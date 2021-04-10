@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Genocs.FormRecognizer.ConsoleApp": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
