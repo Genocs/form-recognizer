@@ -1,13 +1,10 @@
-﻿using Genocs.FormRecognizer.ConsoleApp.Options;
+﻿using Genocs.Integration.MSAzure.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Formatting.Compact;
-using System.Configuration;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace Genocs.FormRecognizer.ConsoleApp
 {
@@ -20,9 +17,7 @@ namespace Genocs.FormRecognizer.ConsoleApp
 
         private static IHostBuilder CreateHostBuilder(string[] args)
         {
-            // Requires `using Microsoft.Extensions.Hosting;`
             return Host.CreateDefaultBuilder(args)
-                .ConfigureHostConfiguration(configHost => configHost.AddEnvironmentVariables())
                 .ConfigureAppConfiguration((context, config) =>
                 {
                     config.AddEnvironmentVariables();
@@ -45,9 +40,7 @@ namespace Genocs.FormRecognizer.ConsoleApp
                 })
                 .ConfigureLogging((hostingContext, logging) =>
                 {
-                    // Requires `using Microsoft.Extensions.Logging;`
                     logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                    logging.AddApplicationInsights();
 
                     var serilogBuilder = new LoggerConfiguration()
                                                     .ReadFrom
@@ -59,15 +52,16 @@ namespace Genocs.FormRecognizer.ConsoleApp
 
                     logging.AddConsole();
                     logging.AddDebug();
-                    logging.AddEventSourceLogger();
                 })
                 .ConfigureServices((hostingContext, services) =>
                 {
+                    // Register config
                     services.Configure<AzureCognitiveServicesConfig>(hostingContext.Configuration.GetSection("AzureCognitiveServicesConfig"));
+                    services.Configure<AzureStorageConfig>(hostingContext.Configuration.GetSection("AzureStorageConfig"));
+
+                    // Register services
                     services.AddHostedService<WorkerService>();
                 });
-
         }
-
     }
 }

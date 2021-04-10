@@ -1,8 +1,8 @@
-using Azure;
+﻿using Azure;
 using Azure.AI.FormRecognizer;
 using Azure.AI.FormRecognizer.Models;
 using Azure.AI.FormRecognizer.Training;
-using Genocs.FormRecognizer.ConsoleApp.Options;
+using Genocs.Integration.MSAzure.Options;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -19,12 +19,16 @@ namespace Genocs.FormRecognizer.ConsoleApp
         private bool _disposed;
 
         private readonly ILogger<WorkerService> _logger;
-        private readonly AzureCognitiveServicesConfig _config;
+        private readonly AzureCognitiveServicesConfig _configCognitiveServices;
+        private readonly AzureStorageConfig _configAzureStorage;
 
-        public WorkerService(ILogger<WorkerService> logger, IOptions<AzureCognitiveServicesConfig> config)
+        public WorkerService(ILogger<WorkerService> logger,
+            IOptions<AzureCognitiveServicesConfig> configCognitiveServices,
+            IOptions<AzureStorageConfig> configAzureStorage)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _config = config.Value;
+            _configCognitiveServices = configCognitiveServices.Value;
+            _configAzureStorage = configAzureStorage.Value;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -71,20 +75,23 @@ namespace Genocs.FormRecognizer.ConsoleApp
 
         private async Task MainAsync()
         {
-            string endpoint = _config.Endpoint;
-            string apiKey = _config.SubscriptionKey;
-            string trainingSetUrl = @"trainingSetUrl";
-            string fileUrl = @"<filePath>";
-            string modelId = @"<filePath>";
-            string modelName = @"<filePath>";
-            string filePath = @"<filePath>";
+            string endpoint = _configCognitiveServices.Endpoint;
+            string apiKey = _configCognitiveServices.SubscriptionKey;
+            string trainingSetUrl = _configAzureStorage.TrainingSetContainer;
+            string fileUrl = _configAzureStorage.InspectingFileUrl;
+
+            string modelId = "40763499-a146-4202-be20-0418510ae1e4";
+            string modelName = "2021_04_08_01";
+            string filePath = @"C:\tmp\uno.jpg";
 
             EvaluateExisting(endpoint, apiKey);
+
+            // Remove the comment on the line below to create a new model
             //await CreateModel(endpoint, apiKey, trainingSetUrl, modelName);
             await TestLocal(endpoint, apiKey, modelId, filePath);
             await TestUrl(endpoint, apiKey, modelId, fileUrl);
 
-            Console.WriteLine("Done Successfully!");
+            _logger.LogInformation("Done Successfully!");
         }
 
 

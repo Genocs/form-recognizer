@@ -1,4 +1,4 @@
-﻿using Genocs.FormRecognizer.WebApi.Options;
+﻿using Genocs.Integration.MSAzure.Options;
 using Microsoft.Azure.CognitiveServices.Vision.Face;
 using Microsoft.Azure.CognitiveServices.Vision.Face.Models;
 using Microsoft.Extensions.Logging;
@@ -8,14 +8,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Genocs.FormRecognizer.WebApi.Services
+namespace Genocs.Integration.MSAzure.Services
 {
-    public class FormRecognizerService
+    public class FaceComparisonService
     {
         private readonly IFaceClient _client;
         private readonly ILogger<FormRecognizerService> _logger;
 
-        public FormRecognizerService(IOptions<AzureCognitiveServicesConfig> config, ILogger<FormRecognizerService> logger)
+        public FaceComparisonService(IOptions<AzureCognitiveServicesConfig> config, ILogger<FormRecognizerService> logger)
         {
             _ = config ?? throw new ArgumentNullException(nameof(config));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

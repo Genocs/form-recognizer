@@ -1,5 +1,5 @@
 ﻿using Genocs.FormRecognizer.WebApi.Dto;
-using Genocs.FormRecognizer.WebApi.Services;
+using Genocs.Integration.MSAzure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;

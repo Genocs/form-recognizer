@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.FormRecognizer.WebAp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.FormRecognizer.ConsoleApp", "src\Genocs.FormRecognizer.ConsoleApp\Genocs.FormRecognizer.ConsoleApp.csproj", "{A8655D44-AD75-44BA-A02D-D267162B30A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Genocs.Integration.MSAzure", "src\Genocs.Integration.MSAzure\Genocs.Integration.MSAzure.csproj", "{AC597E17-8762-47AC-9DF1-0C2ACC614AAF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{A8655D44-AD75-44BA-A02D-D267162B30A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8655D44-AD75-44BA-A02D-D267162B30A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8655D44-AD75-44BA-A02D-D267162B30A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC597E17-8762-47AC-9DF1-0C2ACC614AAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC597E17-8762-47AC-9DF1-0C2ACC614AAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC597E17-8762-47AC-9DF1-0C2ACC614AAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC597E17-8762-47AC-9DF1-0C2ACC614AAF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

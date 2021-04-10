@@ -2,7 +2,7 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
-using Genocs.FormRecognizer.WebApi.Options;
+using Genocs.Integration.MSAzure.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -12,7 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Genocs.FormRecognizer.WebApi.Services
+namespace Genocs.Integration.MSAzure.Services
 {
     public class StorageService
     {
@@ -42,7 +42,7 @@ namespace Genocs.FormRecognizer.WebApi.Services
         {
             // Create a URI to the blob
 
-            string url = $"https://{_storageConfig.AccountName}.blob.core.windows.net/{_storageConfig.ImageContainer}/{fileName}";
+            string url = $"https://{_storageConfig.AccountName}.blob.core.windows.net/{_storageConfig.TrainingSetContainer}/{fileName}";
             Uri blobUri = new Uri(url);
 
             // Create StorageSharedKeyCredentials object by reading
@@ -56,7 +56,7 @@ namespace Genocs.FormRecognizer.WebApi.Services
             // Upload the file
             await blobClient.UploadAsync(fileStream, overwrite: true);
 
-            string tkn = SASToken(_storageConfig.AccountName, _storageConfig.AccountKey, _storageConfig.ImageContainer, fileName);
+            string tkn = SASToken(_storageConfig.AccountName, _storageConfig.AccountKey, _storageConfig.TrainingSetContainer, fileName);
 
             return await Task.FromResult(tkn);
         }
