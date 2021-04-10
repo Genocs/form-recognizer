@@ -12,6 +12,8 @@ before_script:
 script:
   - ./scripts/build.sh
   - ./scripts/test.sh
+  - ./scripts/dockerize.sh
+  
 after_success:
   #- ./scripts/pack.sh
 notifications:
