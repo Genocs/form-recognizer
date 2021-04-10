@@ -42,7 +42,7 @@ namespace Genocs.Integration.MSAzure.Services
         {
             // Create a URI to the blob
 
-            string url = $"https://{_storageConfig.AccountName}.blob.core.windows.net/{_storageConfig.TrainingSetContainer}/{fileName}";
+            string url = $"https://{_storageConfig.AccountName}.blob.core.windows.net/{_storageConfig.UploadContainer}/{fileName}";
             Uri blobUri = new Uri(url);
 
             // Create StorageSharedKeyCredentials object by reading
@@ -56,7 +56,7 @@ namespace Genocs.Integration.MSAzure.Services
             // Upload the file
             await blobClient.UploadAsync(fileStream, overwrite: true);
 
-            string tkn = SASToken(_storageConfig.AccountName, _storageConfig.AccountKey, _storageConfig.TrainingSetContainer, fileName);
+            string tkn = SASToken(_storageConfig.AccountName, _storageConfig.AccountKey, _storageConfig.UploadContainer, fileName);
 
             return await Task.FromResult(tkn);
         }
@@ -91,16 +91,6 @@ namespace Genocs.Integration.MSAzure.Services
 
         public async Task<List<UploadedItem>> UploadFilesAsync(List<IFormFile> files)
         {
-            if (files == null)
-            {
-                throw new Exception("images cannot be null");
-            }
-
-            if (files.Count < 2)
-            {
-                throw new Exception("images cannot contains less that 2 items");
-            }
-
             List<UploadedItem> result = new();
             foreach (var formFile in files)
             {

@@ -31,20 +31,11 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
         [Route("uploadtoexecute"), HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<FormRecognizerResult> PostUploadAndScanImage([FromForm(Name = "images")] List<IFormFile> files)
+        public async Task<List<dynamic>> PostUploadAndScanImage([FromForm(Name = "images")] List<IFormFile> files)
         {
+            string modelId = "40763499-a146-4202-be20-0418510ae1e4";
             var uploadResult = await this.storageService.UploadFilesAsync(files);
-            IList<Microsoft.Azure.CognitiveServices.Vision.Face.Models.SimilarFace> similarResult = await this.formRecognizerService.FindSimilar(uploadResult.First().URL, uploadResult.Last().URL);
-
-            return await Task.Run(() =>
-            {
-                FormRecognizerResult result = new();
-                if (similarResult != null && similarResult.Any())
-                {
-                    result.Confidence = similarResult.OrderByDescending(c => c.Confidence).First().Confidence;
-                }
-                return result;
-            });
+            return  await this.formRecognizerService.ScanRemote(modelId, uploadResult.First().URL);
         }
 
 

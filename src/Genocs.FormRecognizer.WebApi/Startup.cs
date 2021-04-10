@@ -1,5 +1,5 @@
-using Genocs.FormRecognizer.WebApi.Services;
 using Genocs.Integration.MSAzure.Options;
+using Genocs.Integration.MSAzure.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

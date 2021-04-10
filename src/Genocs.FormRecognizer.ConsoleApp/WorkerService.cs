@@ -77,7 +77,7 @@ namespace Genocs.FormRecognizer.ConsoleApp
         {
             string endpoint = _configCognitiveServices.Endpoint;
             string apiKey = _configCognitiveServices.SubscriptionKey;
-            string trainingSetUrl = _configAzureStorage.TrainingSetContainer;
+            string trainingSetUrl = _configAzureStorage.TrainingSetContainerUrl;
             string fileUrl = _configAzureStorage.InspectingFileUrl;
 
             string modelId = "40763499-a146-4202-be20-0418510ae1e4";
