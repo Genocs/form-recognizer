@@ -23,44 +23,38 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
             this.storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
         }
 
+
+
         /// <summary>
         /// It allows to upload an image and scan it
         /// </summary>
-        /// <param name="files">Images files</param>
-        /// <returns>Result</returns>
-        [Route("uploadtoexecute"), HttpPost]
+        /// <param name="modelId">The ML ModelId</param>
+        /// <param name="files">The File/s stream</param>
+        /// <returns>The result</returns>
+        [Route("upload_and_run"), HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<List<dynamic>> PostUploadAndScanImage([FromForm(Name = "images")] List<IFormFile> files)
+        public async Task<List<dynamic>> PostUploadAndScanImage([FromQuery] string modelId, [FromForm(Name = "images")] List<IFormFile> files)
         {
-            string modelId = "40763499-a146-4202-be20-0418510ae1e4";
             var uploadResult = await this.storageService.UploadFilesAsync(files);
-            return  await this.formRecognizerService.ScanRemote(modelId, uploadResult.First().URL);
+            return await this.formRecognizerService.ScanRemote(modelId, uploadResult.First().URL);
         }
 
 
         /// <summary>
         /// It allows to scan a image previously uploaded
         /// </summary>
-        /// <param name="files">Images files</param>
-        /// <returns>Result</returns>
-        [Route("execute"), HttpPost]
+        /// <param name="modelId">The ML ModelId</param>
+        /// <param name="url">The public available url</param>
+        /// <returns>The result</returns>
+
+        [Route("run_remote"), HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<FormRecognizerResult> PostScanImage(string url)
+        public async Task<List<dynamic>> PostScanImage([FromQuery] string modelId, [FromQuery] string url)
         {
 
-            //IList<Microsoft.Azure.CognitiveServices.Vision.Face.Models.SimilarFace> similarResult = await this.formRecognizerService.FindSimilar(uploadResult.First().URL, uploadResult.Last().URL);
-
-            return await Task.Run(() =>
-            {
-                FormRecognizerResult result = new();
-                //if (similarResult != null && similarResult.Any())
-                //{
-                //    result.Confidence = similarResult.OrderByDescending(c => c.Confidence).First().Confidence;
-                //}
-                return result;
-            });
+            return await this.formRecognizerService.ScanRemote(modelId, url);
         }
     }
 }

@@ -54,7 +54,7 @@ namespace Genocs.Integration.MSAzure.Services
 
                 foreach (FormField field in form.Fields.Values)
                 {
-                    ((IDictionary<string, object>)exo).Add(field.Name, new { Value = field.ValueData.Text, Confidence = field.Confidence });
+                    ((IDictionary<string, object>)exo).Add(field.Name, new { Value = field?.ValueData?.Text, field?.Confidence });
                 }
                 res.Add(exo);
 
