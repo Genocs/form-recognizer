@@ -53,7 +53,6 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<List<dynamic>> PostScanImage([FromQuery] string modelId, [FromQuery] string url)
         {
-
             return await this.formRecognizerService.ScanRemote(modelId, url);
         }
     }
