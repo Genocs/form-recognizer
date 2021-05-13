@@ -72,7 +72,7 @@ namespace Genocs.Integration.MSAzure.Services
                 targetFaceIds.Add(target.FaceId.Value);
             }
 
-            // Find a similar face(s) in the list of IDs. Comaparing only the first in list for testing purposes.
+            // Find a similar face(s) in the list of IDs. Comparing only the first in list for testing purposes.
 
             List<SimilarFace> result = new();
 

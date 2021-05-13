@@ -24,9 +24,11 @@ namespace Genocs.FormRecognizer.WebApi
             services.AddOptions();
             services.Configure<AzureStorageConfig>(Configuration.GetSection("AzureStorageConfig"));
             services.Configure<AzureCognitiveServicesConfig>(Configuration.GetSection("AzureCognitiveServicesConfig"));
+            services.Configure<AzureCognitiveServicesImageClassifierConfig>(Configuration.GetSection("AzureCognitiveServicesImageClassifierConfig"));
 
             services.AddSingleton<StorageService>();
             services.AddSingleton<FormRecognizerService>();
+            services.AddSingleton<FormClassifierService>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

@@ -58,6 +58,7 @@ namespace Genocs.FormRecognizer.ConsoleApp
                     // Register config
                     services.Configure<AzureCognitiveServicesConfig>(hostingContext.Configuration.GetSection("AzureCognitiveServicesConfig"));
                     services.Configure<AzureStorageConfig>(hostingContext.Configuration.GetSection("AzureStorageConfig"));
+                    services.Configure<AzureCognitiveServicesImageClassifierConfig>(hostingContext.Configuration.GetSection("AzureCognitiveServicesImageClassifierConfig"));
 
                     // Register services
                     services.AddHostedService<WorkerService>();
