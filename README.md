@@ -14,7 +14,7 @@ The project require to have an Azure subscription with
 
 ``` PS
   "AzureStorageConfig": {
-    "AccountName": "{{accountName}}",
+    "AccountName": "{{AccountName}}",
     "AccountKey": "{{AccountKey}}",
     "ImageContainer": "{{ImageContainer}}",
     "ThumbnailContainer": "{{ThumbnailContainer}}"
@@ -23,6 +23,10 @@ The project require to have an Azure subscription with
     "Endpoint": "{{Endpoint}}",
     "SubscriptionKey": "{{SubscriptionKey}}"
     "ModelId": "{{ModelId}}"	
+  },
+  "AzureCognitiveServicesImageClassifierConfig": {
+    "Endpoint": "{{Endpoint}}",
+    "PredictionKey": "{{PredictionKey}}"
   }
 ```  
   

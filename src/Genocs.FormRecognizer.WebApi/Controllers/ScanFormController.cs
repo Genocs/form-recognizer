@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Genocs.FormRecognizer.WebApi.Controllers
 {
@@ -74,7 +75,7 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
             string classificationModelId = "1ca8195a-f5e6-41c1-83f3-034df7f3a6ff";
 
             FormExtractorResult result = new FormExtractorResult();
-            var classification = await this.formClassifierService.Classify(iterationModelId, url);
+            var classification = await this.formClassifierService.Classify(iterationModelId, HttpUtility.HtmlDecode(url));
 
             if (classification != null && classification.Predictions != null && classification.Predictions.Any())
             {
