@@ -2,7 +2,7 @@
 using Azure.AI.FormRecognizer;
 using Azure.AI.FormRecognizer.Models;
 using Azure.AI.FormRecognizer.Training;
-using Genocs.Integration.MSAzure.Options;
+using Genocs.Integration.ML.CognitiveServices.Options;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

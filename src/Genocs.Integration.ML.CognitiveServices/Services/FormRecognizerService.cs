@@ -1,7 +1,8 @@
 ﻿using Azure;
 using Azure.AI.FormRecognizer;
 using Azure.AI.FormRecognizer.Models;
-using Genocs.Integration.MSAzure.Options;
+using Genocs.Integration.ML.CognitiveServices.Interfaces;
+using Genocs.Integration.ML.CognitiveServices.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -9,33 +10,40 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Genocs.Integration.MSAzure.Services
+namespace Genocs.Integration.ML.CognitiveServices.Services
 {
-    public class FormRecognizerService
+    public class FormRecognizerService : IFormRecognizer
     {
+        private readonly FormRecognizerConfig _config;
         private readonly ILogger<FormRecognizerService> _logger;
+
         private readonly FormRecognizerClient _client;
 
-        public FormRecognizerService(IOptions<AzureCognitiveServicesConfig> config, ILogger<FormRecognizerService> logger)
+        public FormRecognizerService(IOptions<FormRecognizerConfig> config, ILogger<FormRecognizerService> logger)
         {
-            _ = config ?? throw new ArgumentNullException(nameof(config));
+            if (config == null)
+            {
+                throw new ArgumentNullException(nameof(config));
+            }
+
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-            AzureCognitiveServicesConfig cfg = config.Value;
-            _client = new FormRecognizerClient(new Uri(cfg.Endpoint), new AzureKeyCredential(cfg.SubscriptionKey));
+            _config = config.Value;
+
+            _client = new FormRecognizerClient(new Uri(_config.Endpoint), new AzureKeyCredential(_config.SubscriptionKey));
         }
 
-        public async Task<List<dynamic>> ScanLocal(string modelId, string filePath)
+        public async Task<List<dynamic>> ScanLocal(string filePath)
         {
             using var stream = new FileStream(filePath, FileMode.Open);
-            RecognizeCustomFormsOperation operation = await _client.StartRecognizeCustomFormsAsync(modelId, stream);
+            RecognizeCustomFormsOperation operation = await _client.StartRecognizeCustomFormsAsync(_config.ModelId, stream);
             return await Evaluate(operation);
         }
 
-        public async Task<List<dynamic>> ScanRemote(string modelId, string url)
+        public async Task<List<dynamic>> ScanRemote(string url)
         {
             Uri formFileUri = new Uri(url);
-            RecognizeCustomFormsOperation operation = await _client.StartRecognizeCustomFormsFromUriAsync(modelId, formFileUri);
+            RecognizeCustomFormsOperation operation = await _client.StartRecognizeCustomFormsFromUriAsync(_config.ModelId, formFileUri);
             return await Evaluate(operation);
         }
 

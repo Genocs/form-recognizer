@@ -9,16 +9,16 @@
     <repository type="git" url="https://github.com/Genocs/form-recognizer.git" branch="master" commit="37bd57f2cdca35cb0c346d214468d7a5ede9057d" />
     <license type="expression">MIT</license>
     <icon>genocs-icon.png</icon>    
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <title>The Core Library by Genocs</title>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <title>The Machine Learning Microsoft Cognitive Services Library by Genocs</title>
     <summary>
-The base library useful to build .NET Core projects.
+The Machine Learning Microsoft Cognitive Services Library by Genocs.
     </summary>
     <description>
-The base library useful to build .NET Core projects.
+The Machine Learning Microsoft Cognitive Services Library by Genocs.
     </description>
     <releaseNotes>
-- .NET Core 3.1
+- .NET Core 5
 - Swashbuckle 5
     </releaseNotes>
     <tags>

@@ -1,0 +1,11 @@
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace Genocs.Integration.ML.CognitiveServices.Interfaces
+{
+    public interface IFormRecognizer
+    {
+        Task<List<dynamic>> ScanLocal(string filePath);
+        Task<List<dynamic>> ScanRemote(string url);
+    }
+}

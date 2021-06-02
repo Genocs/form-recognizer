@@ -1,4 +1,4 @@
-﻿namespace Genocs.Integration.MSAzure.Options
+﻿namespace Genocs.Integration.ML.CognitiveServices.Options
 {
     public class AzureStorageConfig
     {

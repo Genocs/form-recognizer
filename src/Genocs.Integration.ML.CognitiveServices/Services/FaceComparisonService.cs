@@ -1,4 +1,5 @@
-﻿using Genocs.Integration.MSAzure.Options;
+﻿using Genocs.Integration.ML.CognitiveServices.Interfaces;
+using Genocs.Integration.ML.CognitiveServices.Options;
 using Microsoft.Azure.CognitiveServices.Vision.Face;
 using Microsoft.Azure.CognitiveServices.Vision.Face.Models;
 using Microsoft.Extensions.Logging;
@@ -8,16 +9,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Genocs.Integration.MSAzure.Services
+namespace Genocs.Integration.ML.CognitiveServices.Services
 {
-    public class FaceComparisonService
+    public class FaceComparisonService : IFaceComparison
     {
         private readonly IFaceClient _client;
         private readonly ILogger<FormRecognizerService> _logger;
 
         public FaceComparisonService(IOptions<AzureCognitiveServicesConfig> config, ILogger<FormRecognizerService> logger)
         {
-            _ = config ?? throw new ArgumentNullException(nameof(config));
+            if (config == null)
+            {
+                throw new ArgumentNullException(nameof(config));
+            }
+
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             _client = Authenticate(config.Value.Endpoint, config.Value.SubscriptionKey);
@@ -76,7 +81,7 @@ namespace Genocs.Integration.MSAzure.Services
 
             List<SimilarFace> result = new();
 
-            foreach(var source in sourceFaces)
+            foreach (var source in sourceFaces)
             {
                 result.AddRange(await _client.Face.FindSimilarAsync(source.FaceId.Value, null, null, targetFaceIds));
             }

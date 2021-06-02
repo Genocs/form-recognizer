@@ -1,4 +1,4 @@
-﻿using Genocs.Integration.MSAzure.Options;
+﻿using Genocs.Integration.ML.CognitiveServices.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -58,7 +58,8 @@ namespace Genocs.FormRecognizer.ConsoleApp
                     // Register config
                     services.Configure<AzureCognitiveServicesConfig>(hostingContext.Configuration.GetSection("AzureCognitiveServicesConfig"));
                     services.Configure<AzureStorageConfig>(hostingContext.Configuration.GetSection("AzureStorageConfig"));
-                    services.Configure<AzureCognitiveServicesImageClassifierConfig>(hostingContext.Configuration.GetSection("AzureCognitiveServicesImageClassifierConfig"));
+                    services.Configure<ImageClassifierConfig>(hostingContext.Configuration.GetSection("ImageClassifierConfig"));
+                    services.Configure<FormRecognizerConfig>(hostingContext.Configuration.GetSection("FormRecognizerConfig"));
 
                     // Register services
                     services.AddHostedService<WorkerService>();

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Genocs.Integration.MSAzure.Models
+namespace Genocs.Integration.ML.CognitiveServices.Models
 {
     public class Prediction
     {

@@ -2,7 +2,7 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
-using Genocs.Integration.MSAzure.Options;
+using Genocs.Integration.ML.CognitiveServices.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -12,7 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Genocs.Integration.MSAzure.Services
+namespace Genocs.Integration.ML.CognitiveServices.Services
 {
     public class StorageService
     {
@@ -47,11 +47,10 @@ namespace Genocs.Integration.MSAzure.Services
 
             // Create StorageSharedKeyCredentials object by reading
             // the values from the configuration (appsettings.json)
-            StorageSharedKeyCredential storageCredentials =
-                new StorageSharedKeyCredential(_storageConfig.AccountName, _storageConfig.AccountKey);
+            StorageSharedKeyCredential storageCredentials = new(_storageConfig.AccountName, _storageConfig.AccountKey);
 
             // Create the blob client.
-            BlobClient blobClient = new BlobClient(blobUri, storageCredentials);
+            BlobClient blobClient = new(blobUri, storageCredentials);
 
             // Upload the file
             await blobClient.UploadAsync(fileStream, overwrite: true);

@@ -1,10 +1,10 @@
-﻿namespace Genocs.Integration.MSAzure.Options
+﻿namespace Genocs.Integration.ML.CognitiveServices.Options
 {
-    public class AzureCognitiveServicesConfig
+    public class FormRecognizerConfig
     {
         public string Endpoint { get; set; }
         public string SubscriptionKey { get; set; }
         public string TrainingsetUrl { get; set; }
-
+        public string ModelId { get; set; }
     }
 }

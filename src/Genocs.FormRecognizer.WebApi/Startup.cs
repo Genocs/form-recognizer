@@ -1,5 +1,5 @@
-using Genocs.Integration.MSAzure.Options;
-using Genocs.Integration.MSAzure.Services;
+using Genocs.Integration.ML.CognitiveServices.Options;
+using Genocs.Integration.ML.CognitiveServices.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -22,13 +22,15 @@ namespace Genocs.FormRecognizer.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddOptions();
-            services.Configure<AzureStorageConfig>(Configuration.GetSection("AzureStorageConfig"));
+
             services.Configure<AzureCognitiveServicesConfig>(Configuration.GetSection("AzureCognitiveServicesConfig"));
-            services.Configure<AzureCognitiveServicesImageClassifierConfig>(Configuration.GetSection("AzureCognitiveServicesImageClassifierConfig"));
+            services.Configure<AzureStorageConfig>(Configuration.GetSection("AzureStorageConfig"));
+            services.Configure<ImageClassifierConfig>(Configuration.GetSection("ImageClassifierConfig"));
+            services.Configure<FormRecognizerConfig>(Configuration.GetSection("FormRecognizerConfig"));
 
             services.AddSingleton<StorageService>();
             services.AddSingleton<FormRecognizerService>();
-            services.AddSingleton<FormClassifierService>();
+            services.AddSingleton<ImageClassifierService>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

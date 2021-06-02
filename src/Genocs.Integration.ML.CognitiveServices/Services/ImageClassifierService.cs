@@ -1,22 +1,25 @@
 ﻿using Azure;
 using Azure.AI.FormRecognizer;
 using Azure.AI.FormRecognizer.Models;
-using Genocs.Integration.MSAzure.Extensions;
-using Genocs.Integration.MSAzure.Models;
-using Genocs.Integration.MSAzure.Options;
+using Genocs.Integration.ML.CognitiveServices.Extensions;
+using Genocs.Integration.ML.CognitiveServices.Interfaces;
+using Genocs.Integration.ML.CognitiveServices.Models;
+using Genocs.Integration.ML.CognitiveServices.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Threading.Tasks;
 using System.Net.Http.Json;
+using System.Threading.Tasks;
 
-namespace Genocs.Integration.MSAzure.Services
+namespace Genocs.Integration.ML.CognitiveServices.Services
 {
-    public class FormClassifierService
+    public class ImageClassifierService : IImageClassifier
     {
-        private readonly ILogger<FormClassifierService> _logger;
+        private readonly ImageClassifierConfig _config;
+
+        private readonly ILogger<ImageClassifierService> _logger;
         private readonly FormRecognizerClient _client;
 
         private readonly HttpClient _httpClient;
@@ -24,24 +27,28 @@ namespace Genocs.Integration.MSAzure.Services
         // https://westeurope.api.cognitive.microsoft.com/customvision/v3.0/Prediction/83db127e-d786-4662-8f11-4dce83da21a5/classify/iterations/Iteration1/url
         private readonly string _url = "classify/iterations/Iteration1/url";
 
-        public FormClassifierService(IOptions<AzureCognitiveServicesImageClassifierConfig> config, ILogger<FormClassifierService> logger)
+        public ImageClassifierService(IOptions<ImageClassifierConfig> config, ILogger<ImageClassifierService> logger)
         {
-            _ = config ?? throw new ArgumentNullException(nameof(config));
+            if (config == null)
+            {
+                throw new ArgumentNullException(nameof(config));
+            }
+
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-            AzureCognitiveServicesImageClassifierConfig cfg = config.Value;
+            _config = config.Value;
 
             _httpClient = new HttpClient
             {
-                BaseAddress = new Uri(cfg.Endpoint)
+                BaseAddress = new Uri(_config.Endpoint)
             };
 
-            _httpClient.DefaultRequestHeaders.Add("Prediction-Key", cfg.PredictionKey);
+            _httpClient.DefaultRequestHeaders.Add("Prediction-Key", _config.PredictionKey);
         }
 
-        public async Task<Classification> Classify(string modelId, string url)
+        public async Task<Classification> Classify(string url)
         {
-            var postResponse = await _httpClient.PostAsync($"/customvision/v3.0/Prediction/{modelId}/{_url}", new { Url = url }.AsJson());
+            var postResponse = await _httpClient.PostAsync($"/customvision/v3.0/Prediction/{_config.ModelId}/{_url}", new { Url = url }.AsJson());
             postResponse.EnsureSuccessStatusCode();
 
             if (postResponse != null && postResponse.IsSuccessStatusCode)

@@ -1,6 +1,5 @@
-﻿using Genocs.FormRecognizer.WebApi.Dto;
-using Genocs.Integration.MSAzure.Models;
-using Genocs.Integration.MSAzure.Services;
+﻿using Genocs.Integration.ML.CognitiveServices.Models;
+using Genocs.Integration.ML.CognitiveServices.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,14 +12,14 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
 {
 
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class ScanFormController : ControllerBase
     {
         private readonly FormRecognizerService formRecognizerService;
         private readonly StorageService storageService;
-        private readonly FormClassifierService formClassifierService;
+        private readonly ImageClassifierService formClassifierService;
 
-        public ScanFormController(FormRecognizerService formRecognizerService, StorageService storageService, FormClassifierService formClassifierService)
+        public ScanFormController(FormRecognizerService formRecognizerService, StorageService storageService, ImageClassifierService formClassifierService)
         {
             this.formRecognizerService = formRecognizerService ?? throw new ArgumentNullException(nameof(formRecognizerService));
             this.storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
@@ -36,10 +35,11 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
         [Route("upload_and_run"), HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<List<dynamic>> PostUploadAndScanImage([FromQuery] string modelId, [FromForm(Name = "images")] List<IFormFile> files)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<List<dynamic>> PostUploadAndScanImage([FromForm(Name = "images")] List<IFormFile> files)
         {
             var uploadResult = await this.storageService.UploadFilesAsync(files);
-            return await this.formRecognizerService.ScanRemote(modelId, uploadResult.First().URL);
+            return await this.formRecognizerService.ScanRemote(uploadResult.First().URL);
         }
 
 
@@ -53,9 +53,9 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
         [Route("run_remote"), HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<List<dynamic>> PostScanImage([FromQuery] string modelId, [FromQuery] string url)
+        public async Task<List<dynamic>> PostScanImage([FromQuery] string url)
         {
-            return await this.formRecognizerService.ScanRemote(modelId, url);
+            return await this.formRecognizerService.ScanRemote(url);
         }
 
 
@@ -69,13 +69,11 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
         [Route("evaluate_form"), HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         public async Task<FormExtractorResult> GetScanImage(string url)
         {
-            string iterationModelId = "83db127e-d786-4662-8f11-4dce83da21a5";
-            string classificationModelId = "1ca8195a-f5e6-41c1-83f3-034df7f3a6ff";
-
-            FormExtractorResult result = new FormExtractorResult();
-            var classification = await this.formClassifierService.Classify(iterationModelId, HttpUtility.HtmlDecode(url));
+            FormExtractorResult result = new();
+            var classification = await this.formClassifierService.Classify(HttpUtility.HtmlDecode(url));
 
             if (classification != null && classification.Predictions != null && classification.Predictions.Any())
             {
@@ -83,7 +81,7 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
             }
 
             result.Classification = classification;
-            result.ContentData = await this.formRecognizerService.ScanRemote(classificationModelId, url);
+            result.ContentData = await this.formRecognizerService.ScanRemote(url);
 
             return result;
         }
