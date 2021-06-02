@@ -6,7 +6,7 @@
 
 @url = https://localhost:5001
 
-@imageUrl = https%3A%2F%2Ffirebasestorage.googleapis.com%2Fv0%2Fb%2Ffiscanner-web.appspot.com%2Fo%2Fimages%252FKGt2f0vFUIMKCOWlqpOCFwxbKMF3%252F20210519_161651.jpg%3Falt%3Dmedia%26token%3D0d541407-858e-4486-9e3a-2e945e81d0ce
+@imageUrl = your_encoded_image_url
 
 ### Check the Home page
 GET {{url}} HTTP/1.1
