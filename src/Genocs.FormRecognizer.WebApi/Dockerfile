@@ -8,7 +8,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY ["src/Genocs.FormRecognizer.WebApi/Genocs.FormRecognizer.WebApi.csproj", "src/Genocs.FormRecognizer.WebApi/"]
-COPY ["src/Genocs.Integration.MSAzure/Genocs.Integration.MSAzure.csproj", "src/Genocs.Integration.MSAzure/"]
+COPY ["src/Genocs.Integration.ML.CognitiveServices/Genocs.Integration.ML.CognitiveServices.csproj", "src/Genocs.Integration.ML.CognitiveServices/"]
 
 RUN dotnet restore "src/Genocs.FormRecognizer.WebApi/Genocs.FormRecognizer.WebApi.csproj"
 COPY . .

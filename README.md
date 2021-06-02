@@ -16,17 +16,21 @@ The project require to have an Azure subscription with
   "AzureStorageConfig": {
     "AccountName": "{{AccountName}}",
     "AccountKey": "{{AccountKey}}",
-    "ImageContainer": "{{ImageContainer}}",
-    "ThumbnailContainer": "{{ThumbnailContainer}}"
+    "UploadContainer": "{{UploadContainer}}",
+    "TrainingSetContainerUrl": "{{TrainingSetContainerUrl}}",
+    "ThumbnailContainer": "{{ThumbnailContainer}}",
+    "InspectingFileUrl": "{{InspectingFileUrl}}"
   },
-  "AzureCognitiveServicesConfig": {
+  "ImageClassifierConfig": {
     "Endpoint": "{{Endpoint}}",
-    "SubscriptionKey": "{{SubscriptionKey}}"
-    "ModelId": "{{ModelId}}"	
+    "PredictionKey": "{{PredictionKey}}",
+    "IterationModelId": "{{IterationModelId}}",
+    "ModelId": "{{ModelId}}"
   },
-  "AzureCognitiveServicesImageClassifierConfig": {
+  "FormRecognizerConfig": {
     "Endpoint": "{{Endpoint}}",
-    "PredictionKey": "{{PredictionKey}}"
+    "PredictionKey": "{{PredictionKey}}",
+    "ModelId": "{{ModelId}}"
   }
 ```  
   
