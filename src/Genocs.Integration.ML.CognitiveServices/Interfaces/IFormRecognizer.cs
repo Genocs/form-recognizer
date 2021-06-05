@@ -5,7 +5,7 @@ namespace Genocs.Integration.ML.CognitiveServices.Interfaces
 {
     public interface IFormRecognizer
     {
-        Task<List<dynamic>> ScanLocal(string filePath);
-        Task<List<dynamic>> ScanRemote(string url);
+        Task<List<dynamic>> ScanLocal(string classificationKey, string filePath);
+        Task<List<dynamic>> ScanRemote(string classificationKey, string url);
     }
 }

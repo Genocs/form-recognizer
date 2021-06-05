@@ -19,7 +19,9 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
         private readonly StorageService storageService;
         private readonly ImageClassifierService formClassifierService;
 
-        public ScanFormController(FormRecognizerService formRecognizerService, StorageService storageService, ImageClassifierService formClassifierService)
+        public ScanFormController(FormRecognizerService formRecognizerService,
+                                    StorageService storageService,
+                                    ImageClassifierService formClassifierService)
         {
             this.formRecognizerService = formRecognizerService ?? throw new ArgumentNullException(nameof(formRecognizerService));
             this.storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
@@ -27,19 +29,84 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
         }
 
         /// <summary>
-        /// It allows to upload an image and scan it
+        /// It allows to classify an image.
         /// </summary>
-        /// <param name="modelId">The ML ModelId</param>
-        /// <param name="files">The File/s stream</param>
-        /// <returns>The result</returns>
-        [Route("upload_and_run"), HttpPost]
+        /// <param name="url">The HTML encoded url</param>
+        /// <returns>The classification result</returns>
+        [Route("Classify"), HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<List<dynamic>> PostUploadAndScanImage([FromForm(Name = "images")] List<IFormFile> files)
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<Prediction>> GetClassify([FromQuery] string url)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                return BadRequest("url cannot be null or empty");
+            }
+
+            var classification = await this.formClassifierService.Classify(HttpUtility.HtmlDecode(url));
+
+            if (classification != null && classification.Predictions != null && classification.Predictions.Any())
+            {
+                var first = classification.Predictions.OrderByDescending(o => o.Probability).First();
+
+                return first;
+            }
+            return null;
+        }
+
+
+        /// <summary>
+        /// It allows to upload an image and classify it
+        /// </summary>
+        /// <param name="files">File that will be classified</param>
+        /// <returns>The Prediction result</returns>
+        [Route("UploadAndClassify"), HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<Prediction>> PostUploadAndClassify([FromForm(Name = "images")] List<IFormFile> files)
+        {
+            if (files == null || files.Count == 0)
+            {
+                return BadRequest("no 'images' file detected");
+            }
+
+            if (files[0].Length == 0)
+            {
+                return BadRequest("empty 'images' file not allowed");
+            }
+
+            // Upload on storage
+            var uploadResult = await this.storageService.UploadFilesAsync(files);
+
+            // Classify the result
+            var classification = await this.formClassifierService.Classify(HttpUtility.HtmlDecode(uploadResult.First().URL));
+
+            if (classification != null && classification.Predictions != null && classification.Predictions.Any())
+            {
+                var first = classification.Predictions.OrderByDescending(o => o.Probability).First();
+
+                return first;
+            }
+            return null;
+        }
+
+
+        /// <summary>
+        /// It allows to upload an image and estract form data it
+        /// </summary>
+        /// <param name="files">The File/s stream</param>
+        /// <param name="classificationModelId">The classification model Id</param>
+        /// <returns>The result</returns>
+        [Route("UploadAndEvaluate"), HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<List<dynamic>> PostUploadAndEvaluate([FromForm(Name = "images")] List<IFormFile> files, [FromQuery] string classificationModelId)
         {
             var uploadResult = await this.storageService.UploadFilesAsync(files);
-            return await this.formRecognizerService.ScanRemote(uploadResult.First().URL);
+            return await this.formRecognizerService.ScanRemote(classificationModelId, uploadResult.First().URL);
         }
 
 
@@ -50,12 +117,22 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
         /// <param name="url">The public available url</param>
         /// <returns>The result</returns>
 
-        [Route("run_remote"), HttpPost]
+        [Route("ClassifyAndEvalaute"), HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<List<dynamic>> PostScanImage([FromQuery] string url)
+        public async Task<ActionResult<List<dynamic>>> PostClassifyAndEvalaute([FromQuery] string classificationModelId, string url)
         {
-            return await this.formRecognizerService.ScanRemote(url);
+            if (string.IsNullOrWhiteSpace(classificationModelId))
+            {
+                return BadRequest("classificationModelId cannot be null or empty");
+            }
+
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                return BadRequest("url cannot be null or empty");
+            }
+
+            return await this.formRecognizerService.ScanRemote(classificationModelId, url);
         }
 
 
@@ -65,7 +142,6 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
         /// <param name="modelId">The ML ModelId</param>
         /// <param name="url">The public available url</param>
         /// <returns>The result</returns>
-
         [Route("evaluate_form"), HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -78,10 +154,10 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
             if (classification != null && classification.Predictions != null && classification.Predictions.Any())
             {
                 var first = classification.Predictions.OrderByDescending(o => o.Probability).First();
+                result.ContentData = await this.formRecognizerService.ScanRemote(first.TagId, url);
             }
 
             result.Classification = classification;
-            result.ContentData = await this.formRecognizerService.ScanRemote(url);
 
             return result;
         }

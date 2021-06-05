@@ -11,9 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.FormRecognizer.Tests
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{5B7F598F-D6C6-4316-9657-68212BAC78E9}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4EAFC7BD-C336-4980-8B99-6A2FD4A9F69B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.Integration.ML.CognitiveServices", "src\Genocs.Integration.ML.CognitiveServices\Genocs.Integration.ML.CognitiveServices.csproj", "{640CC5D0-9FA0-4F0C-9C46-750955394372}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.Integration.ML.CognitiveServices", "src\Genocs.Integration.ML.CognitiveServices\Genocs.Integration.ML.CognitiveServices.csproj", "{5201A9AA-6F3B-45FD-932C-0C3DC2520ABE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,10 +31,10 @@ Global
 		{F93E80AE-C09A-4126-90B6-CC9F8E61CEB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F93E80AE-C09A-4126-90B6-CC9F8E61CEB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F93E80AE-C09A-4126-90B6-CC9F8E61CEB8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{640CC5D0-9FA0-4F0C-9C46-750955394372}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{640CC5D0-9FA0-4F0C-9C46-750955394372}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{640CC5D0-9FA0-4F0C-9C46-750955394372}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{640CC5D0-9FA0-4F0C-9C46-750955394372}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5201A9AA-6F3B-45FD-932C-0C3DC2520ABE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5201A9AA-6F3B-45FD-932C-0C3DC2520ABE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5201A9AA-6F3B-45FD-932C-0C3DC2520ABE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5201A9AA-6F3B-45FD-932C-0C3DC2520ABE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

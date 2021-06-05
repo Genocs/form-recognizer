@@ -3,10 +3,10 @@ using Xunit;
 
 namespace Genocs.FormRecognizer.Tests
 {
-    public class UnitTest1
+    public class MiscellaneousUnitTest
     {
         [Fact]
-        public void Test1()
+        public void SerializeExpandoObjectWithJsonConvert()
         {
             // my pretend dataset
             List<string> fields = new List<string>();

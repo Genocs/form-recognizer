@@ -3,6 +3,7 @@ using Azure.AI.FormRecognizer;
 using Azure.AI.FormRecognizer.Models;
 using Genocs.Integration.ML.CognitiveServices.Interfaces;
 using Genocs.Integration.ML.CognitiveServices.Options;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -15,17 +16,19 @@ namespace Genocs.Integration.ML.CognitiveServices.Services
     public class FormRecognizerService : IFormRecognizer
     {
         private readonly FormRecognizerConfig _config;
+        private readonly IDistributedCache _distributedCache;
         private readonly ILogger<FormRecognizerService> _logger;
 
         private readonly FormRecognizerClient _client;
 
-        public FormRecognizerService(IOptions<FormRecognizerConfig> config, ILogger<FormRecognizerService> logger)
+        public FormRecognizerService(IDistributedCache distributedCache, IOptions<FormRecognizerConfig> config, ILogger<FormRecognizerService> logger)
         {
             if (config == null)
             {
                 throw new ArgumentNullException(nameof(config));
             }
 
+            _distributedCache = distributedCache ?? throw new ArgumentNullException(nameof(distributedCache));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             _config = config.Value;
@@ -33,17 +36,21 @@ namespace Genocs.Integration.ML.CognitiveServices.Services
             _client = new FormRecognizerClient(new Uri(_config.Endpoint), new AzureKeyCredential(_config.SubscriptionKey));
         }
 
-        public async Task<List<dynamic>> ScanLocal(string filePath)
+        public async Task<List<dynamic>> ScanLocal(string classificationKey, string filePath)
         {
+            string classificationModelId = await _distributedCache.GetStringAsync(classificationKey);
+
             using var stream = new FileStream(filePath, FileMode.Open);
-            RecognizeCustomFormsOperation operation = await _client.StartRecognizeCustomFormsAsync(_config.ModelId, stream);
+            RecognizeCustomFormsOperation operation = await _client.StartRecognizeCustomFormsAsync(classificationModelId, stream);
             return await Evaluate(operation);
         }
 
-        public async Task<List<dynamic>> ScanRemote(string url)
+        public async Task<List<dynamic>> ScanRemote(string classificationKey, string url)
         {
+            string classificationModelId = await _distributedCache.GetStringAsync(classificationKey);
+
             Uri formFileUri = new Uri(url);
-            RecognizeCustomFormsOperation operation = await _client.StartRecognizeCustomFormsFromUriAsync(_config.ModelId, formFileUri);
+            RecognizeCustomFormsOperation operation = await _client.StartRecognizeCustomFormsFromUriAsync(classificationModelId, formFileUri);
             return await Evaluate(operation);
         }
 

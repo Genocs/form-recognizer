@@ -1,3 +1,5 @@
+using Genocs.FormRecognizer.WebApi.Extensions;
+using Genocs.Integration.ML.CognitiveServices.Interfaces;
 using Genocs.Integration.ML.CognitiveServices.Options;
 using Genocs.Integration.ML.CognitiveServices.Services;
 using Microsoft.AspNetCore.Builder;
@@ -29,8 +31,10 @@ namespace Genocs.FormRecognizer.WebApi
             services.Configure<FormRecognizerConfig>(Configuration.GetSection("FormRecognizerConfig"));
 
             services.AddSingleton<StorageService>();
-            services.AddSingleton<FormRecognizerService>();
-            services.AddSingleton<ImageClassifierService>();
+            services.AddSingleton<IFormRecognizer, FormRecognizerService>();
+            services.AddSingleton<IImageClassifier, ImageClassifierService>();
+
+            services.AddCustomCache(Configuration.GetSection("RedisConfig"));
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

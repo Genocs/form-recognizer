@@ -1,5 +1,4 @@
 ﻿using Azure;
-using Azure.AI.FormRecognizer;
 using Azure.AI.FormRecognizer.Models;
 using Genocs.Integration.ML.CognitiveServices.Extensions;
 using Genocs.Integration.ML.CognitiveServices.Interfaces;
@@ -20,7 +19,6 @@ namespace Genocs.Integration.ML.CognitiveServices.Services
         private readonly ImageClassifierConfig _config;
 
         private readonly ILogger<ImageClassifierService> _logger;
-        private readonly FormRecognizerClient _client;
 
         private readonly HttpClient _httpClient;
 
@@ -48,6 +46,7 @@ namespace Genocs.Integration.ML.CognitiveServices.Services
 
         public async Task<Classification> Classify(string url)
         {
+            // The model Id is the classification model Id 
             var postResponse = await _httpClient.PostAsync($"/customvision/v3.0/Prediction/{_config.ModelId}/{_url}", new { Url = url }.AsJson());
             postResponse.EnsureSuccessStatusCode();
 
