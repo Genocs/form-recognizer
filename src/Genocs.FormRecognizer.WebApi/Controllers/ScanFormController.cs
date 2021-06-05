@@ -1,4 +1,6 @@
-﻿using Genocs.Integration.ML.CognitiveServices.Models;
+﻿using Genocs.FormRecognizer.WebApi.Dto;
+using Genocs.Integration.ML.CognitiveServices.Interfaces;
+using Genocs.Integration.ML.CognitiveServices.Models;
 using Genocs.Integration.ML.CognitiveServices.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,13 +17,13 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
     [Route("api/[controller]")]
     public class ScanFormController : ControllerBase
     {
-        private readonly FormRecognizerService formRecognizerService;
+        private readonly IFormRecognizer formRecognizerService;
+        private readonly IImageClassifier formClassifierService;
         private readonly StorageService storageService;
-        private readonly ImageClassifierService formClassifierService;
 
-        public ScanFormController(FormRecognizerService formRecognizerService,
-                                    StorageService storageService,
-                                    ImageClassifierService formClassifierService)
+        public ScanFormController(StorageService storageService,
+                                    IFormRecognizer formRecognizerService,
+                                    IImageClassifier formClassifierService)
         {
             this.formRecognizerService = formRecognizerService ?? throw new ArgumentNullException(nameof(formRecognizerService));
             this.storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
@@ -33,18 +35,18 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
         /// </summary>
         /// <param name="url">The HTML encoded url</param>
         /// <returns>The classification result</returns>
-        [Route("Classify"), HttpGet]
+        [Route("Classify"), HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Prediction>> GetClassify([FromQuery] string url)
+        public async Task<ActionResult<Prediction>> GetClassify([FromBody] BasicRequest request)
         {
-            if (string.IsNullOrWhiteSpace(url))
+            if (string.IsNullOrWhiteSpace(request.Url))
             {
                 return BadRequest("url cannot be null or empty");
             }
 
-            var classification = await this.formClassifierService.Classify(HttpUtility.HtmlDecode(url));
+            var classification = await this.formClassifierService.Classify(HttpUtility.HtmlDecode(request.Url));
 
             if (classification != null && classification.Predictions != null && classification.Predictions.Any())
             {
@@ -117,22 +119,22 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
         /// <param name="url">The public available url</param>
         /// <returns>The result</returns>
 
-        [Route("ClassifyAndEvalaute"), HttpPost]
+        [Route("Evaluate"), HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<List<dynamic>>> PostClassifyAndEvalaute([FromQuery] string classificationModelId, string url)
+        public async Task<ActionResult<List<dynamic>>> PostClassifyAndEvalaute([FromBody] EvaluateRequest request)
         {
-            if (string.IsNullOrWhiteSpace(classificationModelId))
+            if (string.IsNullOrWhiteSpace(request.ClassificationModelId))
             {
                 return BadRequest("classificationModelId cannot be null or empty");
             }
 
-            if (string.IsNullOrWhiteSpace(url))
+            if (string.IsNullOrWhiteSpace(request.Url))
             {
                 return BadRequest("url cannot be null or empty");
             }
 
-            return await this.formRecognizerService.ScanRemote(classificationModelId, url);
+            return await this.formRecognizerService.ScanRemote(request.ClassificationModelId, request.Url);
         }
 
 
@@ -142,19 +144,19 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
         /// <param name="modelId">The ML ModelId</param>
         /// <param name="url">The public available url</param>
         /// <returns>The result</returns>
-        [Route("evaluate_form"), HttpGet]
+        [Route("ClassifyAndEvaluate"), HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces("application/json")]
-        public async Task<FormExtractorResult> GetScanImage(string url)
+        public async Task<FormExtractorResult> GetClassifyAndEvaluate([FromBody] BasicRequest request)
         {
             FormExtractorResult result = new();
-            var classification = await this.formClassifierService.Classify(HttpUtility.HtmlDecode(url));
+            var classification = await this.formClassifierService.Classify(HttpUtility.HtmlDecode(request.Url));
 
             if (classification != null && classification.Predictions != null && classification.Predictions.Any())
             {
                 var first = classification.Predictions.OrderByDescending(o => o.Probability).First();
-                result.ContentData = await this.formRecognizerService.ScanRemote(first.TagId, url);
+                result.ContentData = await this.formRecognizerService.ScanRemote(first.TagId, request.Url);
             }
 
             result.Classification = classification;

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Genocs.FormRecognizer.WebApi.Dto;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using System;
@@ -26,24 +27,24 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
         /// <param name="url">The HTML encoded url</param>
         /// <returns>The classification result</returns>
         [Route("SetupClassificationModel"), HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult> PostSetupClassificationModel([FromQuery] string key, string value)
+        public async Task<ActionResult> PostSetupClassificationModel([FromBody] SetupSettingRequest request)
         {
-            if (string.IsNullOrWhiteSpace(key))
+            if (string.IsNullOrWhiteSpace(request.Key))
             {
                 return BadRequest("key cannot be null or empty");
             }
 
-            if (string.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(request.Value))
             {
                 return BadRequest("value cannot be null or empty");
             }
 
-            await _distributedCache.SetAsync(key, Encoding.UTF8.GetBytes(value));
+            await _distributedCache.SetAsync(request.Key, Encoding.UTF8.GetBytes(request.Value));
 
-            return Ok();
+            return NoContent();
         }
 
     }

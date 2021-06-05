@@ -7,7 +7,10 @@ namespace Genocs.FormRecognizer.WebApi.Extensions
     {
         public static IServiceCollection AddCustomCache(this IServiceCollection services, IConfiguration configuration)
         {
-            if (System.Environment.GetEnvironmentVariable("localdebug") == "1")
+            string server = configuration["Server"];
+            string port = configuration["Port"];
+
+            if (string.IsNullOrWhiteSpace(server) || string.IsNullOrWhiteSpace(port))
             {
                 services.AddDistributedMemoryCache();
             }
