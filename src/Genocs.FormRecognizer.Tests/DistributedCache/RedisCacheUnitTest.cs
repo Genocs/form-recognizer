@@ -18,7 +18,12 @@ namespace Genocs.FormRecognizer.Tests.DistributedCache
 
             var redisOptions = new Microsoft.Extensions.Caching.StackExchangeRedis.RedisCacheOptions
             {
-                ConfigurationOptions = new StackExchange.Redis.ConfigurationOptions()
+                ConfigurationOptions = new StackExchange.Redis.ConfigurationOptions() 
+                {
+                    Ssl = false,
+                    AbortOnConnectFail = false, 
+                    Password = ""
+                }
             };
             redisOptions.ConfigurationOptions.EndPoints.Add(connectionString);
             var opts = Options.Create<Microsoft.Extensions.Caching.StackExchangeRedis.RedisCacheOptions>(redisOptions);

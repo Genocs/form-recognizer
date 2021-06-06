@@ -7,10 +7,9 @@ namespace Genocs.FormRecognizer.WebApi.Extensions
     {
         public static IServiceCollection AddCustomCache(this IServiceCollection services, IConfiguration configuration)
         {
-            string server = configuration["Server"];
-            string port = configuration["Port"];
+            string connectionString = configuration["ConnectionString"];
 
-            if (string.IsNullOrWhiteSpace(server) || string.IsNullOrWhiteSpace(port))
+            if (string.IsNullOrWhiteSpace(connectionString))
             {
                 services.AddDistributedMemoryCache();
             }
@@ -18,9 +17,6 @@ namespace Genocs.FormRecognizer.WebApi.Extensions
             {
                 services.AddStackExchangeRedisCache(options =>
                 {
-                    string server = configuration["Server"];
-                    string port = configuration["Port"];
-                    string connectionString = $"{server}:{port}";
                     options.Configuration = connectionString;
                 });
             }
