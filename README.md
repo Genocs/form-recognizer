@@ -6,10 +6,21 @@ The ML model is built using Azure Cognitive services.
 The project require to have an Azure subscription with
 - Storage account
 - Cognitive Services
+- Redis Cache
+
+## Distributed cache
+The project use a cache to store the classification modelId.
+You have two options:
+1. Use in memory cache
+2. Use Redis cache  
+
+The system by default use the singleton object to store the classification key value pair data.
+
+To use the library remember to setup the classification modelId calling:
+POST {{root_url}}/api/Settings
 
 
-
-## All the variables can be setup using environment variables
+## Setup the environment by using environment variables
 
 
 ``` PS
@@ -24,13 +35,14 @@ The project require to have an Azure subscription with
   "ImageClassifierConfig": {
     "Endpoint": "{{Endpoint}}",
     "PredictionKey": "{{PredictionKey}}",
-    "IterationModelId": "{{IterationModelId}}",
     "ModelId": "{{ModelId}}"
   },
   "FormRecognizerConfig": {
     "Endpoint": "{{Endpoint}}",
-    "PredictionKey": "{{PredictionKey}}",
-    "ModelId": "{{ModelId}}"
+    "PredictionKey": "{{PredictionKey}}"
+  },
+  "RedisConfig": {
+    "ConnectionString": "{{ConnectionString}}"
   }
 ```  
   
@@ -39,5 +51,6 @@ The project require to have an Azure subscription with
 
 ``` PS
 docker build -t genocs/formrecognizer -f .\src\Genocs.FormRecognizer.WebApi\Dockerfile .
-docker push genocs/formrecognizer
+docker tag genocs/formrecognizer genocs/formrecognizer:2.0
+docker push genocs/formrecognizer:2.0
 ``` 
