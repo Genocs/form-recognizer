@@ -1,14 +1,12 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
-using System;
-using System.Diagnostics;
 using Xunit;
 
 namespace Genocs.FormRecognizer.Tests.DistributedCache
 {
     public class RedisCacheUnitTest
     {
-        [Fact]
+        [Fact (Skip = "ci")]
         public void CheckRedisConnection()
         {
 

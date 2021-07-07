@@ -81,7 +81,7 @@ namespace Genocs.FormRecognizer.ConsoleApp
             string fileUrl = _configAzureStorage.InspectingFileUrl;
 
             string modelId = "40763499-a146-4202-be20-0418510ae1e4";
-            string modelName = "2021_04_08_01";
+            //string modelName = "2021_04_08_01";
             string filePath = @"C:\tmp\uno.jpg";
 
             EvaluateExisting(endpoint, apiKey);
