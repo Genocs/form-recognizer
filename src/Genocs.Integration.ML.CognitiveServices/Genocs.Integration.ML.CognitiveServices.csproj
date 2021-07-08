@@ -2,7 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Authors>[Genocs] - Nocco Giovanni Emenuele</Authors>
+    <PackageId>Genocs.Integration.ML.CognitiveServices</PackageId>
+    <Company>Genocs</Company>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>    
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../LICENSE" Pack="true" PackagePath=""/>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Azure.AI.FormRecognizer" Version="3.1.0" />
