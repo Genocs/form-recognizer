@@ -10,7 +10,7 @@ case "$TRAVIS_BRANCH" in
   "develop")
     TAG=dev
     VERSION_TAG=$TAG-$TRAVIS_BUILD_NUMBER
-    ;;    
+    ;;
 esac
 
 REPOSITORY=$DOCKER_CONTAINER/formrecognizer
