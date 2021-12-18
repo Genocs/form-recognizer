@@ -2,6 +2,7 @@
 using Genocs.Integration.ML.CognitiveServices.Interfaces;
 using Genocs.Integration.ML.CognitiveServices.Models;
 using Genocs.Integration.ML.CognitiveServices.Services;
+using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -18,16 +19,22 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
     public class ScanFormController : ControllerBase
     {
         private readonly IFormRecognizer formRecognizerService;
+        private readonly ICardIdRecognizer cardRecognizerService;
+        private readonly IPublishEndpoint publishEndpoint;
         private readonly IImageClassifier formClassifierService;
         private readonly StorageService storageService;
 
         public ScanFormController(StorageService storageService,
                                     IFormRecognizer formRecognizerService,
-                                    IImageClassifier formClassifierService)
+                                    IImageClassifier formClassifierService,
+                                    ICardIdRecognizer cardRecognizerService,
+                                    IPublishEndpoint publishEndpoint)
         {
             this.formRecognizerService = formRecognizerService ?? throw new ArgumentNullException(nameof(formRecognizerService));
             this.storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
             this.formClassifierService = formClassifierService ?? throw new ArgumentNullException(nameof(formClassifierService));
+            this.cardRecognizerService = cardRecognizerService ?? throw new ArgumentNullException(nameof(cardRecognizerService));
+            this.publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
         }
 
         /// <summary>
@@ -161,7 +168,27 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
 
             result.Classification = classification;
 
+            // Publish on to the service bus 
+            await this.publishEndpoint.Publish(result);
+
             return result;
+        }
+
+
+        /// <summary>
+        /// It allows to scan a image previously uploaded
+        /// </summary>
+        /// <param name="modelId">The ML ModelId</param>
+        /// <param name="url">The public available url</param>
+        /// <returns>The result</returns>
+        [Route("CardId"), HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
+        public async Task<ActionResult> GetCardIdInfo([FromBody] BasicRequest request)
+        {
+            await this.formRecognizerService.ScanRemoteCardId(request.Url);
+            return Ok();
         }
     }
 }
