@@ -18,16 +18,20 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
     public class ScanFormController : ControllerBase
     {
         private readonly IFormRecognizer formRecognizerService;
+        private readonly ICardIdRecognizer cardRecognizerService;
+
         private readonly IImageClassifier formClassifierService;
         private readonly StorageService storageService;
 
         public ScanFormController(StorageService storageService,
                                     IFormRecognizer formRecognizerService,
-                                    IImageClassifier formClassifierService)
+                                    IImageClassifier formClassifierService,
+                                    ICardIdRecognizer cardRecognizerService)
         {
             this.formRecognizerService = formRecognizerService ?? throw new ArgumentNullException(nameof(formRecognizerService));
             this.storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
             this.formClassifierService = formClassifierService ?? throw new ArgumentNullException(nameof(formClassifierService));
+            this.cardRecognizerService = cardRecognizerService ?? throw new ArgumentNullException(nameof(cardRecognizerService));
         }
 
         /// <summary>
@@ -162,6 +166,23 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
             result.Classification = classification;
 
             return result;
+        }
+
+
+        /// <summary>
+        /// It allows to scan a image previously uploaded
+        /// </summary>
+        /// <param name="modelId">The ML ModelId</param>
+        /// <param name="url">The public available url</param>
+        /// <returns>The result</returns>
+        [Route("CardId"), HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
+        public async Task<ActionResult> GetCardIdInfo([FromBody] BasicRequest request)
+        {
+            await this.formRecognizerService.ScanRemoteCardId(request.Url);
+            return Ok();
         }
     }
 }

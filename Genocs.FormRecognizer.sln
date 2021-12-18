@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.FormRecognizer.Conso
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.FormRecognizer.Tests", "src\Genocs.FormRecognizer.Tests\Genocs.FormRecognizer.Tests.csproj", "{F93E80AE-C09A-4126-90B6-CC9F8E61CEB8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{5B7F598F-D6C6-4316-9657-68212BAC78E9}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5B7F598F-D6C6-4316-9657-68212BAC78E9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.Integration.ML.CognitiveServices", "src\Genocs.Integration.ML.CognitiveServices\Genocs.Integration.ML.CognitiveServices.csproj", "{5201A9AA-6F3B-45FD-932C-0C3DC2520ABE}"
 EndProject

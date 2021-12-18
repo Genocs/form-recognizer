@@ -9,19 +9,20 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Genocs.Integration.ML.CognitiveServices.Services
 {
     public class FormRecognizerService : IFormRecognizer
     {
-        private readonly FormRecognizerConfig _config;
+        private readonly AzureCognitiveServicesConfig _config;
         private readonly IDistributedCache _distributedCache;
         private readonly ILogger<FormRecognizerService> _logger;
 
         private readonly FormRecognizerClient _client;
 
-        public FormRecognizerService(IDistributedCache distributedCache, IOptions<FormRecognizerConfig> config, ILogger<FormRecognizerService> logger)
+        public FormRecognizerService(IDistributedCache distributedCache, IOptions<AzureCognitiveServicesConfig> config, ILogger<FormRecognizerService> logger)
         {
             if (config == null)
             {
@@ -52,6 +53,35 @@ namespace Genocs.Integration.ML.CognitiveServices.Services
             Uri formFileUri = new Uri(url);
             RecognizeCustomFormsOperation operation = await _client.StartRecognizeCustomFormsFromUriAsync(classificationModelId, formFileUri);
             return await Evaluate(operation);
+        }
+
+        public async Task ScanLocalCardId(string filePath)
+        {
+            using var stream = new FileStream(filePath, FileMode.Open);
+            var options = new RecognizeIdentityDocumentsOptions() { ContentType = FormContentType.Jpeg };
+
+            RecognizeIdentityDocumentsOperation operation = await _client.StartRecognizeIdentityDocumentsAsync(stream, options);
+            Response<RecognizedFormCollection> operationResponse = await operation.WaitForCompletionAsync();
+            RecognizedFormCollection identityDocuments = operationResponse.Value;
+            RecognizedForm identityDocument = identityDocuments.Single();
+
+        }
+
+        public async Task ScanRemoteCardId(string url)
+        {
+            Uri formFileUri = new Uri(url);
+            RecognizeIdentityDocumentsOperation operation = await _client.StartRecognizeIdentityDocumentsFromUriAsync(formFileUri);
+            Response<RecognizedFormCollection> operationResponse = await operation.WaitForCompletionAsync();
+
+            RecognizedFormCollection identityDocuments = operationResponse.Value;
+            RecognizedForm identityDocument = identityDocuments.Single();
+            if (identityDocument.FormType == "prebuilt:idDocument:passport")
+            {
+                if (identityDocument.FormTypeConfidence > 0.90)
+                {
+                    var s = identityDocument.Fields["MachineReadableZone"].ValueData.Text;
+                }
+            }
         }
 
         private async Task<List<dynamic>> Evaluate(RecognizeCustomFormsOperation operation)

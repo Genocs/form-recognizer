@@ -28,11 +28,12 @@ namespace Genocs.FormRecognizer.WebApi
             services.Configure<AzureCognitiveServicesConfig>(Configuration.GetSection("AzureCognitiveServicesConfig"));
             services.Configure<AzureStorageConfig>(Configuration.GetSection("AzureStorageConfig"));
             services.Configure<ImageClassifierConfig>(Configuration.GetSection("ImageClassifierConfig"));
-            services.Configure<FormRecognizerConfig>(Configuration.GetSection("FormRecognizerConfig"));
+            services.Configure<AzureCognitiveServicesConfig>(Configuration.GetSection("FormRecognizerConfig"));
 
             services.AddSingleton<StorageService>();
             services.AddSingleton<IFormRecognizer, FormRecognizerService>();
             services.AddSingleton<IImageClassifier, ImageClassifierService>();
+            services.AddSingleton<ICardIdRecognizer, CardIdRecognizerService>();
 
             services.AddCustomCache(Configuration.GetSection("RedisConfig"));
 

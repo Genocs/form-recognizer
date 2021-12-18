@@ -59,7 +59,7 @@ namespace Genocs.FormRecognizer.ConsoleApp
                     services.Configure<AzureCognitiveServicesConfig>(hostingContext.Configuration.GetSection("AzureCognitiveServicesConfig"));
                     services.Configure<AzureStorageConfig>(hostingContext.Configuration.GetSection("AzureStorageConfig"));
                     services.Configure<ImageClassifierConfig>(hostingContext.Configuration.GetSection("ImageClassifierConfig"));
-                    services.Configure<FormRecognizerConfig>(hostingContext.Configuration.GetSection("FormRecognizerConfig"));
+                    services.Configure<AzureCognitiveServicesConfig>(hostingContext.Configuration.GetSection("FormRecognizerConfig"));
 
                     // Register services
                     services.AddHostedService<WorkerService>();
