@@ -13,19 +13,21 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
     public class SettingsController : ControllerBase
     {
 
-        private readonly IDistributedCache _distributedCache;
+        private readonly IDistributedCache distributedCache;
 
 
         public SettingsController(IDistributedCache distributedCache)
         {
-            this._distributedCache = distributedCache ?? throw new ArgumentNullException(nameof(distributedCache));
+            this.distributedCache = distributedCache ?? throw new ArgumentNullException(nameof(distributedCache));
         }
 
+
+
         /// <summary>
-        /// It allows to classify an image.
+        /// It allows to setup the model classifier lookup table.
         /// </summary>
-        /// <param name="url">The HTML encoded url</param>
-        /// <returns>The classification result</returns>
+        /// <param name="request">the key value pair</param>
+        /// <returns>No Content</returns>
         [Route("SetupClassificationModel"), HttpPost]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -42,7 +44,7 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
                 return BadRequest("value cannot be null or empty");
             }
 
-            await _distributedCache.SetAsync(request.Key, Encoding.UTF8.GetBytes(request.Value));
+            await this.distributedCache.SetAsync(request.Key, Encoding.UTF8.GetBytes(request.Value));
 
             return NoContent();
         }

@@ -1,15 +1,15 @@
-﻿namespace Genocs.FormRecognizer.WebApi.Settings
+﻿namespace Genocs.FormRecognizer.WebApi.Options
 {
-    public class RabbitMQSettings
+    public class RabbitMQConfig
     {
-        public const string Position = "RabbitMQSettings";
+        public const string Position = "RabbitMQConfig";
         public string URL { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
         public string VirtualHost { get; set; }
 
 
-        public static bool IsNullOrEmpty(RabbitMQSettings rabbitMQSettings)
+        public static bool IsNullOrEmpty(RabbitMQConfig rabbitMQSettings)
         {
             if (rabbitMQSettings == null)
             {

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata minClientVersion="5.0.0">
     <id>Genocs.Integration.ML.CognitiveServices</id>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
     <authors>Nocco Giovanni Emanuele</authors>
     <owners>[Genocs] Nocco Giovanni Emanuele</owners>
     <projectUrl>https://github.com/Genocs/genocs-integration-MSAzure</projectUrl>
@@ -18,9 +18,9 @@ The Machine Learning Microsoft Cognitive Services Library by Genocs.
 The Machine Learning Microsoft Cognitive Services Library by Genocs.
     </description>
     <releaseNotes>
-- .NET Core 5
-- Swashbuckle 5
-    </releaseNotes>
+- .NET6
+- Microsoft.Azure.CognitiveServices.Vision.Face V2.7.0-preview.1
+	</releaseNotes>
     <tags>
       azure-cognitive-services
       docker
