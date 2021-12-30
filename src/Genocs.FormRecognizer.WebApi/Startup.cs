@@ -1,5 +1,5 @@
 using Genocs.FormRecognizer.WebApi.Extensions;
-using Genocs.FormRecognizer.WebApi.Settings;
+using Genocs.FormRecognizer.WebApi.Options;
 using Genocs.Integration.ML.CognitiveServices.Interfaces;
 using Genocs.Integration.ML.CognitiveServices.Options;
 using Genocs.Integration.ML.CognitiveServices.Services;
@@ -29,18 +29,18 @@ namespace Genocs.FormRecognizer.WebApi
         {
             services.AddOptions();
 
-            services.Configure<AzureCognitiveServicesConfig>(Configuration.GetSection("AzureCognitiveServicesConfig"));
-            services.Configure<AzureStorageConfig>(Configuration.GetSection("AzureStorageConfig"));
-            services.Configure<ImageClassifierConfig>(Configuration.GetSection("ImageClassifierConfig"));
-            services.Configure<AzureCognitiveServicesConfig>(Configuration.GetSection("FormRecognizerConfig"));
-            services.Configure<RabbitMQSettings>(Configuration.GetSection(RabbitMQSettings.Position));
+            services.Configure<AzureCognitiveServicesConfig>(Configuration.GetSection(AzureCognitiveServicesConfig.Position));
+            services.Configure<AzureStorageConfig>(Configuration.GetSection(AzureStorageConfig.Position));
+            services.Configure<ImageClassifierConfig>(Configuration.GetSection(ImageClassifierConfig.Position));
+            services.Configure<AzureCognitiveServicesConfig>(Configuration.GetSection(AzureCognitiveServicesConfig.Position));
+            services.Configure<RabbitMQConfig>(Configuration.GetSection(RabbitMQConfig.Position));
 
             services.AddSingleton<StorageService>();
             services.AddSingleton<IFormRecognizer, FormRecognizerService>();
             services.AddSingleton<IImageClassifier, ImageClassifierService>();
             services.AddSingleton<ICardIdRecognizer, CardIdRecognizerService>();
 
-            services.AddCustomCache(Configuration.GetSection("RedisConfig"));
+            services.AddCustomCache(Configuration.GetSection(RedisConfig.Position));
 
             ConfigureMassTransit(services);
 
@@ -80,25 +80,21 @@ namespace Genocs.FormRecognizer.WebApi
         /// <param name="services">The service collection</param>
         private void ConfigureMassTransit(IServiceCollection services)
         {
-            RabbitMQSettings rabbitMqSettings = new RabbitMQSettings();
-            Configuration.GetSection(RabbitMQSettings.Position).Bind(rabbitMqSettings);
+            RabbitMQConfig rabbitMqSettings = new RabbitMQConfig();
+            Configuration.GetSection(RabbitMQConfig.Position).Bind(rabbitMqSettings);
 
-            if(RabbitMQSettings.IsNullOrEmpty(rabbitMqSettings))
+            if(RabbitMQConfig.IsNullOrEmpty(rabbitMqSettings))
             {
                 return;
             }
 
             services.AddMassTransit(x =>
             {
-                // Consumer
-                //x.AddConsumer<SubmitOrderConsumer>();
-                //x.AddConsumer<OrderAcceptedConsumer>();
-
                 // Transport RabbitMQ
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    RabbitMQSettings rabbitMqSettings = new RabbitMQSettings();
-                    Configuration.GetSection(RabbitMQSettings.Position).Bind(rabbitMqSettings);
+                    RabbitMQConfig rabbitMqSettings = new();
+                    Configuration.GetSection(RabbitMQConfig.Position).Bind(rabbitMqSettings);
 
                     cfg.Host(rabbitMqSettings.URL, 5671, rabbitMqSettings.VirtualHost, h =>
                     {
@@ -110,28 +106,6 @@ namespace Genocs.FormRecognizer.WebApi
                             s.Protocol = SslProtocols.Tls12;
                         });
                     });
-
-                    //cfg.ReceiveEndpoint("submit-order", e =>
-                    //{
-                    //    e.UseMessageRetry(r => r.Interval(5, TimeSpan.FromSeconds(10)));
-
-                    //    e.Consumer(() => new SubmitOrderConsumer());
-                    //});
-
-                    //cfg.ReceiveEndpoint("order-accepted", e =>
-                    //{
-                    //    e.UseMessageRetry(r => r.Interval(5, TimeSpan.FromSeconds(10)));
-
-                    //    e.Consumer(() => new OrderAcceptedConsumer());
-                    //});
-
-                    //cfg.ReceiveEndpoint("home-made", e =>
-                    //{
-                    //    e.UseMessageRetry(r => r.Interval(5, TimeSpan.FromSeconds(10)));
-
-                    //    e.Consumer(() => new TaxFreeFormConsumer());
-                    //});
-
 
                     cfg.ConfigureEndpoints(context);
                 });

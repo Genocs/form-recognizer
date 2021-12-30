@@ -2,6 +2,7 @@
 {
     public class AzureStorageConfig
     {
+        public const string Position = "AzureStorageConfig";
         public string AccountName { get; set; }
         public string AccountKey { get; set; }
         public string UploadContainer { get; set; }

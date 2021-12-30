@@ -49,7 +49,7 @@ namespace Genocs.Integration.ML.CognitiveServices.Services
             // It is recommended since its overall accuracy is improved
             // compared with models 1 and 2.
             IList<DetectedFace> detectedFaces = await _client.Face.DetectWithUrlAsync(url,
-                                                                        recognitionModel: RecognitionModel.Recognition03,
+                                                                        recognitionModel: RecognitionModel.Recognition04,
                                                                         detectionModel: DetectionModel.Detection03);
 
             _logger.LogInformation($"{detectedFaces.Count} face(s) detected from image '{url}'");

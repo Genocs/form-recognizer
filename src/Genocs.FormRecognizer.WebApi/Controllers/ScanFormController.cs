@@ -53,7 +53,7 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
                 return BadRequest("url cannot be null or empty");
             }
 
-            var classification = await this.formClassifierService.Classify(HttpUtility.HtmlDecode(request.Url));
+            var classification = await formClassifierService.Classify(HttpUtility.HtmlDecode(request.Url));
 
             if (classification != null && classification.Predictions != null && classification.Predictions.Any())
             {
@@ -87,10 +87,10 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
             }
 
             // Upload on storage
-            var uploadResult = await this.storageService.UploadFilesAsync(files);
+            var uploadResult = await storageService.UploadFilesAsync(files);
 
             // Classify the result
-            var classification = await this.formClassifierService.Classify(HttpUtility.HtmlDecode(uploadResult.First().URL));
+            var classification = await formClassifierService.Classify(HttpUtility.HtmlDecode(uploadResult.First().URL));
 
             if (classification != null && classification.Predictions != null && classification.Predictions.Any())
             {
@@ -115,7 +115,7 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
         public async Task<List<dynamic>> PostUploadAndEvaluate([FromForm(Name = "images")] List<IFormFile> files, [FromQuery] string classificationModelId)
         {
             var uploadResult = await this.storageService.UploadFilesAsync(files);
-            return await this.formRecognizerService.ScanRemote(classificationModelId, uploadResult.First().URL);
+            return await formRecognizerService.ScanRemote(classificationModelId, uploadResult.First().URL);
         }
 
 
@@ -163,12 +163,12 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
             if (classification != null && classification.Predictions != null && classification.Predictions.Any())
             {
                 var first = classification.Predictions.OrderByDescending(o => o.Probability).First();
-                result.ContentData = await this.formRecognizerService.ScanRemote(first.TagId, request.Url);
+                result.ContentData = await formRecognizerService.ScanRemote(first.TagId, request.Url);
             }
 
             result.Classification = classification;
 
-            // Publish on to the service bus 
+            // Publish to the service bus 
             await this.publishEndpoint.Publish(result);
 
             return result;
@@ -187,7 +187,7 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
         [Produces("application/json")]
         public async Task<ActionResult> GetCardIdInfo([FromBody] BasicRequest request)
         {
-            await this.formRecognizerService.ScanRemoteCardId(request.Url);
+            await formRecognizerService.ScanRemoteCardId(request.Url);
             return Ok();
         }
     }
