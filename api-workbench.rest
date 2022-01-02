@@ -3,7 +3,6 @@
 # https://marketplace.visualstudio.com/items?itemName=humao.rest-client
 ###############################################################################
 
-
 @url = https://localhost:5001
 
 @imageUrl = your_encoded_image_url
