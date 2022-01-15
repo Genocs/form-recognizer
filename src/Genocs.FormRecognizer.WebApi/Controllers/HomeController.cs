@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Genocs.FormRecognizer.WebApi.Controllers
 {
@@ -11,7 +10,7 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult Get() 
-            => Ok("Genocs - FormRecognizer WebApi Service");
+            => Ok("Genocs - FormRecognizer WebApi");
 
         [HttpGet("ping")]
         [ProducesResponseType(StatusCodes.Status200OK)]

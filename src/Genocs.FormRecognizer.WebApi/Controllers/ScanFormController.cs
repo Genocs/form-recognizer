@@ -18,11 +18,11 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
     [Route("api/[controller]")]
     public class ScanFormController : ControllerBase
     {
-        private readonly IFormRecognizer formRecognizerService;
-        private readonly ICardIdRecognizer cardRecognizerService;
-        private readonly IPublishEndpoint publishEndpoint;
-        private readonly IImageClassifier formClassifierService;
-        private readonly StorageService storageService;
+        private readonly IFormRecognizer _formRecognizerService;
+        private readonly ICardIdRecognizer _cardRecognizerService;
+        private readonly IPublishEndpoint _publishEndpoint;
+        private readonly IImageClassifier _formClassifierService;
+        private readonly StorageService _storageService;
 
         public ScanFormController(StorageService storageService,
                                     IFormRecognizer formRecognizerService,
@@ -30,11 +30,11 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
                                     ICardIdRecognizer cardRecognizerService,
                                     IPublishEndpoint publishEndpoint)
         {
-            this.formRecognizerService = formRecognizerService ?? throw new ArgumentNullException(nameof(formRecognizerService));
-            this.storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
-            this.formClassifierService = formClassifierService ?? throw new ArgumentNullException(nameof(formClassifierService));
-            this.cardRecognizerService = cardRecognizerService ?? throw new ArgumentNullException(nameof(cardRecognizerService));
-            this.publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
+            _formRecognizerService = formRecognizerService ?? throw new ArgumentNullException(nameof(formRecognizerService));
+            _storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
+            _formClassifierService = formClassifierService ?? throw new ArgumentNullException(nameof(formClassifierService));
+            _cardRecognizerService = cardRecognizerService ?? throw new ArgumentNullException(nameof(cardRecognizerService));
+            _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
                 return BadRequest("url cannot be null or empty");
             }
 
-            var classification = await formClassifierService.Classify(HttpUtility.HtmlDecode(request.Url));
+            var classification = await _formClassifierService.Classify(HttpUtility.HtmlDecode(request.Url));
 
             if (classification != null && classification.Predictions != null && classification.Predictions.Any())
             {
@@ -72,9 +72,10 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
         /// <returns>The Prediction result</returns>
         [Route("UploadAndClassify"), HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Prediction>> PostUploadAndClassify([FromForm(Name = "images")] List<IFormFile> files)
+        public async Task<ActionResult> PostUploadAndClassify([FromForm(Name = "images")] List<IFormFile> files)
         {
             if (files == null || files.Count == 0)
             {
@@ -87,18 +88,18 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
             }
 
             // Upload on storage
-            var uploadResult = await storageService.UploadFilesAsync(files);
+            var uploadResult = await _storageService.UploadFilesAsync(files);
 
             // Classify the result
-            var classification = await formClassifierService.Classify(HttpUtility.HtmlDecode(uploadResult.First().URL));
+            var classification = await _formClassifierService.Classify(HttpUtility.HtmlDecode(uploadResult.First().URL));
 
             if (classification != null && classification.Predictions != null && classification.Predictions.Any())
             {
                 var first = classification.Predictions.OrderByDescending(o => o.Probability).First();
 
-                return first;
+                return Ok(first);
             }
-            return null;
+            return NoContent();
         }
 
 
@@ -114,8 +115,8 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<List<dynamic>> PostUploadAndEvaluate([FromForm(Name = "images")] List<IFormFile> files, [FromQuery] string classificationModelId)
         {
-            var uploadResult = await this.storageService.UploadFilesAsync(files);
-            return await formRecognizerService.ScanRemote(classificationModelId, uploadResult.First().URL);
+            var uploadResult = await this._storageService.UploadFilesAsync(files);
+            return await _formRecognizerService.ScanRemote(classificationModelId, uploadResult.First().URL);
         }
 
 
@@ -141,7 +142,7 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
                 return BadRequest("url cannot be null or empty");
             }
 
-            return await this.formRecognizerService.ScanRemote(request.ClassificationModelId, request.Url);
+            return await this._formRecognizerService.ScanRemote(request.ClassificationModelId, request.Url);
         }
 
 
@@ -149,7 +150,7 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
         /// It allows to scan a image previously uploaded
         /// </summary>
         /// <param name="modelId">The ML ModelId</param>
-        /// <param name="url">The public available url</param>
+        /// <param name="url">The public available resource url</param>
         /// <returns>The result</returns>
         [Route("ClassifyAndEvaluate"), HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -158,18 +159,19 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
         public async Task<FormExtractorResult> GetClassifyAndEvaluate([FromBody] BasicRequest request)
         {
             FormExtractorResult result = new();
-            var classification = await this.formClassifierService.Classify(HttpUtility.HtmlDecode(request.Url));
+            result.ResourceUrl = HttpUtility.HtmlDecode(request.Url);
+            var classification = await this._formClassifierService.Classify(HttpUtility.HtmlDecode(request.Url));
 
             if (classification != null && classification.Predictions != null && classification.Predictions.Any())
             {
                 var first = classification.Predictions.OrderByDescending(o => o.Probability).First();
-                result.ContentData = await formRecognizerService.ScanRemote(first.TagId, request.Url);
+                result.ContentData = await _formRecognizerService.ScanRemote(first.TagId, request.Url);
             }
 
             result.Classification = classification;
 
             // Publish to the service bus 
-            await this.publishEndpoint.Publish(result);
+            await this._publishEndpoint.Publish(result);
 
             return result;
         }
@@ -182,13 +184,13 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
         /// <param name="url">The public available url</param>
         /// <returns>The result</returns>
         [Route("CardId"), HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces("application/json")]
         public async Task<ActionResult> GetCardIdInfo([FromBody] BasicRequest request)
         {
-            await formRecognizerService.ScanRemoteCardId(request.Url);
-            return Ok();
+            await _formRecognizerService.ScanRemoteCardId(request.Url);
+            return NoContent();
         }
     }
 }

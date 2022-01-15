@@ -13,14 +13,13 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
     public class SettingsController : ControllerBase
     {
 
-        private readonly IDistributedCache distributedCache;
+        private readonly IDistributedCache _distributedCache;
 
 
         public SettingsController(IDistributedCache distributedCache)
         {
-            this.distributedCache = distributedCache ?? throw new ArgumentNullException(nameof(distributedCache));
+            _distributedCache = distributedCache ?? throw new ArgumentNullException(nameof(distributedCache));
         }
-
 
 
         /// <summary>
@@ -44,10 +43,9 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
                 return BadRequest("value cannot be null or empty");
             }
 
-            await this.distributedCache.SetAsync(request.Key, Encoding.UTF8.GetBytes(request.Value));
+            await this._distributedCache.SetAsync(request.Key, Encoding.UTF8.GetBytes(request.Value));
 
             return NoContent();
         }
-
     }
 }

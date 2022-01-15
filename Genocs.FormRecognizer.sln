@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31129.286
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.FormRecognizer.WebApi", "src\Genocs.FormRecognizer.WebApi\Genocs.FormRecognizer.WebApi.csproj", "{E9E095E6-F3B5-4533-B97B-F2BC811456D4}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5B7F598F-D6C6-4316-9657-68212BAC78E9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.Integration.ML.CognitiveServices", "src\Genocs.Integration.ML.CognitiveServices\Genocs.Integration.ML.CognitiveServices.csproj", "{5201A9AA-6F3B-45FD-932C-0C3DC2520ABE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Genocs.FormRecognizer.Contracts", "src\Genocs.FormRecognizer.Contracts\Genocs.FormRecognizer.Contracts.csproj", "{C13CE615-0F6A-4878-AA01-037CBE326585}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +37,10 @@ Global
 		{5201A9AA-6F3B-45FD-932C-0C3DC2520ABE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5201A9AA-6F3B-45FD-932C-0C3DC2520ABE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5201A9AA-6F3B-45FD-932C-0C3DC2520ABE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C13CE615-0F6A-4878-AA01-037CBE326585}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C13CE615-0F6A-4878-AA01-037CBE326585}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C13CE615-0F6A-4878-AA01-037CBE326585}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C13CE615-0F6A-4878-AA01-037CBE326585}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

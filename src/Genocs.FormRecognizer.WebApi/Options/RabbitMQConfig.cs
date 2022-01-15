@@ -16,7 +16,7 @@
                 return true;
             }
 
-            if (rabbitMQSettings.URL == null)
+            if (string.IsNullOrWhiteSpace(rabbitMQSettings.URL))
             {
                 return true;
             }
