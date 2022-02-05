@@ -1,6 +1,6 @@
-![Form Recognizer Library](https://raw.githubusercontent.com/genocs/clean-architecture-template/master/images/genocs-icon.png) form-recognizer
+![Form Recognizer Library](https://raw.githubusercontent.com/Genocs/form-recognizer/master/icon.png) form-recognizer
 ====
-Web Api service built with .NET Core 5. It allows to extract tag coming from images.
+Web Api service built with .NET Core 6. It allows to extract tag coming from images.
 The ML model is built using Azure Cognitive services.
 
 ----
