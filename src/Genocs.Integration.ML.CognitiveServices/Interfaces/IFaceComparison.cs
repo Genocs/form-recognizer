@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Genocs.Integration.ML.CognitiveServices.Interfaces
+namespace Genocs.Integration.ML.CognitiveServices.Interfaces;
+
+public interface IFaceComparison
 {
-    public interface IFaceComparison
-    {
-        Task<IList<SimilarFace>> FindSimilar(string firstImage, string secondImage);
-    }
+    Task<IList<SimilarFace>> FindSimilar(string firstImage, string secondImage);
 }

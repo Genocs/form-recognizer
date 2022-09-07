@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Genocs.Integration.ML.CognitiveServices.Interfaces
+namespace Genocs.Integration.ML.CognitiveServices.Interfaces;
+
+public interface IFormRecognizer
 {
-    public interface IFormRecognizer
-    {
-        Task<List<dynamic>> ScanLocal(string classificationKey, string filePath);
-        Task<List<dynamic>> ScanRemote(string classificationKey, string url);
-        public Task ScanLocalCardId(string filePath);
-        public Task ScanRemoteCardId(string url);
-    }
+    Task<List<dynamic>> ScanLocal(string classificationKey, string filePath);
+    Task<List<dynamic>> ScanRemote(string classificationKey, string url);
+    public Task ScanLocalCardId(string filePath);
+    public Task ScanRemoteCardId(string url);
 }

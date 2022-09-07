@@ -15,7 +15,6 @@ namespace Genocs.FormRecognizer.WebApi.Controllers
 
         private readonly IDistributedCache _distributedCache;
 
-
         public SettingsController(IDistributedCache distributedCache)
         {
             _distributedCache = distributedCache ?? throw new ArgumentNullException(nameof(distributedCache));
