@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace Genocs.Integration.ML.CognitiveServices.Interfaces;
+﻿namespace Genocs.Integration.ML.CognitiveServices.Interfaces;
 
 public interface IFormRecognizer
 {

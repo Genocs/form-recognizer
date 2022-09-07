@@ -1,5 +1,4 @@
 ﻿using Genocs.Integration.ML.CognitiveServices.Models;
-using System.Threading.Tasks;
 
 namespace Genocs.Integration.ML.CognitiveServices.Interfaces;
 

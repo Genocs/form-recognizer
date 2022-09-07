@@ -2,6 +2,8 @@
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
 		<PackageId>Genocs.Integration.ML.CognitiveServices</PackageId>
 		<Version>2.0.0-preview.1</Version>
 		<Authors>[Genocs] - Nocco Giovanni Emenuele</Authors>
@@ -13,12 +15,6 @@
 		</Description>
 		<PackageIcon>icon.png</PackageIcon>
 	</PropertyGroup>
-
-	<ItemGroup>
-	  <Compile Remove="Exceptions\**" />
-	  <EmbeddedResource Remove="Exceptions\**" />
-	  <None Remove="Exceptions\**" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<None Include="../../LICENSE" Pack="true" PackagePath="\" />

@@ -6,10 +6,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace Genocs.Integration.ML.CognitiveServices.Services;
 

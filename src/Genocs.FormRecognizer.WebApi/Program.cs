@@ -1,49 +1,80 @@
-using Microsoft.AspNetCore.Hosting;
+using Genocs.FormRecognizer.WebApi;
+using Genocs.FormRecognizer.WebApi.Options;
+using Genocs.Integration.ML.CognitiveServices.Interfaces;
+using Genocs.Integration.ML.CognitiveServices.Services;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Serilog;
+using Serilog.Events;
+
+using Genocs.FormRecognizer.WebApi.Extensions;
+using Genocs.Integration.ML.CognitiveServices.Options;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
-namespace Genocs.FormRecognizer.WebApi
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Debug)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .CreateLogger();
+
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((ctx, lc) => lc
+    .WriteTo.Console());
+
+// ***********************************************
+// Open Telemetry - START
+OpenTelemetryInitializer.Initialize(builder);
+// Open Telemetry - END
+// ***********************************************
+
+
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.Configure<HealthCheckPublisherOptions>(options =>
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
+    options.Delay = TimeSpan.FromSeconds(2);
+    options.Predicate = check => check.Tags.Contains("ready");
+});
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((context, config) =>
-                {
-                    var env = context.HostingEnvironment;
+builder.Services.AddOptions();
 
-                    config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
+builder.Services.Configure<AzureCognitiveServicesConfig>(builder.Configuration.GetSection(AzureCognitiveServicesConfig.Position));
+builder.Services.Configure<AzureStorageConfig>(builder.Configuration.GetSection(AzureStorageConfig.Position));
+builder.Services.Configure<ImageClassifierConfig>(builder.Configuration.GetSection(ImageClassifierConfig.Position));
+builder.Services.Configure<AzureCognitiveServicesConfig>(builder.Configuration.GetSection(AzureCognitiveServicesConfig.Position));
+builder.Services.Configure<RabbitMQConfig>(builder.Configuration.GetSection(RabbitMQConfig.Position));
 
-                    config.AddEnvironmentVariables();
 
-                    if (args != null)
-                    {
-                        config.AddCommandLine(args);
-                    }
+builder.Services.AddSingleton<StorageService>();
+builder.Services.AddSingleton<IFormRecognizer, FormRecognizerService>();
+builder.Services.AddSingleton<IImageClassifier, ImageClassifierService>();
+builder.Services.AddSingleton<ICardIdRecognizer, CardIdRecognizerService>();
 
-                    if (context.HostingEnvironment.IsDevelopment())
-                    {
-                        config.AddUserSecrets<Program>();
-                    }
-                })
-                .ConfigureLogging((hostingContext, logging) =>
-                {
-                    // Requires `using Microsoft.Extensions.Logging;`
-                    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                    logging.AddConsole();
-                    logging.AddDebug();
-                    logging.AddEventSourceLogger();
-                })
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
+builder.Services.AddCustomCache(builder.Configuration.GetSection(RedisConfig.Position));
+
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
+
+app.UseHttpsRedirection();
+
+app.UseRouting();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();
+
+Log.CloseAndFlush();

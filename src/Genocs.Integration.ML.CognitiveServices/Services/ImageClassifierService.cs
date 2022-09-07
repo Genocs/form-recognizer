@@ -6,11 +6,7 @@ using Genocs.Integration.ML.CognitiveServices.Models;
 using Genocs.Integration.ML.CognitiveServices.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
 
 namespace Genocs.Integration.ML.CognitiveServices.Services;
 

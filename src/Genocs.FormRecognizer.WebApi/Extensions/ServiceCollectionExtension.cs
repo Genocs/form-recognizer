@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace Genocs.FormRecognizer.WebApi.Extensions;
+﻿namespace Genocs.FormRecognizer.WebApi.Extensions;
 
 public static class ServiceCollectionExtension
 {
