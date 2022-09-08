@@ -1,10 +1,14 @@
 {
   "profiles": {
-    "Genocs.FormRecognizer.ConsoleApp": {
+    "Genocs.FormRecognizer.Service": {
       "commandName": "Project",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"
-      }
+      },
+      "dotnetRunMessages": true
+    },
+    "Docker": {
+      "commandName": "Docker"
     }
   }
 }

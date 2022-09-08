@@ -9,6 +9,8 @@ using Serilog.Events;
 using Genocs.FormRecognizer.WebApi.Extensions;
 using Genocs.Integration.ML.CognitiveServices.Options;
 using Microsoft.Extensions.Configuration;
+using MassTransit;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -56,6 +58,18 @@ builder.Services.AddSingleton<IImageClassifier, ImageClassifierService>();
 builder.Services.AddSingleton<ICardIdRecognizer, CardIdRecognizerService>();
 
 builder.Services.AddCustomCache(builder.Configuration.GetSection(RedisConfig.Position));
+
+
+builder.Services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
+builder.Services.AddMassTransit(x =>
+{
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        MessageDataDefaults.ExtraTimeToLive = TimeSpan.FromDays(1);
+        MessageDataDefaults.Threshold = 2000;
+        MessageDataDefaults.AlwaysWriteToRepository = false;
+    });
+});
 
 
 var app = builder.Build();

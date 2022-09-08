@@ -1,14 +1,10 @@
-﻿using Genocs.FormRecognizer.WebApi.Dto;
+﻿using Genocs.FormRecognizer.Contracts;
+using Genocs.FormRecognizer.WebApi.Dto;
 using Genocs.Integration.ML.CognitiveServices.Interfaces;
 using Genocs.Integration.ML.CognitiveServices.Models;
 using Genocs.Integration.ML.CognitiveServices.Services;
 using MassTransit;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Web;
 
 namespace Genocs.FormRecognizer.WebApi.Controllers;
@@ -43,10 +39,11 @@ public class ScanFormController : ControllerBase
     /// <param name="url">The HTML encoded url</param>
     /// <returns>The classification result</returns>
     [Route("Classify"), HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Prediction))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<Prediction>> GetClassify([FromBody] BasicRequest request)
+    public async Task<IActionResult> GetClassify([FromBody] BasicRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.Url))
         {
@@ -59,9 +56,9 @@ public class ScanFormController : ControllerBase
         {
             var first = classification.Predictions.OrderByDescending(o => o.Probability).First();
 
-            return first;
+            return Ok(first);
         }
-        return null;
+        return NoContent();
     }
 
 
@@ -71,11 +68,11 @@ public class ScanFormController : ControllerBase
     /// <param name="files">File that will be classified</param>
     /// <returns>The Prediction result</returns>
     [Route("UploadAndClassify"), HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Prediction))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult> PostUploadAndClassify([FromForm(Name = "images")] List<IFormFile> files)
+    public async Task<IActionResult> PostUploadAndClassify([FromForm(Name = "images")] List<IFormFile> files)
     {
         if (files == null || files.Count == 0)
         {
@@ -153,10 +150,10 @@ public class ScanFormController : ControllerBase
     /// <param name="url">The public available resource url</param>
     /// <returns>The result</returns>
     [Route("ClassifyAndEvaluate"), HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FormExtractorResult))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Produces("application/json")]
-    public async Task<FormExtractorResult> GetClassifyAndEvaluate([FromBody] BasicRequest request)
+    public async Task<IActionResult> GetClassifyAndEvaluate([FromBody] BasicRequest request)
     {
         FormExtractorResult result = new();
         result.ResourceUrl = HttpUtility.HtmlDecode(request.Url);
@@ -173,7 +170,7 @@ public class ScanFormController : ControllerBase
         // Publish to the service bus 
         await _publishEndpoint.Publish(result);
 
-        return result;
+        return Ok(result);
     }
 
 
@@ -184,13 +181,14 @@ public class ScanFormController : ControllerBase
     /// <param name="url">The public available url</param>
     /// <returns>The result</returns>
     [Route("CardId"), HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Produces("application/json")]
-    public async Task<ActionResult> GetCardIdInfo([FromBody] BasicRequest request)
+    public async Task<IActionResult> GetCardIdInfo([FromBody] BasicRequest request)
     {
-        await _formRecognizerService.ScanRemoteCardId(request.Url);
-        return NoContent();
+        var result = await _formRecognizerService.ScanRemoteCardId(request.Url);
+        return string.IsNullOrWhiteSpace(result) ? NoContent() : Ok(result);
     }
 }
 

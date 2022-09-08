@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Net.Http;
 using System.Text;
 
 namespace Genocs.Integration.ML.CognitiveServices.Extensions;

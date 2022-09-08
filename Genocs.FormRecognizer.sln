@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.FormRecognizer.WebApi", "src\Genocs.FormRecognizer.WebApi\Genocs.FormRecognizer.WebApi.csproj", "{E9E095E6-F3B5-4533-B97B-F2BC811456D4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.FormRecognizer.ConsoleApp", "src\Genocs.FormRecognizer.ConsoleApp\Genocs.FormRecognizer.ConsoleApp.csproj", "{A8655D44-AD75-44BA-A02D-D267162B30A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.FormRecognizer.Service", "src\Genocs.FormRecognizer.ConsoleApp\Genocs.FormRecognizer.Service.csproj", "{A8655D44-AD75-44BA-A02D-D267162B30A9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.FormRecognizer.Tests", "src\Genocs.FormRecognizer.Tests\Genocs.FormRecognizer.Tests.csproj", "{F93E80AE-C09A-4126-90B6-CC9F8E61CEB8}"
 EndProject
@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5B7F598F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.Integration.ML.CognitiveServices", "src\Genocs.Integration.ML.CognitiveServices\Genocs.Integration.ML.CognitiveServices.csproj", "{5201A9AA-6F3B-45FD-932C-0C3DC2520ABE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Genocs.FormRecognizer.Contracts", "src\Genocs.FormRecognizer.Contracts\Genocs.FormRecognizer.Contracts.csproj", "{C13CE615-0F6A-4878-AA01-037CBE326585}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.FormRecognizer.Contracts", "src\Genocs.FormRecognizer.Contracts\Genocs.FormRecognizer.Contracts.csproj", "{C13CE615-0F6A-4878-AA01-037CBE326585}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

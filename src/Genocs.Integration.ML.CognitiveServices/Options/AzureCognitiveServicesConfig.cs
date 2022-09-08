@@ -3,6 +3,6 @@
 public class AzureCognitiveServicesConfig
 {
     public const string Position = "AzureCognitiveServicesConfig";
-    public string? Endpoint { get; set; }
-    public string? SubscriptionKey { get; set; }
+    public string Endpoint { get; set; } = default!;
+    public string SubscriptionKey { get; set; } = default!;
 }

@@ -1,8 +1,8 @@
 ﻿using Azure;
 using Azure.AI.FormRecognizer.Models;
+using Genocs.FormRecognizer.Contracts;
 using Genocs.Integration.ML.CognitiveServices.Extensions;
 using Genocs.Integration.ML.CognitiveServices.Interfaces;
-using Genocs.Integration.ML.CognitiveServices.Models;
 using Genocs.Integration.ML.CognitiveServices.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -25,26 +25,46 @@ public class ImageClassifierService : IImageClassifier, IDisposable
     private readonly string prefix_url = "customvision/v3.0/Prediction";
     private readonly string postfix_url = "classify/iterations/Iteration1/url";
 
-    public ImageClassifierService(IOptions<ImageClassifierConfig> config, ILogger<ImageClassifierService> logger)
+    public ImageClassifierService(ILogger<ImageClassifierService> logger, IOptions<ImageClassifierConfig> config)
     {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
         if (config == null)
         {
             throw new ArgumentNullException(nameof(config));
         }
 
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        if (config.Value == null)
+        {
+            throw new ArgumentNullException(nameof(config.Value));
+        }
+
+        if (!string.IsNullOrWhiteSpace(config.Value.Endpoint))
+        {
+            throw new ArgumentNullException(nameof(config.Value.Endpoint));
+        }
+
+        if (!string.IsNullOrWhiteSpace(config.Value.ModelId))
+        {
+            throw new ArgumentNullException(nameof(config.Value.ModelId));
+        }
+
+        if (!string.IsNullOrWhiteSpace(config.Value.PredictionKey))
+        {
+            throw new ArgumentNullException(nameof(config.Value.PredictionKey));
+        }
 
         _config = config.Value;
 
         _httpClient = new HttpClient
         {
-            BaseAddress = new Uri(_config.Endpoint)
+            BaseAddress = new Uri(config.Value.Endpoint)
         };
 
         _httpClient.DefaultRequestHeaders.Add("Prediction-Key", _config.PredictionKey);
     }
 
-    public async Task<Classification> Classify(string url)
+    public async Task<Classification?> Classify(string url)
     {
         // The model Id is the classification model Id 
         var postResponse = await _httpClient.PostAsync($"/{prefix_url}/{_config.ModelId}/{postfix_url}", new { Url = url }.AsJson());

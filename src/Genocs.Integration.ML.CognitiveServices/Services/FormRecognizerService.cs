@@ -50,7 +50,7 @@ public class FormRecognizerService : IFormRecognizer
         return await Evaluate(operation);
     }
 
-    public async Task ScanLocalCardId(string filePath)
+    public async Task<string?> ScanLocalCardId(string filePath)
     {
         using var stream = new FileStream(filePath, FileMode.Open);
         var options = new RecognizeIdentityDocumentsOptions() { ContentType = FormContentType.Jpeg };
@@ -59,9 +59,11 @@ public class FormRecognizerService : IFormRecognizer
         Response<RecognizedFormCollection> operationResponse = await operation.WaitForCompletionAsync();
         RecognizedFormCollection identityDocuments = operationResponse.Value;
         RecognizedForm identityDocument = identityDocuments.Single();
+
+        return identityDocument.FormType;
     }
 
-    public async Task ScanRemoteCardId(string url)
+    public async Task<string?> ScanRemoteCardId(string url)
     {
         Uri formFileUri = new Uri(url);
         RecognizeIdentityDocumentsOperation operation = await _client.StartRecognizeIdentityDocumentsFromUriAsync(formFileUri);
@@ -69,13 +71,19 @@ public class FormRecognizerService : IFormRecognizer
 
         RecognizedFormCollection identityDocuments = operationResponse.Value;
         RecognizedForm identityDocument = identityDocuments.Single();
+
+        string? mrz = null;
         if (identityDocument.FormType == "prebuilt:idDocument:passport")
         {
             if (identityDocument.FormTypeConfidence > 0.90)
             {
-                var s = identityDocument.Fields["MachineReadableZone"].ValueData.Text;
+                if(identityDocument.Fields["MachineReadableZone"] != null && identityDocument.Fields["MachineReadableZone"].ValueData != null)
+                {
+                    mrz = identityDocument.Fields["MachineReadableZone"].ValueData.Text;
+                }
             }
         }
+        return mrz;
     }
 
     private async Task<List<dynamic>> Evaluate(RecognizeCustomFormsOperation operation)
