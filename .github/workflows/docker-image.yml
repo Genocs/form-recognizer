@@ -42,7 +42,7 @@ jobs:
       - name: Build and push Docker images
         uses: docker/build-push-action@v3.1.1
         with:
-          context: .
+          context: ./src/Genocs.FormRecognizer.WebApi
           push: true
           tags: user/app:latest          
           #tags: ${{ steps.meta.outputs.tags }}
