@@ -4,5 +4,5 @@ namespace Genocs.Integration.ML.CognitiveServices.Interfaces;
 
 public interface IImageClassifier
 {
-    Task<Classification> Classify(string url);
+    Task<Classification?> Classify(string url);
 }
