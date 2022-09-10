@@ -1,20 +1,19 @@
 using Genocs.FormRecognizer.WebApi;
+using Genocs.FormRecognizer.WebApi.Extensions;
 using Genocs.FormRecognizer.WebApi.Options;
-using Genocs.Integration.ML.CognitiveServices.Interfaces;
-using Genocs.Integration.ML.CognitiveServices.Services;
+using Genocs.Integration.CognitiveServices.Interfaces;
+using Genocs.Integration.CognitiveServices.Options;
+using Genocs.Integration.CognitiveServices.Services;
+using MassTransit;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Serilog;
 using Serilog.Events;
 
-using Genocs.FormRecognizer.WebApi.Extensions;
-using Genocs.Integration.ML.CognitiveServices.Options;
-using Microsoft.Extensions.Configuration;
-using MassTransit;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Debug)
+    .MinimumLevel.Override("MassTransit", LogEventLevel.Debug)
     .Enrich.FromLogContext()
     .WriteTo.Console()
     .CreateLogger();
@@ -62,9 +61,20 @@ builder.Services.AddCustomCache(builder.Configuration.GetSection(RedisConfig.Pos
 
 builder.Services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
 builder.Services.AddMassTransit(x =>
-{
+{  
+
     x.UsingRabbitMq((context, cfg) =>
     {
+        var rabbitMQOptions = new RabbitMQConfig();
+        builder.Configuration.GetSection(RabbitMQConfig.Position).Bind(rabbitMQOptions);
+
+        cfg.Host(rabbitMQOptions.URL, rabbitMQOptions.VirtualHost, h =>
+        {
+            h.Username(rabbitMQOptions.Username);
+            h.Password(rabbitMQOptions.Password);
+        });
+
+
         MessageDataDefaults.ExtraTimeToLive = TimeSpan.FromDays(1);
         MessageDataDefaults.Threshold = 2000;
         MessageDataDefaults.AlwaysWriteToRepository = false;

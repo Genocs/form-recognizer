@@ -1,4 +1,4 @@
-﻿namespace Genocs.Integration.ML.CognitiveServices.Models;
+﻿namespace Genocs.Integration.CognitiveServices.Models;
 
 // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse); 
 public class Word

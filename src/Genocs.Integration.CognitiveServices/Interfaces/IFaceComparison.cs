@@ -1,6 +1,6 @@
 ﻿using Microsoft.Azure.CognitiveServices.Vision.Face.Models;
 
-namespace Genocs.Integration.ML.CognitiveServices.Interfaces;
+namespace Genocs.Integration.CognitiveServices.Interfaces;
 
 public interface IFaceComparison
 {

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Text;
 
-namespace Genocs.Integration.ML.CognitiveServices.Extensions;
+namespace Genocs.Integration.CognitiveServices.Extensions;
 
 public static class HttpExtensions
 {

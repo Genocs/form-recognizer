@@ -1,6 +1,6 @@
-﻿using Genocs.Integration.ML.CognitiveServices.Models;
+﻿using Genocs.Integration.CognitiveServices.Models;
 
-namespace Genocs.Integration.ML.CognitiveServices.Interfaces;
+namespace Genocs.Integration.CognitiveServices.Interfaces;
 
 /// <summary>
 /// The generic interface for Document Id Identifier

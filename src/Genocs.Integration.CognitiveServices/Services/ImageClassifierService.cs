@@ -1,14 +1,14 @@
 ﻿using Azure;
 using Azure.AI.FormRecognizer.Models;
 using Genocs.FormRecognizer.Contracts;
-using Genocs.Integration.ML.CognitiveServices.Extensions;
-using Genocs.Integration.ML.CognitiveServices.Interfaces;
-using Genocs.Integration.ML.CognitiveServices.Options;
+using Genocs.Integration.CognitiveServices.Extensions;
+using Genocs.Integration.CognitiveServices.Interfaces;
+using Genocs.Integration.CognitiveServices.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 
-namespace Genocs.Integration.ML.CognitiveServices.Services;
+namespace Genocs.Integration.CognitiveServices.Services;
 
 public class ImageClassifierService : IImageClassifier, IDisposable
 {
@@ -39,17 +39,17 @@ public class ImageClassifierService : IImageClassifier, IDisposable
             throw new ArgumentNullException(nameof(config.Value));
         }
 
-        if (!string.IsNullOrWhiteSpace(config.Value.Endpoint))
+        if (string.IsNullOrWhiteSpace(config.Value.Endpoint))
         {
             throw new ArgumentNullException(nameof(config.Value.Endpoint));
         }
 
-        if (!string.IsNullOrWhiteSpace(config.Value.ModelId))
+        if (string.IsNullOrWhiteSpace(config.Value.ModelId))
         {
             throw new ArgumentNullException(nameof(config.Value.ModelId));
         }
 
-        if (!string.IsNullOrWhiteSpace(config.Value.PredictionKey))
+        if (string.IsNullOrWhiteSpace(config.Value.PredictionKey))
         {
             throw new ArgumentNullException(nameof(config.Value.PredictionKey));
         }

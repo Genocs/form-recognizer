@@ -1,4 +1,4 @@
-﻿namespace Genocs.Integration.ML.CognitiveServices.Interfaces;
+﻿namespace Genocs.Integration.CognitiveServices.Interfaces;
 
 public interface IFormRecognizer
 {

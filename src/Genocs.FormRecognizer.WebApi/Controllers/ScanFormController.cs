@@ -1,8 +1,7 @@
 ﻿using Genocs.FormRecognizer.Contracts;
 using Genocs.FormRecognizer.WebApi.Dto;
-using Genocs.Integration.ML.CognitiveServices.Interfaces;
-using Genocs.Integration.ML.CognitiveServices.Models;
-using Genocs.Integration.ML.CognitiveServices.Services;
+using Genocs.Integration.CognitiveServices.Interfaces;
+using Genocs.Integration.CognitiveServices.Services;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using System.Web;

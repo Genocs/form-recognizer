@@ -4,21 +4,20 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<PackageId>Genocs.Integration.ML.CognitiveServices</PackageId>
-		<Version>2.0.0-preview.1</Version>
-		<Authors>[Genocs] - Nocco Giovanni Emenuele</Authors>
+		<PackageId>Genocs.Integration.CognitiveServices</PackageId>
+		<Version>2.0.0-preview.2</Version>
+		<Authors>Nocco Giovanni Emenuele</Authors>
 		<Company>Genocs</Company>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
-		<PackageTags>Azure Cognitive Services;Docker;NET;Machine Learning;Microservice</PackageTags>
-		<Description>
-			The Machine Learning Microsoft Cognitive Services Library by Genocs
-		</Description>
 		<PackageIcon>icon.png</PackageIcon>
+		<PackageTags>Machine Learning;Azure Cognitive Services;Vision;FormRecognizer;Face Recognition;Microservice</PackageTags>
+		<Description>The Machine Learning Microsoft Cognitive Services Library by Genocs</Description>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="../../LICENSE" Pack="true" PackagePath="\" />
-		<None Include="../../icon.png" Pack="true" PackagePath="\" />
+		<None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
+		<None Include="..\..\icon.png" Pack="true" PackagePath="\" />
 
 	</ItemGroup>
 

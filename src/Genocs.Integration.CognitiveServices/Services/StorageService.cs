@@ -2,12 +2,12 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
-using Genocs.Integration.ML.CognitiveServices.Options;
+using Genocs.Integration.CognitiveServices.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Genocs.Integration.ML.CognitiveServices.Services;
+namespace Genocs.Integration.CognitiveServices.Services;
 
 public class StorageService
 {
@@ -140,6 +140,6 @@ public class StorageService
 
 public class UploadedItem
 {
-    public string FileName { get; set; }
-    public string URL { get; set; }
+    public string FileName { get; set; } = default!;
+    public string URL { get; set; } = default!;
 }

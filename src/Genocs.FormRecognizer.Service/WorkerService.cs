@@ -2,7 +2,7 @@
 using Azure.AI.FormRecognizer;
 using Azure.AI.FormRecognizer.Models;
 using Azure.AI.FormRecognizer.Training;
-using Genocs.Integration.ML.CognitiveServices.Options;
+using Genocs.Integration.CognitiveServices.Options;
 using Microsoft.Extensions.Options;
 
 namespace Genocs.FormRecognizer.Service;
