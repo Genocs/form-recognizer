@@ -5,9 +5,9 @@
 
 @url = https://localhost:5001
 
-@imageUrl = your_encoded_image_url
-@classifierModelId = your_classifier_model_id
-@recognizerModelId = your_recognizer_model_id 
+@imageUrl = <<your_encoded_image_url>>
+@classifierModelId = <<your_classifier_model_id>>
+@recognizerModelId = <<your_recognizer_model_id>>
 
 ### Check the Home page
 GET {{url}} HTTP/1.1
@@ -15,6 +15,17 @@ GET {{url}} HTTP/1.1
 
 ### Check the ping
 GET {{url}}/ping HTTP/1.1
+
+
+
+### Bind the Classification model to the Feature Extraction Model
+POST {{url}}/api/Settings/SetupClassificationModel HTTP/1.1
+Content-Type: application/json
+
+{
+    "key": "{{classifierModelId}}",
+    "value": "{{recognizerModelId}}"
+}
 
 
 ### Classify the image
@@ -36,7 +47,7 @@ Content-Type: application/json
 }
 
 
-### Classify and evaluate in one single step
+### Classify and Evaluate in one single step
 POST {{url}}/api/ScanForm/ClassifyAndEvaluate HTTP/1.1
 Content-Type: application/json
 
@@ -45,12 +56,5 @@ Content-Type: application/json
 }
 
 
-### Bind the Classification model to the Recognizer Model
-POST {{url}}/api/Settings/SetupClassificationModel HTTP/1.1
-Content-Type: application/json
 
-{
-    "key": "{{classifierModelId}}",
-    "value": "{{recognizerModelId}}"
-}
 

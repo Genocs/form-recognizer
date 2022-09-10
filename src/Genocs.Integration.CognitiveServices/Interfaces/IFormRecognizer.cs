@@ -6,4 +6,5 @@ public interface IFormRecognizer
     Task<List<dynamic>> ScanRemote(string classificationKey, string url);
     public Task<string?> ScanLocalCardId(string filePath);
     public Task<string?> ScanRemoteCardId(string url);
+
 }

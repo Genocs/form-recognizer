@@ -1,15 +1,17 @@
 ![Form Recognizer Library](https://raw.githubusercontent.com/Genocs/form-recognizer/master/icon.png) form-recognizer
 ====
-Web Api service built with .NET Core 6. It allows to extract tag coming from images.
+Web Api service built with .NET6. 
+
+It allows to extract tag coming from images.
 The ML model is built using Azure Cognitive services.
 
 ----
 
-[![.NET](https://github.com/Genocs/form-recognizer/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/Genocs/form-recognizer/actions/workflows/dotnet.yml) [![Build Status](https://app.travis-ci.com/Genocs/form-recognizer.svg?branch=master)](https://app.travis-ci.com/Genocs/form-recognizer.svg?branch=master) <a href="https://www.nuget.org/packages/Genocs.Integration.ML.CognitiveServices/" rel="Genocs.Integration.ML.CognitiveServices">![NuGet](https://buildstats.info/nuget/Genocs.Integration.ML.CognitiveServices)</a> <a href="https://hub.docker.com/repository/docker/genocs/formrecognizer/" rel="Genocs.Integration.ML.CognitiveServices">![Docker Automated build](https://img.shields.io/docker/automated/genocs/formrecognizer)</a> [![Docker Image CI](https://github.com/Genocs/form-recognizer/actions/workflows/docker-image.yml/badge.svg?branch=master)](https://github.com/Genocs/form-recognizer/actions/workflows/docker-image.yml) [![Gitter](https://img.shields.io/badge/chat-on%20gitter-blue.svg)](https://gitter.im/genocs/)
+[![.NET](https://github.com/Genocs/form-recognizer/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/Genocs/form-recognizer/actions/workflows/dotnet.yml) [![Build Status](https://app.travis-ci.com/Genocs/form-recognizer.svg?branch=master)](https://app.travis-ci.com/Genocs/form-recognizer.svg?branch=master) <a href="https://www.nuget.org/packages/Genocs.Integration.CognitiveServices/" rel="Genocs.Integration.CognitiveServices">![NuGet](https://buildstats.info/nuget/Genocs.Integration.ML.CognitiveServices)</a> <a href="https://hub.docker.com/repository/docker/genocs/formrecognizer/" rel="Genocs.Integration.ML.CognitiveServices">![Docker Automated build](https://img.shields.io/docker/automated/genocs/formrecognizer)</a> [![Docker Image CI](https://github.com/Genocs/form-recognizer/actions/workflows/docker-image.yml/badge.svg?branch=master)](https://github.com/Genocs/form-recognizer/actions/workflows/docker-image.yml) [![Gitter](https://img.shields.io/badge/chat-on%20gitter-blue.svg)](https://gitter.im/genocs/)
 
 
 ## Azure 
-The project require to have an Azure subscription with
+The project require to have an Azure subscription with following services up and running
 - Storage account
 - Cognitive Services
 - Redis Cache
@@ -58,9 +60,9 @@ POST {{root_url}}/api/Settings
 ``` PS
 docker build -t genocs/formrecognizer -f .\src\Genocs.FormRecognizer.WebApi\Dockerfile .
 
-docker tag genocs/formrecognizer genocs/formrecognizer:2.1.2
+docker tag genocs/formrecognizer genocs/formrecognizer:2.1.3
 docker tag genocs/formrecognizer genocs/formrecognizer:latest
 
-docker push genocs/formrecognizer:2.1.2
+docker push genocs/formrecognizer:2.1.3
 docker push genocs/formrecognizer:latest
 ``` 
