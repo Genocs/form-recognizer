@@ -56,11 +56,11 @@ POST {{root_url}}/api/Settings
 ## Docker image
 
 ``` PS
-docker build -t genocs/formrecognizer .\src\Genocs.FormRecognizer.WebApi\Dockerfile .
+docker build -t genocs/formrecognizer -f .\src\Genocs.FormRecognizer.WebApi\Dockerfile .
 
-docker tag genocs/formrecognizer genocs/formrecognizer:2.1.1
+docker tag genocs/formrecognizer genocs/formrecognizer:2.1.2
 docker tag genocs/formrecognizer genocs/formrecognizer:latest
 
-docker push genocs/formrecognizer:2.1.1
+docker push genocs/formrecognizer:2.1.2
 docker push genocs/formrecognizer:latest
 ``` 
