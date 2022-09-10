@@ -22,7 +22,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Genocs.Integration.ML.CognitiveServices\Genocs.Integration.ML.CognitiveServices.csproj" />
+		<ProjectReference Include="..\Genocs.Integration.CognitiveServices\Genocs.Integration.CognitiveServices.csproj" />
 	</ItemGroup>
 
 </Project>

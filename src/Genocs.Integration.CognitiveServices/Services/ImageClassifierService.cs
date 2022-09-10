@@ -1,14 +1,14 @@
 ﻿using Azure;
 using Azure.AI.FormRecognizer.Models;
 using Genocs.FormRecognizer.Contracts;
-using Genocs.Integration.ML.CognitiveServices.Extensions;
-using Genocs.Integration.ML.CognitiveServices.Interfaces;
-using Genocs.Integration.ML.CognitiveServices.Options;
+using Genocs.Integration.CognitiveServices.Extensions;
+using Genocs.Integration.CognitiveServices.Interfaces;
+using Genocs.Integration.CognitiveServices.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 
-namespace Genocs.Integration.ML.CognitiveServices.Services;
+namespace Genocs.Integration.CognitiveServices.Services;
 
 public class ImageClassifierService : IImageClassifier, IDisposable
 {

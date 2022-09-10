@@ -1,9 +1,5 @@
 ﻿using Genocs.FormRecognizer.Service;
-using Genocs.Integration.ML.CognitiveServices.Options;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Genocs.Integration.CognitiveServices.Options;
 using Serilog;
 using Serilog.Events;
 

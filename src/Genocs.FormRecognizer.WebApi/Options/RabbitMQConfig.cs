@@ -3,10 +3,10 @@
 public class RabbitMQConfig
 {
     public const string Position = "RabbitMQConfig";
-    public string URL { get; set; }
-    public string Username { get; set; }
-    public string Password { get; set; }
-    public string VirtualHost { get; set; }
+    public string URL { get; set; } = "localhost";
+    public string Username { get; set; } = "guest";
+    public string Password { get; set; } = "guest";
+    public string VirtualHost { get; set; } = "/";
 
 
     public static bool IsNullOrEmpty(RabbitMQConfig rabbitMQSettings)

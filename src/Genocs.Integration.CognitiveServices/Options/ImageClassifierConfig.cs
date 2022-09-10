@@ -1,4 +1,4 @@
-﻿namespace Genocs.Integration.ML.CognitiveServices.Options;
+﻿namespace Genocs.Integration.CognitiveServices.Options;
 
 public class ImageClassifierConfig
 {

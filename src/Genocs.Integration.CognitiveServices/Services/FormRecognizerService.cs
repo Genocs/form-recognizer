@@ -1,13 +1,13 @@
 ﻿using Azure;
 using Azure.AI.FormRecognizer;
 using Azure.AI.FormRecognizer.Models;
-using Genocs.Integration.ML.CognitiveServices.Interfaces;
-using Genocs.Integration.ML.CognitiveServices.Options;
+using Genocs.Integration.CognitiveServices.Interfaces;
+using Genocs.Integration.CognitiveServices.Options;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Genocs.Integration.ML.CognitiveServices.Services;
+namespace Genocs.Integration.CognitiveServices.Services;
 
 public class FormRecognizerService : IFormRecognizer
 {

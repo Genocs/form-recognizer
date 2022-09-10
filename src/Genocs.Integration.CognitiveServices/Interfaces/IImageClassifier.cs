@@ -1,6 +1,6 @@
 ﻿using Genocs.FormRecognizer.Contracts;
 
-namespace Genocs.Integration.ML.CognitiveServices.Interfaces;
+namespace Genocs.Integration.CognitiveServices.Interfaces;
 
 public interface IImageClassifier
 {

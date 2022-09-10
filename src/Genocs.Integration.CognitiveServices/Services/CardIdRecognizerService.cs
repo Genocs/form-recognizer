@@ -1,13 +1,13 @@
-﻿using Genocs.Integration.ML.CognitiveServices.Extensions;
-using Genocs.Integration.ML.CognitiveServices.Interfaces;
-using Genocs.Integration.ML.CognitiveServices.Models;
-using Genocs.Integration.ML.CognitiveServices.Options;
+﻿using Genocs.Integration.CognitiveServices.Extensions;
+using Genocs.Integration.CognitiveServices.Interfaces;
+using Genocs.Integration.CognitiveServices.Models;
+using Genocs.Integration.CognitiveServices.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Genocs.Integration.ML.CognitiveServices.Services;
+namespace Genocs.Integration.CognitiveServices.Services;
 
 public class CardIdRecognizerService : ICardIdRecognizer, IDisposable
 {
