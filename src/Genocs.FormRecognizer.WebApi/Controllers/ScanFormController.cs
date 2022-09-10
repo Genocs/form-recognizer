@@ -1,194 +1,194 @@
-﻿using Genocs.FormRecognizer.WebApi.Dto;
+﻿using Genocs.FormRecognizer.Contracts;
+using Genocs.FormRecognizer.WebApi.Dto;
 using Genocs.Integration.ML.CognitiveServices.Interfaces;
 using Genocs.Integration.ML.CognitiveServices.Models;
 using Genocs.Integration.ML.CognitiveServices.Services;
 using MassTransit;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Web;
 
-namespace Genocs.FormRecognizer.WebApi.Controllers
+namespace Genocs.FormRecognizer.WebApi.Controllers;
+
+
+[ApiController]
+[Route("api/[controller]")]
+public class ScanFormController : ControllerBase
 {
+    private readonly IFormRecognizer _formRecognizerService;
+    private readonly ICardIdRecognizer _cardRecognizerService;
+    private readonly IPublishEndpoint _publishEndpoint;
+    private readonly IImageClassifier _formClassifierService;
+    private readonly StorageService _storageService;
 
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ScanFormController : ControllerBase
+    public ScanFormController(StorageService storageService,
+                                IFormRecognizer formRecognizerService,
+                                IImageClassifier formClassifierService,
+                                ICardIdRecognizer cardRecognizerService,
+                                IPublishEndpoint publishEndpoint)
     {
-        private readonly IFormRecognizer formRecognizerService;
-        private readonly ICardIdRecognizer cardRecognizerService;
-        private readonly IPublishEndpoint publishEndpoint;
-        private readonly IImageClassifier formClassifierService;
-        private readonly StorageService storageService;
+        _formRecognizerService = formRecognizerService ?? throw new ArgumentNullException(nameof(formRecognizerService));
+        _storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
+        _formClassifierService = formClassifierService ?? throw new ArgumentNullException(nameof(formClassifierService));
+        _cardRecognizerService = cardRecognizerService ?? throw new ArgumentNullException(nameof(cardRecognizerService));
+        _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
+    }
 
-        public ScanFormController(StorageService storageService,
-                                    IFormRecognizer formRecognizerService,
-                                    IImageClassifier formClassifierService,
-                                    ICardIdRecognizer cardRecognizerService,
-                                    IPublishEndpoint publishEndpoint)
+    /// <summary>
+    /// It allows to classify an image.
+    /// </summary>
+    /// <param name="url">The HTML encoded url</param>
+    /// <returns>The classification result</returns>
+    [Route("Classify"), HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Prediction))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetClassify([FromBody] BasicRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Url))
         {
-            this.formRecognizerService = formRecognizerService ?? throw new ArgumentNullException(nameof(formRecognizerService));
-            this.storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
-            this.formClassifierService = formClassifierService ?? throw new ArgumentNullException(nameof(formClassifierService));
-            this.cardRecognizerService = cardRecognizerService ?? throw new ArgumentNullException(nameof(cardRecognizerService));
-            this.publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
+            return BadRequest("url cannot be null or empty");
         }
 
-        /// <summary>
-        /// It allows to classify an image.
-        /// </summary>
-        /// <param name="url">The HTML encoded url</param>
-        /// <returns>The classification result</returns>
-        [Route("Classify"), HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Prediction>> GetClassify([FromBody] BasicRequest request)
+        var classification = await _formClassifierService.Classify(HttpUtility.HtmlDecode(request.Url));
+
+        if (classification != null && classification.Predictions != null && classification.Predictions.Any())
         {
-            if (string.IsNullOrWhiteSpace(request.Url))
-            {
-                return BadRequest("url cannot be null or empty");
-            }
+            var first = classification.Predictions.OrderByDescending(o => o.Probability).First();
 
-            var classification = await formClassifierService.Classify(HttpUtility.HtmlDecode(request.Url));
+            return Ok(first);
+        }
+        return NoContent();
+    }
 
-            if (classification != null && classification.Predictions != null && classification.Predictions.Any())
-            {
-                var first = classification.Predictions.OrderByDescending(o => o.Probability).First();
 
-                return first;
-            }
-            return null;
+    /// <summary>
+    /// It allows to upload an image and classify it
+    /// </summary>
+    /// <param name="files">File that will be classified</param>
+    /// <returns>The Prediction result</returns>
+    [Route("UploadAndClassify"), HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Prediction))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> PostUploadAndClassify([FromForm(Name = "images")] List<IFormFile> files)
+    {
+        if (files == null || files.Count == 0)
+        {
+            return BadRequest("no 'images' file detected");
         }
 
-
-        /// <summary>
-        /// It allows to upload an image and classify it
-        /// </summary>
-        /// <param name="files">File that will be classified</param>
-        /// <returns>The Prediction result</returns>
-        [Route("UploadAndClassify"), HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Prediction>> PostUploadAndClassify([FromForm(Name = "images")] List<IFormFile> files)
+        if (files[0].Length == 0)
         {
-            if (files == null || files.Count == 0)
-            {
-                return BadRequest("no 'images' file detected");
-            }
-
-            if (files[0].Length == 0)
-            {
-                return BadRequest("empty 'images' file not allowed");
-            }
-
-            // Upload on storage
-            var uploadResult = await storageService.UploadFilesAsync(files);
-
-            // Classify the result
-            var classification = await formClassifierService.Classify(HttpUtility.HtmlDecode(uploadResult.First().URL));
-
-            if (classification != null && classification.Predictions != null && classification.Predictions.Any())
-            {
-                var first = classification.Predictions.OrderByDescending(o => o.Probability).First();
-
-                return first;
-            }
-            return null;
+            return BadRequest("empty 'images' file not allowed");
         }
 
+        // Upload on storage
+        var uploadResult = await _storageService.UploadFilesAsync(files);
 
-        /// <summary>
-        /// It allows to upload an image and estract form data it
-        /// </summary>
-        /// <param name="files">The File/s stream</param>
-        /// <param name="classificationModelId">The classification model Id</param>
-        /// <returns>The result</returns>
-        [Route("UploadAndEvaluate"), HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<List<dynamic>> PostUploadAndEvaluate([FromForm(Name = "images")] List<IFormFile> files, [FromQuery] string classificationModelId)
+        // Classify the result
+        var classification = await _formClassifierService.Classify(HttpUtility.HtmlDecode(uploadResult.First().URL));
+
+        if (classification != null && classification.Predictions != null && classification.Predictions.Any())
         {
-            var uploadResult = await this.storageService.UploadFilesAsync(files);
-            return await formRecognizerService.ScanRemote(classificationModelId, uploadResult.First().URL);
+            var first = classification.Predictions.OrderByDescending(o => o.Probability).First();
+
+            return Ok(first);
+        }
+        return NoContent();
+    }
+
+
+    /// <summary>
+    /// It allows to upload an image and estract form data it
+    /// </summary>
+    /// <param name="files">The File/s stream</param>
+    /// <param name="classificationModelId">The classification model Id</param>
+    /// <returns>The result</returns>
+    [Route("UploadAndEvaluate"), HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<List<dynamic>> PostUploadAndEvaluate([FromForm(Name = "images")] List<IFormFile> files, [FromQuery] string classificationModelId)
+    {
+        var uploadResult = await _storageService.UploadFilesAsync(files);
+        return await _formRecognizerService.ScanRemote(classificationModelId, uploadResult.First().URL);
+    }
+
+
+    /// <summary>
+    /// It allows to scan a image previously uploaded
+    /// </summary>
+    /// <param name="modelId">The ML ModelId</param>
+    /// <param name="url">The public available url</param>
+    /// <returns>The result</returns>
+
+    [Route("Evaluate"), HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<List<dynamic>>> PostClassifyAndEvalaute([FromBody] EvaluateRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.ClassificationModelId))
+        {
+            return BadRequest("classificationModelId cannot be null or empty");
         }
 
-
-        /// <summary>
-        /// It allows to scan a image previously uploaded
-        /// </summary>
-        /// <param name="modelId">The ML ModelId</param>
-        /// <param name="url">The public available url</param>
-        /// <returns>The result</returns>
-
-        [Route("Evaluate"), HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<List<dynamic>>> PostClassifyAndEvalaute([FromBody] EvaluateRequest request)
+        if (string.IsNullOrWhiteSpace(request.Url))
         {
-            if (string.IsNullOrWhiteSpace(request.ClassificationModelId))
-            {
-                return BadRequest("classificationModelId cannot be null or empty");
-            }
-
-            if (string.IsNullOrWhiteSpace(request.Url))
-            {
-                return BadRequest("url cannot be null or empty");
-            }
-
-            return await this.formRecognizerService.ScanRemote(request.ClassificationModelId, request.Url);
+            return BadRequest("url cannot be null or empty");
         }
 
+        return await _formRecognizerService.ScanRemote(request.ClassificationModelId, request.Url);
+    }
 
-        /// <summary>
-        /// It allows to scan a image previously uploaded
-        /// </summary>
-        /// <param name="modelId">The ML ModelId</param>
-        /// <param name="url">The public available url</param>
-        /// <returns>The result</returns>
-        [Route("ClassifyAndEvaluate"), HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [Produces("application/json")]
-        public async Task<FormExtractorResult> GetClassifyAndEvaluate([FromBody] BasicRequest request)
+
+    /// <summary>
+    /// It allows to scan a image previously uploaded
+    /// </summary>
+    /// <param name="modelId">The ML ModelId</param>
+    /// <param name="url">The public available resource url</param>
+    /// <returns>The result</returns>
+    [Route("ClassifyAndEvaluate"), HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FormExtractorResult))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [Produces("application/json")]
+    public async Task<IActionResult> GetClassifyAndEvaluate([FromBody] BasicRequest request)
+    {
+        FormExtractorResult result = new();
+        result.ResourceUrl = HttpUtility.HtmlDecode(request.Url);
+        var classification = await _formClassifierService.Classify(HttpUtility.HtmlDecode(request.Url));
+
+        if (classification != null && classification.Predictions != null && classification.Predictions.Any())
         {
-            FormExtractorResult result = new();
-            var classification = await this.formClassifierService.Classify(HttpUtility.HtmlDecode(request.Url));
-
-            if (classification != null && classification.Predictions != null && classification.Predictions.Any())
-            {
-                var first = classification.Predictions.OrderByDescending(o => o.Probability).First();
-                result.ContentData = await formRecognizerService.ScanRemote(first.TagId, request.Url);
-            }
-
-            result.Classification = classification;
-
-            // Publish to the service bus 
-            await this.publishEndpoint.Publish(result);
-
-            return result;
+            var first = classification.Predictions.OrderByDescending(o => o.Probability).First();
+            result.ContentData = await _formRecognizerService.ScanRemote(first.TagId, request.Url);
         }
 
+        result.Classification = classification;
 
-        /// <summary>
-        /// It allows to scan a image previously uploaded
-        /// </summary>
-        /// <param name="modelId">The ML ModelId</param>
-        /// <param name="url">The public available url</param>
-        /// <returns>The result</returns>
-        [Route("CardId"), HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [Produces("application/json")]
-        public async Task<ActionResult> GetCardIdInfo([FromBody] BasicRequest request)
-        {
-            await formRecognizerService.ScanRemoteCardId(request.Url);
-            return Ok();
-        }
+        // Publish to the service bus 
+        await _publishEndpoint.Publish(result);
+
+        return Ok(result);
+    }
+
+
+    /// <summary>
+    /// It allows to scan a image previously uploaded
+    /// </summary>
+    /// <param name="modelId">The ML ModelId</param>
+    /// <param name="url">The public available url</param>
+    /// <returns>The result</returns>
+    [Route("CardId"), HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [Produces("application/json")]
+    public async Task<IActionResult> GetCardIdInfo([FromBody] BasicRequest request)
+    {
+        var result = await _formRecognizerService.ScanRemoteCardId(request.Url);
+        return string.IsNullOrWhiteSpace(result) ? NoContent() : Ok(result);
     }
 }
+

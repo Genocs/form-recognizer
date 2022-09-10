@@ -1,69 +1,41 @@
-﻿using Genocs.Integration.ML.CognitiveServices.Options;
+﻿using Genocs.FormRecognizer.Service;
+using Genocs.Integration.ML.CognitiveServices.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
-using Serilog.Formatting.Compact;
+using Serilog.Events;
 
-namespace Genocs.FormRecognizer.ConsoleApp
-{
-    class Program
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Debug)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .CreateLogger();
+
+
+IHost host = Host.CreateDefaultBuilder(args)
+    .ConfigureServices((hostContext, services) =>
     {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
+        OpenTelemetryInitializer.Initialize(hostContext, services);
 
-        private static IHostBuilder CreateHostBuilder(string[] args)
-        {
-            return Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((context, config) =>
-                {
-                    config.AddEnvironmentVariables();
+        // Register config
+        services.Configure<AzureCognitiveServicesConfig>(hostContext.Configuration.GetSection("AzureCognitiveServicesConfig"));
+        services.Configure<AzureStorageConfig>(hostContext.Configuration.GetSection("AzureStorageConfig"));
+        services.Configure<ImageClassifierConfig>(hostContext.Configuration.GetSection("ImageClassifierConfig"));
+        services.Configure<AzureCognitiveServicesConfig>(hostContext.Configuration.GetSection("FormRecognizerConfig"));
 
-                    var env = context.HostingEnvironment;
+        services.AddHostedService<WorkerService>();
 
-                    config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
+    })
+    .ConfigureLogging((hostingContext, logging) =>
+    {
+        logging.AddSerilog(dispose: true);
+        logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+    })
+    .Build();
 
-                    if (args != null)
-                    {
-                        config.AddCommandLine(args);
-                    }
+await host.RunAsync();
 
-                    if (context.HostingEnvironment.IsDevelopment())
-                    {
-                        config.AddUserSecrets<Program>();
-                    }
-
-                })
-                .ConfigureLogging((hostingContext, logging) =>
-                {
-                    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-
-                    var serilogBuilder = new LoggerConfiguration()
-                                                    .ReadFrom
-                                                    .Configuration(hostingContext.Configuration)
-                                                    .WriteTo
-                                                    .Console(new CompactJsonFormatter());
-
-                    logging.AddSerilog(serilogBuilder.CreateLogger(), true);
-
-                    logging.AddConsole();
-                    logging.AddDebug();
-                })
-                .ConfigureServices((hostingContext, services) =>
-                {
-                    // Register config
-                    services.Configure<AzureCognitiveServicesConfig>(hostingContext.Configuration.GetSection("AzureCognitiveServicesConfig"));
-                    services.Configure<AzureStorageConfig>(hostingContext.Configuration.GetSection("AzureStorageConfig"));
-                    services.Configure<ImageClassifierConfig>(hostingContext.Configuration.GetSection("ImageClassifierConfig"));
-                    services.Configure<AzureCognitiveServicesConfig>(hostingContext.Configuration.GetSection("FormRecognizerConfig"));
-
-                    // Register services
-                    services.AddHostedService<WorkerService>();
-                });
-        }
-    }
-}
+Log.CloseAndFlush();

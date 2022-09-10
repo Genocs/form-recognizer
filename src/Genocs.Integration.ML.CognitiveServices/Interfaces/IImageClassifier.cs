@@ -1,10 +1,8 @@
-﻿using Genocs.Integration.ML.CognitiveServices.Models;
-using System.Threading.Tasks;
+﻿using Genocs.FormRecognizer.Contracts;
 
-namespace Genocs.Integration.ML.CognitiveServices.Interfaces
+namespace Genocs.Integration.ML.CognitiveServices.Interfaces;
+
+public interface IImageClassifier
 {
-    public interface IImageClassifier
-    {
-        Task<Classification> Classify(string url);
-    }
+    Task<Classification?> Classify(string url);
 }

@@ -2,16 +2,18 @@
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
 		<PackageId>Genocs.Integration.ML.CognitiveServices</PackageId>
 		<Version>2.0.0-preview.1</Version>
-		<Authors>[Genocs] - Nocco Giovanni Emenuele</Authors>
+		<Authors>Nocco Giovanni Emenuele</Authors>
 		<Company>Genocs</Company>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
-		<PackageTags>Azure Cognitive Services;Docker;NET;Machine Learning;Microservice</PackageTags>
+		<PackageIcon>icon.png</PackageIcon>
+		<PackageTags>Machine Learning;Azure Cognitive Services;Vision;FormRecognizer;Face Recognition;Microservice</PackageTags>
 		<Description>
 			The Machine Learning Microsoft Cognitive Services Library by Genocs
 		</Description>
-		<PackageIcon>icon.png</PackageIcon>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -22,15 +24,15 @@
 
 	<ItemGroup>
 		<PackageReference Include="Azure.AI.FormRecognizer" Version="3.1.1" />
-		<PackageReference Include="Azure.Storage.Blobs" Version="12.10.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.13" />
+		<PackageReference Include="Azure.Storage.Blobs" Version="12.13.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
 		<PackageReference Include="Microsoft.Azure.CognitiveServices.Vision.Face" Version="2.7.0-preview.1" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="6.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Exceptions\" />
+	  <ProjectReference Include="..\Genocs.FormRecognizer.Contracts\Genocs.FormRecognizer.Contracts.csproj" />
 	</ItemGroup>
 </Project>
