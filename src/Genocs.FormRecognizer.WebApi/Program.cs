@@ -61,9 +61,20 @@ builder.Services.AddCustomCache(builder.Configuration.GetSection(RedisConfig.Pos
 
 builder.Services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
 builder.Services.AddMassTransit(x =>
-{
+{  
+
     x.UsingRabbitMq((context, cfg) =>
     {
+        var rabbitMQOptions = new RabbitMQConfig();
+        builder.Configuration.GetSection(RabbitMQConfig.Position).Bind(rabbitMQOptions);
+
+        cfg.Host(rabbitMQOptions.URL, rabbitMQOptions.VirtualHost, h =>
+        {
+            h.Username(rabbitMQOptions.Username);
+            h.Password(rabbitMQOptions.Password);
+        });
+
+
         MessageDataDefaults.ExtraTimeToLive = TimeSpan.FromDays(1);
         MessageDataDefaults.Threshold = 2000;
         MessageDataDefaults.AlwaysWriteToRepository = false;

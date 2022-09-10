@@ -39,17 +39,17 @@ public class ImageClassifierService : IImageClassifier, IDisposable
             throw new ArgumentNullException(nameof(config.Value));
         }
 
-        if (!string.IsNullOrWhiteSpace(config.Value.Endpoint))
+        if (string.IsNullOrWhiteSpace(config.Value.Endpoint))
         {
             throw new ArgumentNullException(nameof(config.Value.Endpoint));
         }
 
-        if (!string.IsNullOrWhiteSpace(config.Value.ModelId))
+        if (string.IsNullOrWhiteSpace(config.Value.ModelId))
         {
             throw new ArgumentNullException(nameof(config.Value.ModelId));
         }
 
-        if (!string.IsNullOrWhiteSpace(config.Value.PredictionKey))
+        if (string.IsNullOrWhiteSpace(config.Value.PredictionKey))
         {
             throw new ArgumentNullException(nameof(config.Value.PredictionKey));
         }
