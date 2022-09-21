@@ -1,6 +1,6 @@
 ﻿using Azure;
 using Azure.AI.FormRecognizer.Models;
-using Genocs.FormRecognizer.Contracts;
+using Genocs.Integration.CognitiveServices.Contracts;
 using Genocs.Integration.CognitiveServices.Extensions;
 using Genocs.Integration.CognitiveServices.Interfaces;
 using Genocs.Integration.CognitiveServices.Options;

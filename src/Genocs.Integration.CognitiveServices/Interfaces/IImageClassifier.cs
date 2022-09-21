@@ -1,4 +1,4 @@
-﻿using Genocs.FormRecognizer.Contracts;
+﻿using Genocs.Integration.CognitiveServices.Contracts;
 
 namespace Genocs.Integration.CognitiveServices.Interfaces;
 

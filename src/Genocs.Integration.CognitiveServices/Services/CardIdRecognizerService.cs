@@ -97,7 +97,7 @@ public class CardIdRecognizerService : ICardIdRecognizer, IDisposable
         }
     }
 
-    public async Task<CardIdResult> Recognize(string url)
+    public async Task<CardIdResult?> Recognize(string url)
     {
         HttpResponseMessage response;
 

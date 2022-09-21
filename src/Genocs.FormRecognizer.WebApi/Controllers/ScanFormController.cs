@@ -1,5 +1,5 @@
-﻿using Genocs.FormRecognizer.Contracts;
-using Genocs.FormRecognizer.WebApi.Dto;
+﻿using Genocs.FormRecognizer.WebApi.Dto;
+using Genocs.Integration.CognitiveServices.Contracts;
 using Genocs.Integration.CognitiveServices.Interfaces;
 using Genocs.Integration.CognitiveServices.Services;
 using MassTransit;

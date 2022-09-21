@@ -70,7 +70,10 @@ public class FaceComparisonService : IFaceComparison
         IList<Guid?> targetFaceIds = new List<Guid?>();
         foreach (var target in targetFaces)
         {
-            targetFaceIds.Add(target.FaceId.Value);
+            if (target.FaceId != null)
+            {
+                targetFaceIds.Add(target.FaceId.Value);
+            }
         }
 
         // Find a similar face(s) in the list of IDs. Comparing only the first in list for testing purposes.
@@ -79,7 +82,10 @@ public class FaceComparisonService : IFaceComparison
 
         foreach (var source in sourceFaces)
         {
-            result.AddRange(await _client.Face.FindSimilarAsync(source.FaceId.Value, null, null, targetFaceIds));
+            if (source.FaceId != null)
+            {
+                result.AddRange(await _client.Face.FindSimilarAsync(source.FaceId.Value, null, null, targetFaceIds));
+            }
         }
 
         return result;

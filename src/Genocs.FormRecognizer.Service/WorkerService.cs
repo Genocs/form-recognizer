@@ -1,27 +1,14 @@
-﻿using Azure;
-using Azure.AI.FormRecognizer;
-using Azure.AI.FormRecognizer.Models;
-using Azure.AI.FormRecognizer.Training;
-using Genocs.Integration.CognitiveServices.Options;
-using Microsoft.Extensions.Options;
-
-namespace Genocs.FormRecognizer.Service;
+﻿namespace Genocs.FormRecognizer.Service;
 
 class WorkerService : IHostedService, IDisposable
 {
     private bool _disposed;
 
     private readonly ILogger<WorkerService> _logger;
-    private readonly AzureCognitiveServicesConfig _configCognitiveServices;
-    private readonly AzureStorageConfig _configAzureStorage;
 
-    public WorkerService(ILogger<WorkerService> logger,
-        IOptions<AzureCognitiveServicesConfig> configCognitiveServices,
-        IOptions<AzureStorageConfig> configAzureStorage)
+    public WorkerService(ILogger<WorkerService> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _configCognitiveServices = configCognitiveServices.Value;
-        _configAzureStorage = configAzureStorage.Value;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -70,8 +57,6 @@ class WorkerService : IHostedService, IDisposable
 
     private async Task RunAsync()
     {
-
-
         string modelId = "40763499-a146-4202-be20-0418510ae1e4";
         //string modelName = "2021_04_08_01";
         string filePath = @"C:\tmp\uno.jpg";
