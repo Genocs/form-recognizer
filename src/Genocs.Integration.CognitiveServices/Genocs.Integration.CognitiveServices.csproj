@@ -5,7 +5,7 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<PackageId>Genocs.Integration.CognitiveServices</PackageId>
-		<Version>2.1.0</Version>
+		<Version>2.2.0</Version>
 		<Authors>Nocco Giovanni Emenuele</Authors>
 		<Company>Genocs</Company>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
@@ -13,6 +13,7 @@
 		<PackageTags>Machine Learning;Azure Cognitive Services;Vision;FormRecognizer;Face Recognition;Microservice</PackageTags>
 		<Description>The Machine Learning Microsoft Cognitive Services Library by Genocs</Description>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<RepositoryType>git</RepositoryType>
 	</PropertyGroup>
 
 	<ItemGroup>

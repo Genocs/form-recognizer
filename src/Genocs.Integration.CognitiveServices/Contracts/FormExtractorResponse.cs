@@ -1,6 +1,6 @@
 ﻿namespace Genocs.Integration.CognitiveServices.Contracts;
 
-public class FormExtractorResult
+public class FormExtractorResponse
 {
     public string? ResourceUrl { get; set; }
     public Classification? Classification { get; set; }

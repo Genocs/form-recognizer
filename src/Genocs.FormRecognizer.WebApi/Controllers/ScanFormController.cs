@@ -149,12 +149,12 @@ public class ScanFormController : ControllerBase
     /// <param name="url">The public available resource url</param>
     /// <returns>The result</returns>
     [Route("ClassifyAndEvaluate"), HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FormExtractorResult))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FormExtractorResponse))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Produces("application/json")]
     public async Task<IActionResult> GetClassifyAndEvaluate([FromBody] BasicRequest request)
     {
-        FormExtractorResult result = new();
+        FormExtractorResponse result = new();
         result.ResourceUrl = HttpUtility.HtmlDecode(request.Url);
         var classification = await _formClassifierService.Classify(HttpUtility.HtmlDecode(request.Url));
 
