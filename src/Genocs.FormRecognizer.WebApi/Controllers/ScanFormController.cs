@@ -189,5 +189,22 @@ public class ScanFormController : ControllerBase
         var result = await _formRecognizerService.ScanRemoteCardId(request.Url);
         return string.IsNullOrWhiteSpace(result) ? NoContent() : Ok(result);
     }
+
+    /// <summary>
+    /// It allows to scan a image previously uploaded
+    /// </summary>
+    /// <param name="modelId">The ML ModelId</param>
+    /// <param name="url">The public available url</param>
+    /// <returns>The result</returns>
+    [Route("IdDocument"), HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [Produces("application/json")]
+    public async Task<IActionResult> GetIdDocumentInfo([FromBody] BasicRequest request)
+    {
+        var result = await _cardRecognizerService.Recognize(request.Url);
+        return result == null ? NoContent() : Ok(result);
+    }
 }
 

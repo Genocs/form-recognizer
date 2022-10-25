@@ -3,9 +3,9 @@
 // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse); 
 public class Word
 {
-    public string text { get; set; }
-    public List<int> boundingBox { get; set; }
-    public double confidence { get; set; }
+    public string? Text { get; set; }
+    public List<int>? BoundingBox { get; set; }
+    public double? Confidence { get; set; }
 }
 
 public class Style
