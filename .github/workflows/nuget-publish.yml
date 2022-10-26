@@ -4,23 +4,25 @@ on:
     branches: [master]
 
 jobs:
-  publish:
-    name: build, pack & publish
+
+  publish-nuget:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Setup .NET
+      - name: Setup .NET Core    
         uses: actions/setup-dotnet@v1
+      
+      - name: Install dependencies
+        run: dotnet restore
+      
+      - name: Build
+        run: dotnet build — configuration Release — no-restore
+      
+      - name: Publish to NuGet
+        uses: brandedoutcast/publish-nuget@v2.5.5
         with:
-          dotnet-version: 6.0.x
-
-      - name: Package
-        run: dotnet pack .\src\Genocs.Integration.CognitiveServices\Genocs.Integration.CognitiveServices.csproj -c Release
-      - name: Publish
-        run: dotnet nuget push *.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate`
-        
-      # - name: Pack
-      #   run: dotnet pack EasyDbMigrator\\EasyDbMigrator.csproj -c Release
-      # - name: Publish to GitHub packages
-      #  run: dotnet nuget push /home/runner/work/EasyDbMigrator/EasyDbMigrator/EasyDbMigrator/bin/Release/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate`
-
+          PROJECT_FILE_PATH: src/Genocs.Integration.CognitiveServices/Genocs.Integration.CognitiveServices.csproj
+          PACKAGE_NAME: ApolloBus
+          VERSION_REGEX: ‘^\s*<Version>(.*)<\/Version>\s*$’
+          TAG_FORMAT: ‘*’
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
