@@ -16,7 +16,7 @@ jobs:
         run: dotnet restore
       
       - name: Build
-        run: dotnet build --source src/Genocs.Integration.CognitiveServices/Genocs.Integration.CognitiveServices.csproj --configuration Release --no-restore
+        run: dotnet build -p:Version=2.3.2 --source src/Genocs.Integration.CognitiveServices/Genocs.Integration.CognitiveServices.csproj --configuration Release --no-restore
       
       - name: Publish to NuGet
         uses: brandedoutcast/publish-nuget@v2.5.5
