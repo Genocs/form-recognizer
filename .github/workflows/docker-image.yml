@@ -40,4 +40,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: genocs/formrecognizer:2.3.${{ BUILD_NUMBER }},genocs/formrecognizer:latest
+          tags: genocs/formrecognizer:2.3.${{ env.BUILD_NUMBER }},genocs/formrecognizer:latest
