@@ -22,7 +22,5 @@ jobs:
         uses: brandedoutcast/publish-nuget@v2.5.5
         with:
           PROJECT_FILE_PATH: src/Genocs.Integration.CognitiveServices/Genocs.Integration.CognitiveServices.csproj
-          PACKAGE_NAME: ApolloBus
-          VERSION_REGEX: ‘^\s*<Version>(.*)<\/Version>\s*$’
-          TAG_FORMAT: ‘*’
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+          PACKAGE_NAME: Genocs.Integration.CognitiveServices
+          NUGET_KEY: ${{ secrets.NUGET_API_KEY }}
