@@ -47,9 +47,6 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
-          file: ./Dockerfile
+          context: .
           push: true
-          tags: genocs/formrecognizer:2.3.0,genocs/formrecognizer:latest
-          
-          #tags: ${{ steps.meta.outputs.tags }}
-          #labels: ${{ steps.meta.outputs.labels }}
+          tags: genocs/formrecognizer:2.3.$BUILD_NUMBER,genocs/formrecognizer:latest
