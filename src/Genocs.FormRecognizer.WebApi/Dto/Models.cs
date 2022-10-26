@@ -2,17 +2,17 @@
 
 public class BasicRequest
 {
-    public string Url { get; set; }
+    public string Url { get; set; } = default!;
 }
 
 public class EvaluateRequest : BasicRequest
 {
-    public string ClassificationModelId { get; set; }
+    public string ClassificationModelId { get; set; } = default!;
 }
 
 public class SetupSettingRequest
 {
-    public string Key { get; set; }
-    public string Value { get; set; }
+    public string Key { get; set; } = default!;
+    public string Value { get; set; } = default!;
 
 }
