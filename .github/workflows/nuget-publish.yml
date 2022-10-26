@@ -12,16 +12,9 @@ jobs:
       - name: Setup .NET Core    
         uses: actions/setup-dotnet@v1
       
-      - name: Install dependencies
-        run: dotnet restore
-      
-      - name: Build
-        run: dotnet build -p:Version=2.3.2 --source src/Genocs.Integration.CognitiveServices/Genocs.Integration.CognitiveServices.csproj --configuration Release --no-restore
-      
       - name: Publish to NuGet
         uses: brandedoutcast/publish-nuget@v2.5.5
         with:
           PROJECT_FILE_PATH: src/Genocs.Integration.CognitiveServices/Genocs.Integration.CognitiveServices.csproj
           PACKAGE_NAME: Genocs.Integration.CognitiveServices
-          VERSION_STATIC: 2.3.2
           NUGET_KEY: ${{ secrets.NUGET_API_KEY }}
