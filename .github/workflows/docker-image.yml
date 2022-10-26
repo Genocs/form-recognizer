@@ -7,18 +7,9 @@ on:
     types: [published]
 
 jobs:
-
-  build:
-    name: Build Image
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build the Docker image
-      run: docker build . --file src/Genocs.FormRecognizer.WebApi/Dockerfile --tag formrecognizer:$(date +%s)
       
-  push_to_registry:
-    name: Push Docker image to Docker Hub
+  build_and_push_to_registry:
+    name: Build and Push Docker image to Docker Hub
     runs-on: ubuntu-latest
 
     steps:
@@ -49,4 +40,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: genocs/formrecognizer:2.3.${{ steps.buildnumber.outputs.build_number }},genocs/formrecognizer:latest
+          tags: genocs/formrecognizer:2.3.${{BUILD_NUMBER}},genocs/formrecognizer:latest
