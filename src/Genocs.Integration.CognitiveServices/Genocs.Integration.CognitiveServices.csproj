@@ -5,8 +5,8 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<PackageId>Genocs.Integration.CognitiveServices</PackageId>
-		<Version>2.2.0</Version>
-		<Authors>Nocco Giovanni Emenuele</Authors>
+		<Version>2.2.1</Version>
+		<Authors>Nocco Giovanni Emanuele</Authors>
 		<Company>Genocs</Company>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageIcon>icon.png</PackageIcon>

@@ -54,7 +54,7 @@ builder.Services.Configure<RabbitMQConfig>(builder.Configuration.GetSection(Rabb
 builder.Services.AddSingleton<StorageService>();
 builder.Services.AddSingleton<IFormRecognizer, FormRecognizerService>();
 builder.Services.AddSingleton<IImageClassifier, ImageClassifierService>();
-builder.Services.AddSingleton<ICardIdRecognizer, IdDocumentService>();
+builder.Services.AddSingleton<ICardIdRecognizer, CardIdRecognizerService>();
 
 builder.Services.AddCustomCache(builder.Configuration.GetSection(RedisConfig.Position));
 

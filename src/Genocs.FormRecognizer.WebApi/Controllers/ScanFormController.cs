@@ -176,7 +176,6 @@ public class ScanFormController : ControllerBase
     /// <summary>
     /// It allows to scan a image previously uploaded
     /// </summary>
-    /// <param name="modelId">The ML ModelId</param>
     /// <param name="url">The public available url</param>
     /// <returns>The result</returns>
     [Route("CardId"), HttpPost]
@@ -193,7 +192,6 @@ public class ScanFormController : ControllerBase
     /// <summary>
     /// It allows to scan a image previously uploaded
     /// </summary>
-    /// <param name="modelId">The ML ModelId</param>
     /// <param name="url">The public available url</param>
     /// <returns>The result</returns>
     [Route("IdDocument"), HttpPost]
