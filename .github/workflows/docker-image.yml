@@ -42,6 +42,7 @@ jobs:
         with:
           file: ./Dockerfile
           push: true
-          tags: genocs/formrecognizer:latest
+          tags: genocs/formrecognizer:latest,genocs/formrecognizer:2.3.0
+          
           #tags: ${{ steps.meta.outputs.tags }}
           #labels: ${{ steps.meta.outputs.labels }}
