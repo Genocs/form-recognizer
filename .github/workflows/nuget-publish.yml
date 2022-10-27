@@ -4,17 +4,26 @@ on:
     branches: [master]
 
 jobs:
-
   publish-nuget:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup .NET Core    
-        uses: actions/setup-dotnet@v1
-      
-      - name: Publish to NuGet
-        uses: brandedoutcast/publish-nuget@v2.5.5
+      - name: Generate build number
+        uses: einaregilsson/build-number@v3
         with:
-          PROJECT_FILE_PATH: src/Genocs.Integration.CognitiveServices/Genocs.Integration.CognitiveServices.csproj
-          PACKAGE_NAME: Genocs.Integration.CognitiveServices
-          NUGET_KEY: ${{ secrets.NUGET_API_KEY }}
+          token: ${{secrets.github_token}}
+      - uses: actions/checkout@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
+      - name: Pack
+        run: dotnet pack ./src/Genocs.Integration.CognitiveServices/Genocs.Integration.CognitiveServices.csproj -o . -p:Version=2.4.${{ env.BUILD_NUMBER }}
+      - name: Push
+        run: dotnet nuget push *.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json

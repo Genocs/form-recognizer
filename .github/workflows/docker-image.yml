@@ -8,7 +8,7 @@ on:
 
 jobs:
   build_and_push_to_registry:
-    name: Build and Push Docker image to Docker Hub
+    name: Build and Push image to Docker Hub
     runs-on: ubuntu-latest
 
     steps:
@@ -16,7 +16,7 @@ jobs:
         uses: einaregilsson/build-number@v3
         with:
           token: ${{secrets.github_token}}
-      - name: Print new build number
+      - name: Print build number
         run: echo "Build number is $BUILD_NUMBER"
 
       - name: Checkout
