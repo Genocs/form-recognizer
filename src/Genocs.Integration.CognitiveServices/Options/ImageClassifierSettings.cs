@@ -1,7 +1,7 @@
 ﻿namespace Genocs.Integration.CognitiveServices.Options;
 
 /// <summary>
-/// 
+/// The ImageClassifierSettings object
 /// </summary>
 public class ImageClassifierSettings
 {

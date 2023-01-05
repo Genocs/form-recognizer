@@ -100,6 +100,11 @@ public class CardIdRecognizerService : ICardIdRecognizer, IDisposable
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="url"></param>
+    /// <returns></returns>
     public async Task<CardIdResult?> Recognize(string url)
     {
         HttpResponseMessage response;
@@ -161,5 +166,4 @@ public class CardIdRecognizerService : ICardIdRecognizer, IDisposable
 
         return JsonConvert.DeserializeObject<CardIdResult>(contentString);
     }
-
 }

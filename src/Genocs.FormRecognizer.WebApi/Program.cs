@@ -1,19 +1,19 @@
-using Genocs.FormRecognizer.WebApi;
 using Genocs.FormRecognizer.WebApi.Extensions;
-using Genocs.FormRecognizer.WebApi.Options;
 using Genocs.Integration.CognitiveServices.Interfaces;
 using Genocs.Integration.CognitiveServices.Options;
 using Genocs.Integration.CognitiveServices.Services;
+using Genocs.Monitoring;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Serilog;
 using Serilog.Events;
+using System.Text.Json.Serialization;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
-    .MinimumLevel.Override("Microsoft", LogEventLevel.Debug)
-    .MinimumLevel.Override("MassTransit", LogEventLevel.Debug)
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+    .MinimumLevel.Override("MassTransit", LogEventLevel.Information)
     .Enrich.FromLogContext()
     .WriteTo.Console()
     .CreateLogger();
@@ -24,62 +24,53 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((ctx, lc) => lc
     .WriteTo.Console());
 
-// ***********************************************
-// Open Telemetry - START
-OpenTelemetryInitializer.Initialize(builder);
-// Open Telemetry - END
-// ***********************************************
+//builder.InitializeOpenTelemetry();
+// add services to DI container
+var services = builder.Services;
 
+// Set Custom Open telemetry
+services.AddCustomOpenTelemetry(builder.Configuration);
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+services.AddCors();
+services.AddControllers().AddJsonOptions(x =>
+{
+    // serialize enums as strings in api responses (e.g. Role)
+    x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 
-builder.Services.Configure<HealthCheckPublisherOptions>(options =>
+services.AddHealthChecks();
+
+services.Configure<HealthCheckPublisherOptions>(options =>
 {
     options.Delay = TimeSpan.FromSeconds(2);
     options.Predicate = check => check.Tags.Contains("ready");
 });
 
-builder.Services.AddOptions();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen();
 
-builder.Services.Configure<AzureCognitiveServicesConfig>(builder.Configuration.GetSection(AzureCognitiveServicesConfig.Position));
-builder.Services.Configure<AzureStorageConfig>(builder.Configuration.GetSection(AzureStorageConfig.Position));
-builder.Services.Configure<ImageClassifierConfig>(builder.Configuration.GetSection(ImageClassifierConfig.Position));
-builder.Services.Configure<AzureCognitiveServicesConfig>(builder.Configuration.GetSection(AzureCognitiveServicesConfig.Position));
-builder.Services.Configure<RabbitMQConfig>(builder.Configuration.GetSection(RabbitMQConfig.Position));
-
-
-builder.Services.AddSingleton<StorageService>();
-builder.Services.AddSingleton<IFormRecognizer, FormRecognizerService>();
-builder.Services.AddSingleton<IImageClassifier, ImageClassifierService>();
-builder.Services.AddSingleton<ICardIdRecognizer, CardIdRecognizerService>();
-
-builder.Services.AddCustomCache(builder.Configuration.GetSection(RedisConfig.Position));
+// Add Masstransit bus configuration
+services.AddCustomMassTransit(builder.Configuration);
 
 
-builder.Services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
-builder.Services.AddMassTransit(x =>
-{  
+services.AddOptions();
 
-    x.UsingRabbitMq((context, cfg) =>
-    {
-        var rabbitMQOptions = new RabbitMQConfig();
-        builder.Configuration.GetSection(RabbitMQConfig.Position).Bind(rabbitMQOptions);
-
-        cfg.Host(rabbitMQOptions.URL, rabbitMQOptions.VirtualHost, h =>
-        {
-            h.Username(rabbitMQOptions.Username);
-            h.Password(rabbitMQOptions.Password);
-        });
+services.Configure<AzureCognitiveServicesConfig>(builder.Configuration.GetSection(AzureCognitiveServicesConfig.Position));
+services.Configure<AzureStorageConfig>(builder.Configuration.GetSection(AzureStorageConfig.Position));
+services.Configure<ImageClassifierConfig>(builder.Configuration.GetSection(ImageClassifierConfig.Position));
+services.Configure<AzureCognitiveServicesConfig>(builder.Configuration.GetSection(AzureCognitiveServicesConfig.Position));
+//services.Configure<RabbitMQSettings>(builder.Configuration.GetSection(RabbitMQSettings.Position));
 
 
-        MessageDataDefaults.ExtraTimeToLive = TimeSpan.FromDays(1);
-        MessageDataDefaults.Threshold = 2000;
-        MessageDataDefaults.AlwaysWriteToRepository = false;
-    });
-});
+services.AddSingleton<StorageService>();
+services.AddSingleton<IFormRecognizer, FormRecognizerService>();
+services.AddSingleton<IImageClassifier, ImageClassifierService>();
+services.AddSingleton<ICardIdRecognizer, CardIdRecognizerService>();
+
+services.AddCustomCache(builder.Configuration);
+
+services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
 
 
 var app = builder.Build();
@@ -91,6 +82,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// global cors policy
+app.UseCors(x => x
+    .SetIsOriginAllowed(origin => true)
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .AllowCredentials());
+
 app.UseHttpsRedirection();
 
 app.UseRouting();
@@ -98,6 +96,8 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHealthChecks("/healthz");
 
 app.Run();
 
