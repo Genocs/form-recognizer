@@ -7,5 +7,10 @@ namespace Genocs.Integration.CognitiveServices.Interfaces;
 /// </summary>
 public interface ICardIdRecognizer
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="url"></param>
+    /// <returns>The result</returns>
     Task<CardIdResult?> Recognize(string url);
 }

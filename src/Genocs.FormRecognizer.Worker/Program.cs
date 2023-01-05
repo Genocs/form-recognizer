@@ -1,4 +1,4 @@
-﻿using Genocs.FormRecognizer.Service;
+﻿using Genocs.FormRecognizer.Worker;
 using Genocs.Integration.CognitiveServices.Options;
 using Serilog;
 using Serilog.Events;
@@ -16,11 +16,11 @@ IHost host = Host.CreateDefaultBuilder(args)
     {
         OpenTelemetryInitializer.Initialize(hostContext, services);
 
-        // Register config
-        services.Configure<AzureCognitiveServicesConfig>(hostContext.Configuration.GetSection("AzureCognitiveServicesConfig"));
-        services.Configure<AzureStorageConfig>(hostContext.Configuration.GetSection("AzureStorageConfig"));
-        services.Configure<ImageClassifierConfig>(hostContext.Configuration.GetSection("ImageClassifierConfig"));
-        services.Configure<AzureCognitiveServicesConfig>(hostContext.Configuration.GetSection("FormRecognizerConfig"));
+        // Register Settings
+        services.Configure<AzureCognitiveServicesSettings>(hostContext.Configuration.GetSection(AzureCognitiveServicesSettings.Position));
+        services.Configure<AzureStorageSettings>(hostContext.Configuration.GetSection(AzureStorageSettings.Position));
+        services.Configure<ImageClassifierSettings>(hostContext.Configuration.GetSection(ImageClassifierSettings.Position));
+        services.Configure<AzureCognitiveServicesSettings>(hostContext.Configuration.GetSection(AzureCognitiveServicesSettings.Position));
 
         services.AddHostedService<WorkerService>();
 

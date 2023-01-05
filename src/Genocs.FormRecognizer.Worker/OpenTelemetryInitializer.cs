@@ -4,7 +4,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System.Diagnostics;
 
-namespace Genocs.FormRecognizer.Service;
+namespace Genocs.FormRecognizer.Worker;
 
 internal static class OpenTelemetryInitializer
 {

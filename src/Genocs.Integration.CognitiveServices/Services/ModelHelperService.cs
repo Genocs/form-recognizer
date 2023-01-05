@@ -10,12 +10,12 @@ namespace Genocs.Integration.CognitiveServices.Services;
 
 public class ModelHelperService : IModelHelper
 {
-    private readonly AzureCognitiveServicesConfig _config;
+    private readonly AzureCognitiveServicesSettings _config;
     private readonly ILogger<ModelHelperService> _logger;
 
     private readonly FormTrainingClient _client;
 
-    public ModelHelperService(IOptions<AzureCognitiveServicesConfig> config, ILogger<ModelHelperService> logger)
+    public ModelHelperService(IOptions<AzureCognitiveServicesSettings> config, ILogger<ModelHelperService> logger)
     {
         if (config == null)
         {

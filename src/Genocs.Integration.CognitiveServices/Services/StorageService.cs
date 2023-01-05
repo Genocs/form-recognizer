@@ -12,11 +12,11 @@ namespace Genocs.Integration.CognitiveServices.Services;
 public class StorageService
 {
     private readonly ILogger<StorageService> _logger;
-    private readonly AzureStorageConfig _storageConfig;
+    private readonly AzureStorageSettings _storageConfig;
 
     private static readonly string[] ImagesFormats = new string[] { ".jpg", ".png", ".gif", ".jpeg" };
 
-    public StorageService(IOptions<AzureStorageConfig> config, ILogger<StorageService> logger)
+    public StorageService(IOptions<AzureStorageSettings> config, ILogger<StorageService> logger)
     {
         _ = config ?? throw new ArgumentNullException(nameof(config));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));

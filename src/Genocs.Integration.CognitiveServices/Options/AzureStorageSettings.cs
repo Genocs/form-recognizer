@@ -1,8 +1,11 @@
 ﻿namespace Genocs.Integration.CognitiveServices.Options;
 
-public class AzureStorageConfig
+public class AzureStorageSettings
 {
-    public const string Position = "AzureStorageConfig";
+    /// <summary>
+    /// Default Section name
+    /// </summary>
+    public const string Position = "AzureStorageSettings";
     public string AccountName { get; set; } = default!;
     public string AccountKey { get; set; } = default!;
     public string UploadContainer { get; set; } = default!;

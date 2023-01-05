@@ -9,9 +9,12 @@ using Newtonsoft.Json.Linq;
 
 namespace Genocs.Integration.CognitiveServices.Services;
 
+/// <summary>
+/// 
+/// </summary>
 public class CardIdRecognizerService : ICardIdRecognizer, IDisposable
 {
-    private readonly AzureCognitiveServicesConfig _config;
+    private readonly AzureCognitiveServicesSettings _config;
     private readonly ILogger<CardIdRecognizerService> _logger;
 
     // Track whether Dispose has been called.
@@ -22,7 +25,7 @@ public class CardIdRecognizerService : ICardIdRecognizer, IDisposable
     private readonly string prefix_url = "vision/v2.0/recognizeText?mode=Printed";
 
 
-    public CardIdRecognizerService(IOptions<AzureCognitiveServicesConfig> config, ILogger<CardIdRecognizerService> logger)
+    public CardIdRecognizerService(IOptions<AzureCognitiveServicesSettings> config, ILogger<CardIdRecognizerService> logger)
     {
         if (config == null)
         {

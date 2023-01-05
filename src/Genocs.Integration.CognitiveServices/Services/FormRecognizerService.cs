@@ -11,13 +11,13 @@ namespace Genocs.Integration.CognitiveServices.Services;
 
 public class FormRecognizerService : IFormRecognizer
 {
-    private readonly AzureCognitiveServicesConfig _config;
+    private readonly AzureCognitiveServicesSettings _config;
     private readonly IDistributedCache _distributedCache;
     private readonly ILogger<FormRecognizerService> _logger;
 
     private readonly FormRecognizerClient _client;
 
-    public FormRecognizerService(IDistributedCache distributedCache, IOptions<AzureCognitiveServicesConfig> config, ILogger<FormRecognizerService> logger)
+    public FormRecognizerService(IDistributedCache distributedCache, IOptions<AzureCognitiveServicesSettings> config, ILogger<FormRecognizerService> logger)
     {
         if (config == null)
         {
