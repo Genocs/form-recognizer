@@ -1,25 +1,30 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
 WORKDIR /src
-COPY ["src/Genocs.FormRecognizer.WebApi/Genocs.FormRecognizer.WebApi.csproj", "src/Genocs.FormRecognizer.WebApi/"]
-COPY ["src/Genocs.FormRecognizer.Contracts/Genocs.FormRecognizer.Contracts.csproj", "src/Genocs.FormRecognizer.Contracts/"]
-COPY ["src/Genocs.Integration.CognitiveServices/Genocs.Integration.CognitiveServices.csproj", "src/Genocs.Integration.CognitiveServices/"]
+COPY ["src/Genocs.FormRecognizer.WebApi", "src/Genocs.FormRecognizer.WebApi/"]
 
-RUN dotnet restore "src/Genocs.FormRecognizer.WebApi/Genocs.FormRecognizer.WebApi.csproj"
-COPY . .
+COPY ["LICENSE", "LICENSE"]
+COPY ["icon.png", "icon.png"]
+
 WORKDIR "/src/src/Genocs.FormRecognizer.WebApi"
+
+RUN dotnet restore "Genocs.FormRecognizer.WebApi.csproj"
+
 RUN dotnet build "Genocs.FormRecognizer.WebApi.csproj" -c Release -o /app/build
 
-FROM build AS publish
+FROM build-env AS publish
 RUN dotnet publish "Genocs.FormRecognizer.WebApi.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Genocs.FormRecognizer.WebApi.dll"]
+
+
