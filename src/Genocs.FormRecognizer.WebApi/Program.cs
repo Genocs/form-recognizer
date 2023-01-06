@@ -56,10 +56,10 @@ services.AddCustomMassTransit(builder.Configuration);
 
 services.AddOptions();
 
-services.Configure<AzureCognitiveServicesConfig>(builder.Configuration.GetSection(AzureCognitiveServicesConfig.Position));
-services.Configure<AzureStorageConfig>(builder.Configuration.GetSection(AzureStorageConfig.Position));
-services.Configure<ImageClassifierConfig>(builder.Configuration.GetSection(ImageClassifierConfig.Position));
-services.Configure<AzureCognitiveServicesConfig>(builder.Configuration.GetSection(AzureCognitiveServicesConfig.Position));
+services.Configure<AzureCognitiveServicesSettings>(builder.Configuration.GetSection(AzureCognitiveServicesSettings.Position));
+services.Configure<AzureStorageSettings>(builder.Configuration.GetSection(AzureStorageSettings.Position));
+services.Configure<ImageClassifierSettings>(builder.Configuration.GetSection(ImageClassifierSettings.Position));
+services.Configure<AzureCognitiveServicesSettings>(builder.Configuration.GetSection(AzureCognitiveServicesSettings.Position));
 //services.Configure<RabbitMQSettings>(builder.Configuration.GetSection(RabbitMQSettings.Position));
 
 
