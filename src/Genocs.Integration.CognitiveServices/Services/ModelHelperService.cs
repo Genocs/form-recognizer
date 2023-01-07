@@ -17,18 +17,26 @@ public class ModelHelperService : IModelHelper
 
     public ModelHelperService(IOptions<AzureCognitiveServicesSettings> config, ILogger<ModelHelperService> logger)
     {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
         if (config == null)
         {
             throw new ArgumentNullException(nameof(config));
         }
 
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        if (config.Value == null)
+        {
+            throw new ArgumentNullException(nameof(config.Value));
+        }
+
+        if (!AzureCognitiveServicesSettings.IsValid(config.Value))
+        {
+            throw new ArgumentException("AzureCognitiveServicesSettings is invalid", nameof(config.Value));
+        }
 
         _config = config.Value;
-
         _client = new FormTrainingClient(new Uri(_config.Endpoint), new AzureKeyCredential(_config.SubscriptionKey));
     }
-
 
 
     private async Task<List<dynamic>> Evaluate(RecognizeCustomFormsOperation operation)
@@ -124,7 +132,7 @@ public class ModelHelperService : IModelHelper
     //    }
     //}
 
-    public  async Task CreateModelAsync(string trainingSetUrl, string modelName)
+    public async Task CreateModelAsync(string trainingSetUrl, string modelName)
     {
         // Create a new model to store in the account
         Uri trainingSetUri = new Uri(trainingSetUrl);

@@ -19,4 +19,24 @@ public class AzureCognitiveServicesSettings
     /// The Azure Cognitive Services SubscriptionKey
     /// </summary>
     public string SubscriptionKey { get; set; } = default!;
+
+
+    /// <summary>
+    /// Validator
+    /// </summary>
+    /// <param name="settings">instance object to validate</param>
+    /// <returns>true if valid otherwise false</returns>
+    public static bool IsValid(AzureCognitiveServicesSettings settings)
+    {
+        if (settings is null)
+        {
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(settings.Endpoint) || string.IsNullOrWhiteSpace(settings.SubscriptionKey))
+        {
+            return false;
+        }
+        return true;
+    }
 }

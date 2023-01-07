@@ -83,9 +83,20 @@ public class StorageService
         return await Task.FromResult(thumbnailUrls);
     }
 
+    /// <summary>
+    /// Upload file to the storage
+    /// </summary>
+    /// <param name="files">IFormFile list of files</param>
+    /// <returns>Liast of uploaded object</returns>
     public async Task<List<UploadedItem>> UploadFilesAsync(List<IFormFile> files)
     {
         List<UploadedItem> result = new();
+
+        if (files is null || !files.Any())
+        {
+            return result;
+        }
+
         foreach (var formFile in files)
         {
             if (IsImage(formFile))
@@ -114,7 +125,7 @@ public class StorageService
     {
         BlobSasBuilder sasBuilder = new()
         {
-            ExpiresOn = DateTime.UtcNow + (new TimeSpan(0, 0, 30)),
+            ExpiresOn = DateTime.UtcNow + (new TimeSpan(0, 15, 0)),
             BlobContainerName = containerName,
             BlobName = blobName,
             Resource = "b" // Generate the token for a blob

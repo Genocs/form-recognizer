@@ -108,11 +108,16 @@ public class ScanFormController : ControllerBase
     /// <param name="classificationModelId">The classification model Id</param>
     /// <returns>The result</returns>
     [Route("UploadAndEvaluate"), HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<object>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<dynamic>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<List<dynamic>> PostUploadAndEvaluate([FromForm(Name = "images")] List<IFormFile> files, [FromQuery] string classificationModelId)
+    public async Task<ActionResult<List<dynamic>>> PostUploadAndEvaluate([FromForm(Name = "images")] List<IFormFile> files, [FromQuery] string classificationModelId)
     {
+        if (string.IsNullOrWhiteSpace(classificationModelId))
+        {
+            return BadRequest("classificationModelId cannot be null or empty");
+        }
+
         var uploadResult = await _storageService.UploadFilesAsync(files);
         return await _formRecognizerService.ScanRemote(classificationModelId, uploadResult.First().URL);
     }

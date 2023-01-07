@@ -10,6 +10,9 @@ using System.Net.Http.Json;
 
 namespace Genocs.Integration.CognitiveServices.Services;
 
+/// <summary>
+/// The ImageClassifierService implementation 
+/// </summary>
 public class ImageClassifierService : IImageClassifier, IDisposable
 {
     private readonly ImageClassifierSettings _config;
@@ -22,8 +25,8 @@ public class ImageClassifierService : IImageClassifier, IDisposable
     private HttpClient _httpClient;
 
     // https://westeurope.api.cognitive.microsoft.com/customvision/v3.0/Prediction/83db127e-d786-4662-8f11-4dce83da21a5/classify/iterations/Iteration1/url
-    private readonly string prefix_url = "customvision/v3.0/Prediction";
-    private readonly string postfix_url = "classify/iterations/Iteration1/url";
+    private static string prefix_url = "customvision/v3.0/Prediction";
+    private static string postfix_url = "classify/iterations/Iteration1/url";
 
     public ImageClassifierService(ILogger<ImageClassifierService> logger, IOptions<ImageClassifierSettings> config)
     {
@@ -39,19 +42,9 @@ public class ImageClassifierService : IImageClassifier, IDisposable
             throw new ArgumentNullException(nameof(config.Value));
         }
 
-        if (string.IsNullOrWhiteSpace(config.Value.Endpoint))
+        if (!ImageClassifierSettings.IsValid(config.Value))
         {
-            throw new ArgumentNullException(nameof(config.Value.Endpoint));
-        }
-
-        if (string.IsNullOrWhiteSpace(config.Value.ModelId))
-        {
-            throw new ArgumentNullException(nameof(config.Value.ModelId));
-        }
-
-        if (string.IsNullOrWhiteSpace(config.Value.PredictionKey))
-        {
-            throw new ArgumentNullException(nameof(config.Value.PredictionKey));
+            throw new ArgumentException("ImageClassifierSettings is invalid", nameof(config.Value));
         }
 
         _config = config.Value;

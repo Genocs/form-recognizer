@@ -61,6 +61,13 @@ public class FormRecognizerService : IFormRecognizer
         return await Evaluate(operation);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="classificationKey">_The Classification key</param>
+    /// <param name="url">the resource url</param>
+    /// <returns>dynamic list result</returns>
+    /// <exception cref="NullReferenceException"></exception>
     public async Task<List<dynamic>> ScanRemote(string classificationKey, string url)
     {
         string? classificationModelId = await _distributedCache.GetStringAsync(classificationKey);
