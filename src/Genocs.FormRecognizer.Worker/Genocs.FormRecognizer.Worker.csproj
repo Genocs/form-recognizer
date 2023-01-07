@@ -4,16 +4,15 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<UserSecretsId>80aa45e5-afc3-48c7-8a62-7f2f380f39b6</UserSecretsId>
+		<UserSecretsId>genocs</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<DockerfileContext>..\..</DockerfileContext>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Genocs.Monitoring" Version="1.0.0-rc2.0" />
+		<PackageReference Include="Genocs.Monitoring" Version="1.0.0-rc3.0" />
 		<PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.1" />
-		<PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0">
-		  <TreatAsUsed>true</TreatAsUsed>
-		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
 		<PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
 		<PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
 	</ItemGroup>

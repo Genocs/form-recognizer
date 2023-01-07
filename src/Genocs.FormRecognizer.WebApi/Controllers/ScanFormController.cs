@@ -12,7 +12,7 @@ namespace Genocs.FormRecognizer.WebApi.Controllers;
 
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class ScanFormController : ControllerBase
 {
     private readonly IFormRecognizer _formRecognizerService;

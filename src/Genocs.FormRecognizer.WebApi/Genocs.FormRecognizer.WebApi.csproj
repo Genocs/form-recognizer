@@ -4,14 +4,14 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<UserSecretsId>80aa45e5-afc3-48c7-8a62-7f2f380f39b6</UserSecretsId>
+		<UserSecretsId>genocs</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<DockerfileContext>..\..</DockerfileContext>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Genocs.Integration.CognitiveServices" Version="3.0.0" />
-		<PackageReference Include="Genocs.Monitoring" Version="1.0.0-rc2.0" />
+		<PackageReference Include="Genocs.Monitoring" Version="1.0.0-rc3.0" />
 		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.1" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
 		<PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
