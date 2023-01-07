@@ -2,9 +2,9 @@ name: .NET
 
 on:
   push:
-    branches: [main]
+    branches: [master, develop, deploy]
   pull_request:
-    branches: [main]
+    branches: [master, develop, deploy]
 
 jobs:
   build:
@@ -15,7 +15,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 7.0.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
