@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+  formrecognizer.webapi:
+    image: genocs/formrecognizer-webapi:3.0.0
+    build:
+      context: .
+      dockerfile: webapi.dockerfile
+
+  formrecognizer.worker:
+    image: genocs/formrecognizer-worker:3.0.0
+    build:
+      context: .
+      dockerfile: worker.dockerfile
