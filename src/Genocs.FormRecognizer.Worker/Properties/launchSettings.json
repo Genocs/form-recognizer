@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Genocs.FormRecognizer.Service": {
+    "Genocs.FormRecognizer.Worker": {
       "commandName": "Project",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"

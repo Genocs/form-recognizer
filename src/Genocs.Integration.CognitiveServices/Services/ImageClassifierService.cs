@@ -12,7 +12,7 @@ namespace Genocs.Integration.CognitiveServices.Services;
 
 public class ImageClassifierService : IImageClassifier, IDisposable
 {
-    private readonly ImageClassifierConfig _config;
+    private readonly ImageClassifierSettings _config;
 
     private readonly ILogger<ImageClassifierService> _logger;
 
@@ -25,7 +25,7 @@ public class ImageClassifierService : IImageClassifier, IDisposable
     private readonly string prefix_url = "customvision/v3.0/Prediction";
     private readonly string postfix_url = "classify/iterations/Iteration1/url";
 
-    public ImageClassifierService(ILogger<ImageClassifierService> logger, IOptions<ImageClassifierConfig> config)
+    public ImageClassifierService(ILogger<ImageClassifierService> logger, IOptions<ImageClassifierSettings> config)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 

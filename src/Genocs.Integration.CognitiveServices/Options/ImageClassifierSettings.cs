@@ -1,8 +1,14 @@
 ﻿namespace Genocs.Integration.CognitiveServices.Options;
 
-public class ImageClassifierConfig
+/// <summary>
+/// The ImageClassifierSettings object
+/// </summary>
+public class ImageClassifierSettings
 {
-    public const string Position = "ImageClassifierConfig";
+    /// <summary>
+    /// Default Section name
+    /// </summary>
+    public const string Position = "ImageClassifierSettings";
     public string? Endpoint { get; set; }
     public string? PredictionId { get; set; }
     public string? PredictionKey { get; set; }

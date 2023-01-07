@@ -29,38 +29,44 @@ POST {{root_url}}/api/Settings
 ## Setup the environment by using environment variables
 
 
-``` PS
-  "AzureStorageConfig": {
-    "AccountName": "{{AccountName}}",
+``` sh
+  "AzureStorageSettings": {
+    "AccountName": "{{accountName}}",
     "AccountKey": "{{AccountKey}}",
     "UploadContainer": "{{UploadContainer}}",
     "TrainingSetContainerUrl": "{{TrainingSetContainerUrl}}",
     "ThumbnailContainer": "{{ThumbnailContainer}}",
     "InspectingFileUrl": "{{InspectingFileUrl}}"
   },
-  "ImageClassifierConfig": {
+  "ImageClassifierSettings": {
     "Endpoint": "{{Endpoint}}",
     "PredictionKey": "{{PredictionKey}}",
     "ModelId": "{{ModelId}}"
   },
-  "FormRecognizerConfig": {
+  "FormRecognizerSettings": {
     "Endpoint": "{{Endpoint}}",
     "PredictionKey": "{{PredictionKey}}"
   },
-  "RedisConfig": {
+  "RedisSettings": {
     "ConnectionString": "{{ConnectionString}}"
+  },
+  "RabbitMQSettings": {
+    "HostName": "localhost",
+    "Username": "guest",
+    "Password": "guest",
+    "VirtualHost": "/"
   }
 ```  
   
 
 ## Docker image
 
-``` PS
-docker build -t genocs/formrecognizer:2.2.0 -t genocs/formrecognizer:latest -f .\src\Genocs.FormRecognizer.WebApi\Dockerfile .
+``` sh
+docker build -t genocs/formrecognizer:3.0.0 -t genocs/formrecognizer:latest -f .\webapi.dockerfile .
 
-docker tag genocs/formrecognizer genocs/formrecognizer:2.2.0
+docker tag genocs/formrecognizer genocs/formrecognizer:3.0.0
 docker tag genocs/formrecognizer genocs/formrecognizer:latest
 
-docker push genocs/formrecognizer:2.2.0
+docker push genocs/formrecognizer:3.0.0
 docker push genocs/formrecognizer:latest
 ``` 

@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.FormRecognizer.WebApi", "src\Genocs.FormRecognizer.WebApi\Genocs.FormRecognizer.WebApi.csproj", "{E9E095E6-F3B5-4533-B97B-F2BC811456D4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.FormRecognizer.Service", "src\Genocs.FormRecognizer.Service\Genocs.FormRecognizer.Service.csproj", "{A8655D44-AD75-44BA-A02D-D267162B30A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.FormRecognizer.Worker", "src\Genocs.FormRecognizer.Worker\Genocs.FormRecognizer.Worker.csproj", "{A8655D44-AD75-44BA-A02D-D267162B30A9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.FormRecognizer.Tests", "src\Genocs.FormRecognizer.Tests\Genocs.FormRecognizer.Tests.csproj", "{F93E80AE-C09A-4126-90B6-CC9F8E61CEB8}"
 EndProject

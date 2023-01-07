@@ -10,14 +10,14 @@ namespace Genocs.Integration.CognitiveServices.Services;
 
 public class IdDocumentService : ICardIdRecognizer, IDisposable
 {
-    private readonly AzureCognitiveServicesConfig _config;
+    private readonly AzureCognitiveServicesSettings _config;
     private readonly ILogger<IdDocumentService> _logger;
 
     // Track whether Dispose has been called.
     private bool _disposed = false;
 
 
-    public IdDocumentService(IOptions<AzureCognitiveServicesConfig> config, ILogger<IdDocumentService> logger)
+    public IdDocumentService(IOptions<AzureCognitiveServicesSettings> config, ILogger<IdDocumentService> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 

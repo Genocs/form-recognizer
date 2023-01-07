@@ -1,6 +1,5 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 EXPOSE 80
@@ -8,23 +7,21 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
 WORKDIR /src
-COPY ["src/Genocs.FormRecognizer.WebApi", "src/Genocs.FormRecognizer.WebApi/"]
+COPY ["src/Genocs.FormRecognizer.Worker", "src/Genocs.FormRecognizer.Worker/"]
 
 COPY ["LICENSE", "LICENSE"]
 COPY ["icon.png", "icon.png"]
 
-WORKDIR "/src/src/Genocs.FormRecognizer.WebApi"
+WORKDIR "/src/src/Genocs.FormRecognizer.Worker"
 
-RUN dotnet restore "Genocs.FormRecognizer.WebApi.csproj"
+RUN dotnet restore "Genocs.FormRecognizer.Worker.csproj"
 
-RUN dotnet build "Genocs.FormRecognizer.WebApi.csproj" -c Release -o /app/build
+RUN dotnet build "Genocs.FormRecognizer.Worker.csproj" -c Release -o /app/build
 
 FROM build-env AS publish
-RUN dotnet publish "Genocs.FormRecognizer.WebApi.csproj" -c Release -o /app/publish
+RUN dotnet publish "Genocs.FormRecognizer.Worker.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Genocs.FormRecognizer.WebApi.dll"]
-
-
+ENTRYPOINT ["dotnet", "Genocs.FormRecognizer.Worker.dll"]

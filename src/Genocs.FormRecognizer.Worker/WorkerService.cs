@@ -1,4 +1,4 @@
-﻿namespace Genocs.FormRecognizer.Service;
+﻿namespace Genocs.FormRecognizer.Worker;
 
 class WorkerService : IHostedService, IDisposable
 {

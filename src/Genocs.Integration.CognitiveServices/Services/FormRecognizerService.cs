@@ -9,15 +9,25 @@ using Microsoft.Extensions.Options;
 
 namespace Genocs.Integration.CognitiveServices.Services;
 
+/// <summary>
+/// FormRecognizerService implementation
+/// </summary>
 public class FormRecognizerService : IFormRecognizer
 {
-    private readonly AzureCognitiveServicesConfig _config;
+    private readonly AzureCognitiveServicesSettings _config;
     private readonly IDistributedCache _distributedCache;
     private readonly ILogger<FormRecognizerService> _logger;
 
     private readonly FormRecognizerClient _client;
 
-    public FormRecognizerService(IDistributedCache distributedCache, IOptions<AzureCognitiveServicesConfig> config, ILogger<FormRecognizerService> logger)
+    /// <summary>
+    /// ctor
+    /// </summary>
+    /// <param name="distributedCache"></param>
+    /// <param name="config"></param>
+    /// <param name="logger"></param>
+    /// <exception cref="ArgumentNullException"></exception>
+    public FormRecognizerService(IDistributedCache distributedCache, IOptions<AzureCognitiveServicesSettings> config, ILogger<FormRecognizerService> logger)
     {
         if (config == null)
         {
@@ -34,7 +44,17 @@ public class FormRecognizerService : IFormRecognizer
 
     public async Task<List<dynamic>> ScanLocal(string classificationKey, string filePath)
     {
-        string classificationModelId = await _distributedCache.GetStringAsync(classificationKey);
+        string? classificationModelId = await _distributedCache.GetStringAsync(classificationKey);
+
+        if (string.IsNullOrWhiteSpace(classificationModelId))
+        {
+            throw new NullReferenceException($"DistributedCache do not contains classificationKey: '{classificationKey}'");
+        }
+
+        if (string.IsNullOrWhiteSpace(filePath))
+        {
+            throw new NullReferenceException($"filePath cannot be null or empty");
+        }
 
         using var stream = new FileStream(filePath, FileMode.Open);
         RecognizeCustomFormsOperation operation = await _client.StartRecognizeCustomFormsAsync(classificationModelId, stream);
@@ -43,7 +63,17 @@ public class FormRecognizerService : IFormRecognizer
 
     public async Task<List<dynamic>> ScanRemote(string classificationKey, string url)
     {
-        string classificationModelId = await _distributedCache.GetStringAsync(classificationKey);
+        string? classificationModelId = await _distributedCache.GetStringAsync(classificationKey);
+
+        if (string.IsNullOrWhiteSpace(classificationModelId))
+        {
+            throw new NullReferenceException($"DistributedCache do not contains classificationKey: '{classificationKey}'");
+        }
+
+        if (string.IsNullOrWhiteSpace(url))
+        {
+            throw new NullReferenceException($"url cannot be null or empty");
+        }
 
         Uri formFileUri = new Uri(url);
         RecognizeCustomFormsOperation operation = await _client.StartRecognizeCustomFormsFromUriAsync(classificationModelId, formFileUri);
@@ -52,6 +82,11 @@ public class FormRecognizerService : IFormRecognizer
 
     public async Task<string?> ScanLocalCardId(string filePath)
     {
+        if (string.IsNullOrWhiteSpace(filePath))
+        {
+            throw new NullReferenceException($"filePath cannot be null or empty");
+        }
+
         using var stream = new FileStream(filePath, FileMode.Open);
         var options = new RecognizeIdentityDocumentsOptions() { ContentType = FormContentType.Jpeg };
 
@@ -65,6 +100,11 @@ public class FormRecognizerService : IFormRecognizer
 
     public async Task<string?> ScanRemoteCardId(string url)
     {
+        if (string.IsNullOrWhiteSpace(url))
+        {
+            throw new NullReferenceException($"url cannot be null or empty");
+
+        }
         Uri formFileUri = new Uri(url);
         RecognizeIdentityDocumentsOperation operation = await _client.StartRecognizeIdentityDocumentsFromUriAsync(formFileUri);
         Response<RecognizedFormCollection> operationResponse = await operation.WaitForCompletionAsync();
@@ -77,7 +117,7 @@ public class FormRecognizerService : IFormRecognizer
         {
             if (identityDocument.FormTypeConfidence > 0.90)
             {
-                if(identityDocument.Fields["MachineReadableZone"] != null && identityDocument.Fields["MachineReadableZone"].ValueData != null)
+                if (identityDocument.Fields["MachineReadableZone"] != null && identityDocument.Fields["MachineReadableZone"].ValueData != null)
                 {
                     mrz = identityDocument.Fields["MachineReadableZone"].ValueData.Text;
                 }

@@ -1,16 +1,18 @@
 ﻿using Genocs.FormRecognizer.WebApi.Dto;
 using Genocs.Integration.CognitiveServices.Contracts;
 using Genocs.Integration.CognitiveServices.Interfaces;
+using Genocs.Integration.CognitiveServices.Models;
 using Genocs.Integration.CognitiveServices.Services;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Mime;
 using System.Web;
 
 namespace Genocs.FormRecognizer.WebApi.Controllers;
 
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class ScanFormController : ControllerBase
 {
     private readonly IFormRecognizer _formRecognizerService;
@@ -106,7 +108,7 @@ public class ScanFormController : ControllerBase
     /// <param name="classificationModelId">The classification model Id</param>
     /// <returns>The result</returns>
     [Route("UploadAndEvaluate"), HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<object>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<List<dynamic>> PostUploadAndEvaluate([FromForm(Name = "images")] List<IFormFile> files, [FromQuery] string classificationModelId)
@@ -124,8 +126,10 @@ public class ScanFormController : ControllerBase
     /// <returns>The result</returns>
 
     [Route("Evaluate"), HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<object>))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [Produces(MediaTypeNames.Application.Json)]
+    [Consumes(MediaTypeNames.Application.Json)]
     public async Task<ActionResult<List<dynamic>>> PostClassifyAndEvalaute([FromBody] EvaluateRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.ClassificationModelId))
@@ -151,7 +155,8 @@ public class ScanFormController : ControllerBase
     [Route("ClassifyAndEvaluate"), HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FormExtractorResponse))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [Produces("application/json")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [Consumes(MediaTypeNames.Application.Json)]
     public async Task<IActionResult> GetClassifyAndEvaluate([FromBody] BasicRequest request)
     {
         FormExtractorResponse result = new();
@@ -182,7 +187,8 @@ public class ScanFormController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [Produces("application/json")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [Consumes(MediaTypeNames.Application.Json)]
     public async Task<IActionResult> GetCardIdInfo([FromBody] BasicRequest request)
     {
         var result = await _formRecognizerService.ScanRemoteCardId(request.Url);
@@ -195,10 +201,11 @@ public class ScanFormController : ControllerBase
     /// <param name="url">The public available url</param>
     /// <returns>The result</returns>
     [Route("IdDocument"), HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CardIdResult))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [Produces("application/json")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [Consumes(MediaTypeNames.Application.Json)]
     public async Task<IActionResult> GetIdDocumentInfo([FromBody] BasicRequest request)
     {
         var result = await _cardRecognizerService.Recognize(request.Url);
