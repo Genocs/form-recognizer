@@ -12,7 +12,7 @@ namespace Genocs.Integration.CognitiveServices.Services;
 /// <summary>
 /// 
 /// </summary>
-public class CardIdRecognizerService : ICardIdRecognizer, IDisposable
+public class CardIdRecognizerService : IIdDocumentRecognizer, IDisposable
 {
     private readonly AzureCognitiveServicesSettings _config;
     private readonly ILogger<CardIdRecognizerService> _logger;
@@ -105,7 +105,7 @@ public class CardIdRecognizerService : ICardIdRecognizer, IDisposable
     /// </summary>
     /// <param name="url"></param>
     /// <returns></returns>
-    public async Task<CardIdResult?> Recognize(string url)
+    public async Task<CardIdResult?> RecognizeAsync(string url)
     {
         HttpResponseMessage response;
 

@@ -10,7 +10,7 @@ public class ImageClassifierSettings
     /// </summary>
     public const string Position = "ImageClassifierSettings";
     public string? Endpoint { get; set; }
-    public string? PredictionId { get; set; }
+//    public string? PredictionId { get; set; }
     public string? PredictionKey { get; set; }
     public string? ModelId { get; set; }
 
@@ -24,7 +24,7 @@ public class ImageClassifierSettings
         if (settings == null) return false;
 
         if (string.IsNullOrWhiteSpace(settings.Endpoint)) return false;
-        if (string.IsNullOrWhiteSpace(settings.PredictionId)) return false;
+        //if (string.IsNullOrWhiteSpace(settings.PredictionId)) return false;
         if (string.IsNullOrWhiteSpace(settings.PredictionKey)) return false;
         if (string.IsNullOrWhiteSpace(settings.ModelId)) return false;
         return true;

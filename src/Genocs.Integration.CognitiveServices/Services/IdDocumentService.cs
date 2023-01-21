@@ -8,8 +8,12 @@ using Microsoft.Extensions.Options;
 
 namespace Genocs.Integration.CognitiveServices.Services;
 
-public class IdDocumentService : ICardIdRecognizer, IDisposable
+/// <summary>
+/// 
+/// </summary>
+public class IdDocumentService : IIdDocumentRecognizer, IDisposable
 {
+    private const string ModelId = "prebuilt-idDocument";
     private readonly AzureCognitiveServicesSettings _config;
     private readonly ILogger<IdDocumentService> _logger;
 
@@ -17,6 +21,12 @@ public class IdDocumentService : ICardIdRecognizer, IDisposable
     private bool _disposed = false;
 
 
+    /// <summary>
+    /// Standard constructor
+    /// </summary>
+    /// <param name="config"></param>
+    /// <param name="logger"></param>
+    /// <exception cref="ArgumentNullException"></exception>
     public IdDocumentService(IOptions<AzureCognitiveServicesSettings> config, ILogger<IdDocumentService> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -37,6 +47,11 @@ public class IdDocumentService : ICardIdRecognizer, IDisposable
         if (string.IsNullOrWhiteSpace(_config.Endpoint))
         {
             throw new ArgumentNullException(_config.Endpoint);
+        }
+
+        if (!Uri.IsWellFormedUriString(_config.Endpoint, UriKind.Absolute))
+        {
+            throw new InvalidDataException($"Config Endpoint Uri '{_config.Endpoint}' is invalid");
         }
     }
 
@@ -88,13 +103,52 @@ public class IdDocumentService : ICardIdRecognizer, IDisposable
         }
     }
 
-    public async Task<CardIdResult> Recognize(string url)
+    /// <summary>
+    /// The standard implementation
+    /// </summary>
+    /// <param name="url"></param>
+    /// <returns></returns>
+    public async Task<CardIdResult?> RecognizeAsync(string url)
     {
+        if (string.IsNullOrWhiteSpace(url))
+        {
+            throw new NullReferenceException(nameof(url));
+        }
+
+        if (!Uri.IsWellFormedUriString(url, UriKind.Absolute))
+        {
+            throw new InvalidDataException($"resource url '{url}' is invalid");
+        }
+
+        _logger.LogInformation($"Called RecognizeAsync: '{url}'");
 
         AzureKeyCredential credential = new AzureKeyCredential(_config.SubscriptionKey);
         DocumentAnalysisClient documentAnalysisClient = new DocumentAnalysisClient(new Uri(_config.Endpoint), credential);
-        var res = await documentAnalysisClient.AnalyzeDocumentFromUriAsync(WaitUntil.Completed, "prebuilt-idDocument", new Uri(url));
-        //CardIdResult result = new CardIdResult { AnalyzeResult = }
+        AnalyzeDocumentOperation operationResult = await documentAnalysisClient.AnalyzeDocumentFromUriAsync(WaitUntil.Completed, ModelId, new Uri(url));
+
+        Azure.AI.FormRecognizer.DocumentAnalysis.AnalyzeResult? result = null;
+        if (!operationResult.HasCompleted)
+        {
+            var response = await operationResult.WaitForCompletionAsync();
+            result = response.Value;
+        }
+
+        result = operationResult.Value;
+
+        if (result == null)
+        {
+            return null;
+        }
+
+        if (result.Documents == null || !result.Documents.Any())
+        {
+            // No documents
+            return null;
+        }
+        Azure.AI.FormRecognizer.DocumentAnalysis.AnalyzedDocument? document = result.Documents.OrderBy(o => o.Confidence).FirstOrDefault();
+
+        // Extract fields
+
 
         return null;
     }

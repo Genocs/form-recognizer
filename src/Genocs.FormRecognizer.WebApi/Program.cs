@@ -66,7 +66,7 @@ services.Configure<AzureCognitiveServicesSettings>(builder.Configuration.GetSect
 services.AddSingleton<StorageService>();
 services.AddSingleton<IFormRecognizer, FormRecognizerService>();
 services.AddSingleton<IImageClassifier, ImageClassifierService>();
-services.AddSingleton<ICardIdRecognizer, CardIdRecognizerService>();
+services.TryAddScoped<IIdDocumentRecognizer, IdDocumentService>();
 
 services.AddCustomCache(builder.Configuration);
 

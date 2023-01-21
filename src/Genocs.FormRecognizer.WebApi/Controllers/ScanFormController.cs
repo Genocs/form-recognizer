@@ -16,7 +16,7 @@ namespace Genocs.FormRecognizer.WebApi.Controllers;
 public class ScanFormController : ControllerBase
 {
     private readonly IFormRecognizer _formRecognizerService;
-    private readonly ICardIdRecognizer _cardRecognizerService;
+    private readonly IIdDocumentRecognizer _idDocumentService;
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly IImageClassifier _formClassifierService;
     private readonly StorageService _storageService;
@@ -24,13 +24,13 @@ public class ScanFormController : ControllerBase
     public ScanFormController(StorageService storageService,
                                 IFormRecognizer formRecognizerService,
                                 IImageClassifier formClassifierService,
-                                ICardIdRecognizer cardRecognizerService,
+                                IIdDocumentRecognizer idDocumentService,
                                 IPublishEndpoint publishEndpoint)
     {
         _formRecognizerService = formRecognizerService ?? throw new ArgumentNullException(nameof(formRecognizerService));
         _storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
         _formClassifierService = formClassifierService ?? throw new ArgumentNullException(nameof(formClassifierService));
-        _cardRecognizerService = cardRecognizerService ?? throw new ArgumentNullException(nameof(cardRecognizerService));
+        _idDocumentService = idDocumentService ?? throw new ArgumentNullException(nameof(idDocumentService));
         _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
     }
 
@@ -213,7 +213,7 @@ public class ScanFormController : ControllerBase
     [Consumes(MediaTypeNames.Application.Json)]
     public async Task<IActionResult> GetIdDocumentInfo([FromBody] BasicRequest request)
     {
-        var result = await _cardRecognizerService.Recognize(request.Url);
+        var result = await _idDocumentService.RecognizeAsync(request.Url);
         return result == null ? NoContent() : Ok(result);
     }
 }
