@@ -42,7 +42,14 @@ public class FormRecognizerService : IFormRecognizer
         _client = new FormRecognizerClient(new Uri(_config.Endpoint), new AzureKeyCredential(_config.SubscriptionKey));
     }
 
-    public async Task<List<dynamic>> ScanLocal(string classificationKey, string filePath)
+    /// <summary>
+    /// Scan an image file froma a stream
+    /// </summary>
+    /// <param name="classificationKey"></param>
+    /// <param name="stream"></param>
+    /// <returns></returns>
+    /// <exception cref="NullReferenceException"></exception>
+    public async Task<List<dynamic>> ScanAsync(string classificationKey, Stream stream)
     {
         string? classificationModelId = await _distributedCache.GetStringAsync(classificationKey);
 
@@ -51,12 +58,8 @@ public class FormRecognizerService : IFormRecognizer
             throw new NullReferenceException($"DistributedCache do not contains classificationKey: '{classificationKey}'");
         }
 
-        if (string.IsNullOrWhiteSpace(filePath))
-        {
-            throw new NullReferenceException($"filePath cannot be null or empty");
-        }
+        // Add check if the stream contains an image file
 
-        using var stream = new FileStream(filePath, FileMode.Open);
         RecognizeCustomFormsOperation operation = await _client.StartRecognizeCustomFormsAsync(classificationModelId, stream);
         return await Evaluate(operation);
     }
@@ -68,7 +71,7 @@ public class FormRecognizerService : IFormRecognizer
     /// <param name="url">the resource url</param>
     /// <returns>dynamic list result</returns>
     /// <exception cref="NullReferenceException"></exception>
-    public async Task<List<dynamic>> ScanRemote(string classificationKey, string url)
+    public async Task<List<dynamic>> ScanAsync(string classificationKey, string url)
     {
         string? classificationModelId = await _distributedCache.GetStringAsync(classificationKey);
 

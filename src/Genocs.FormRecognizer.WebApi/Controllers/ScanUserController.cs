@@ -122,7 +122,7 @@ public class ScanUserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Produces(MediaTypeNames.Application.Json)]
     [Consumes(MediaTypeNames.Application.Json)]
-    public async Task<IActionResult> GetCardIdInfo([FromBody] BasicRequest request)
+    public async Task<IActionResult> GetCardIdInfoAsync([FromBody] BasicRequest request)
     {
         var result = await _idDocumentService.RecognizeAsync(request.Url);
         return string.IsNullOrWhiteSpace(result?.AnalyzeResult?.Version) ? NoContent() : Ok(result);
@@ -139,7 +139,7 @@ public class ScanUserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Produces(MediaTypeNames.Application.Json)]
     [Consumes(MediaTypeNames.Application.Json)]
-    public async Task<IActionResult> GetIdDocumentInfo([FromBody] BasicRequest request)
+    public async Task<IActionResult> GetIdDocumentInfoAsync([FromBody] BasicRequest request)
     {
         var result = await _idDocumentService.RecognizeAsync(request.Url);
         return result == null ? NoContent() : Ok(result);

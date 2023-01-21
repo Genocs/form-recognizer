@@ -107,7 +107,7 @@ public class ScanFormController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<dynamic>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<List<dynamic>>> PostUploadAndEvaluate([FromForm(Name = "images")] List<IFormFile> files, [FromQuery] string classificationModelId)
+    public async Task<ActionResult<List<dynamic>>> PostUploadAndEvaluateAsync([FromForm(Name = "images")] List<IFormFile> files, [FromQuery] string classificationModelId)
     {
         if (string.IsNullOrWhiteSpace(classificationModelId))
         {
@@ -115,7 +115,7 @@ public class ScanFormController : ControllerBase
         }
 
         var uploadResult = await _storageService.UploadFilesAsync(files);
-        return await _formRecognizerService.ScanRemote(classificationModelId, uploadResult.First().URL);
+        return await _formRecognizerService.ScanAsync(classificationModelId, uploadResult.First().URL);
     }
 
 
@@ -131,7 +131,7 @@ public class ScanFormController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Produces(MediaTypeNames.Application.Json)]
     [Consumes(MediaTypeNames.Application.Json)]
-    public async Task<ActionResult<List<dynamic>>> PostClassifyAndEvalaute([FromBody] EvaluateRequest request)
+    public async Task<ActionResult<List<dynamic>>> PostClassifyAndEvalauteAsync([FromBody] EvaluateRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.ClassificationModelId))
         {
@@ -143,7 +143,7 @@ public class ScanFormController : ControllerBase
             return BadRequest("url cannot be null or empty");
         }
 
-        return await _formRecognizerService.ScanRemote(request.ClassificationModelId, request.Url);
+        return await _formRecognizerService.ScanAsync(request.ClassificationModelId, request.Url);
     }
 
 
@@ -158,7 +158,7 @@ public class ScanFormController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Produces(MediaTypeNames.Application.Json)]
     [Consumes(MediaTypeNames.Application.Json)]
-    public async Task<IActionResult> GetClassifyAndEvaluate([FromBody] BasicRequest request)
+    public async Task<IActionResult> GetClassifyAndEvaluateAsync([FromBody] BasicRequest request)
     {
         FormExtractorResponse result = new();
         result.ResourceUrl = HttpUtility.HtmlDecode(request.Url);
@@ -167,7 +167,7 @@ public class ScanFormController : ControllerBase
         if (classification != null && classification.Predictions != null && classification.Predictions.Any())
         {
             var first = classification.Predictions.OrderByDescending(o => o.Probability).First();
-            result.ContentData = await _formRecognizerService.ScanRemote(first.TagId, request.Url);
+            result.ContentData = await _formRecognizerService.ScanAsync(first.TagId, request.Url);
         }
 
         result.Classification = classification;
