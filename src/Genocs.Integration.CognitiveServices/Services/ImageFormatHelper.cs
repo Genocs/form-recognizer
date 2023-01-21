@@ -56,10 +56,30 @@ public class ImageFormatHelper
         /// The unknows format
         /// </summary>
         unknown,
+
+        /// <summary>
+        /// Windows Bitmap image type
+        /// </summary>
         bmp,
+
+        /// <summary>
+        /// Jpeg image type
+        /// </summary>
         jpeg,
+
+        /// <summary>
+        /// Gif image type
+        /// </summary>
         gif,
+
+        /// <summary>
+        /// Tiff image type
+        /// </summary>
         tiff,
+
+        /// <summary>
+        /// Png image type
+        /// </summary>
         png
     }
 }

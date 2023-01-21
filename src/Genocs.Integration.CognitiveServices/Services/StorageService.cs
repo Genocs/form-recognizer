@@ -9,6 +9,9 @@ using Microsoft.Extensions.Options;
 
 namespace Genocs.Integration.CognitiveServices.Services;
 
+/// <summary>
+/// Storage service used to store images to Azure blob storage
+/// </summary>
 public class StorageService
 {
     private readonly ILogger<StorageService> _logger;
@@ -23,6 +26,11 @@ public class StorageService
         _storageConfig = config.Value;
     }
 
+    /// <summary>
+    /// Check if the file contains image
+    /// </summary>
+    /// <param name="file">The uploaded file</param>
+    /// <returns></returns>
     public static bool IsImage(IFormFile file)
     {
         if (file.ContentType.Contains("image"))
@@ -60,7 +68,7 @@ public class StorageService
         List<string> thumbnailUrls = new();
 
         // Create a URI to the storage account
-        Uri accountUri = new Uri("https://" + _storageConfig.AccountName + ".blob.core.windows.net/");
+        Uri accountUri = new Uri($"https://{_storageConfig.AccountName}.blob.core.windows.net/");
 
         // Create BlobServiceClient from the account URI
         BlobServiceClient blobServiceClient = new BlobServiceClient(accountUri);

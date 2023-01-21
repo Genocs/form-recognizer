@@ -11,7 +11,7 @@ namespace Genocs.Integration.CognitiveServices.Services;
 /// <summary>
 /// 
 /// </summary>
-public class IdDocumentService : IIdDocumentRecognizer, IDisposable
+public class IdDocumentService : IIDocumentRecognizer, IDisposable
 {
     private const string ModelId = "prebuilt-idDocument";
     private readonly AzureCognitiveServicesSettings _config;
@@ -30,7 +30,6 @@ public class IdDocumentService : IIdDocumentRecognizer, IDisposable
     public IdDocumentService(IOptions<AzureCognitiveServicesSettings> config, ILogger<IdDocumentService> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
 
         if (config == null)
         {

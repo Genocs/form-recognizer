@@ -105,7 +105,13 @@ public class FormRecognizerService : IFormRecognizer
         return identityDocument.FormType;
     }
 
-    public async Task<string?> ScanRemoteCardId(string url)
+    /// <summary>
+    /// Scan image to find ID Document
+    /// </summary>
+    /// <param name="url"></param>
+    /// <returns></returns>
+    /// <exception cref="NullReferenceException"></exception>
+    public async Task<string?> ScanRemoteCardIdAsync(string url)
     {
         if (string.IsNullOrWhiteSpace(url))
         {

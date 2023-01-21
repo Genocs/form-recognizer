@@ -11,12 +11,13 @@ public class AzureCognitiveServicesSettings
     public static string Position = "AzureCognitiveServicesSettings";
 
     /// <summary>
-    /// Azure Cognitive Services URL
+    /// The cognitive service root endpoint
     /// </summary>
+
     public string Endpoint { get; set; } = default!;
 
     /// <summary>
-    /// The Azure Cognitive Services SubscriptionKey
+    /// The azure cognitive services subscription key
     /// </summary>
     public string SubscriptionKey { get; set; } = default!;
 
@@ -28,15 +29,10 @@ public class AzureCognitiveServicesSettings
     /// <returns>true if valid otherwise false</returns>
     public static bool IsValid(AzureCognitiveServicesSettings settings)
     {
-        if (settings is null)
-        {
-            return false;
-        }
+        if (settings is null) return false;
 
-        if (string.IsNullOrWhiteSpace(settings.Endpoint) || string.IsNullOrWhiteSpace(settings.SubscriptionKey))
-        {
-            return false;
-        }
+        if (string.IsNullOrWhiteSpace(settings.Endpoint)) return false;
+        if (string.IsNullOrWhiteSpace(settings.SubscriptionKey)) return false;
         return true;
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Genocs.FormRecognizer.WebApi.Dto;
 using Genocs.Integration.CognitiveServices.Contracts;
 using Genocs.Integration.CognitiveServices.Interfaces;
-using Genocs.Integration.CognitiveServices.Models;
 using Genocs.Integration.CognitiveServices.Services;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +15,6 @@ namespace Genocs.FormRecognizer.WebApi.Controllers;
 public class ScanFormController : ControllerBase
 {
     private readonly IFormRecognizer _formRecognizerService;
-    private readonly IIdDocumentRecognizer _idDocumentService;
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly IImageClassifier _formClassifierService;
     private readonly StorageService _storageService;
@@ -24,13 +22,11 @@ public class ScanFormController : ControllerBase
     public ScanFormController(StorageService storageService,
                                 IFormRecognizer formRecognizerService,
                                 IImageClassifier formClassifierService,
-                                IIdDocumentRecognizer idDocumentService,
                                 IPublishEndpoint publishEndpoint)
     {
         _formRecognizerService = formRecognizerService ?? throw new ArgumentNullException(nameof(formRecognizerService));
         _storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
         _formClassifierService = formClassifierService ?? throw new ArgumentNullException(nameof(formClassifierService));
-        _idDocumentService = idDocumentService ?? throw new ArgumentNullException(nameof(idDocumentService));
         _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
     }
 
@@ -44,14 +40,14 @@ public class ScanFormController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetClassify([FromBody] BasicRequest request)
+    public async Task<IActionResult> GetClassifyAsync([FromBody] BasicRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.Url))
         {
             return BadRequest("url cannot be null or empty");
         }
 
-        var classification = await _formClassifierService.Classify(HttpUtility.HtmlDecode(request.Url));
+        var classification = await _formClassifierService.ClassifyAsync(HttpUtility.HtmlDecode(request.Url));
 
         if (classification != null && classification.Predictions != null && classification.Predictions.Any())
         {
@@ -73,7 +69,7 @@ public class ScanFormController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> PostUploadAndClassify([FromForm(Name = "images")] List<IFormFile> files)
+    public async Task<IActionResult> PostUploadAndClassifyAsync([FromForm(Name = "images")] List<IFormFile> files)
     {
         if (files == null || files.Count == 0)
         {
@@ -89,7 +85,7 @@ public class ScanFormController : ControllerBase
         var uploadResult = await _storageService.UploadFilesAsync(files);
 
         // Classify the result
-        var classification = await _formClassifierService.Classify(HttpUtility.HtmlDecode(uploadResult.First().URL));
+        var classification = await _formClassifierService.ClassifyAsync(HttpUtility.HtmlDecode(uploadResult.First().URL));
 
         if (classification != null && classification.Predictions != null && classification.Predictions.Any())
         {
@@ -166,7 +162,7 @@ public class ScanFormController : ControllerBase
     {
         FormExtractorResponse result = new();
         result.ResourceUrl = HttpUtility.HtmlDecode(request.Url);
-        var classification = await _formClassifierService.Classify(HttpUtility.HtmlDecode(request.Url));
+        var classification = await _formClassifierService.ClassifyAsync(HttpUtility.HtmlDecode(request.Url));
 
         if (classification != null && classification.Predictions != null && classification.Predictions.Any())
         {
@@ -180,41 +176,6 @@ public class ScanFormController : ControllerBase
         await _publishEndpoint.Publish(result);
 
         return Ok(result);
-    }
-
-
-    /// <summary>
-    /// It allows to scan a image previously uploaded
-    /// </summary>
-    /// <param name="url">The public available url</param>
-    /// <returns>The result</returns>
-    [Route("CardId"), HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [Produces(MediaTypeNames.Application.Json)]
-    [Consumes(MediaTypeNames.Application.Json)]
-    public async Task<IActionResult> GetCardIdInfo([FromBody] BasicRequest request)
-    {
-        var result = await _formRecognizerService.ScanRemoteCardId(request.Url);
-        return string.IsNullOrWhiteSpace(result) ? NoContent() : Ok(result);
-    }
-
-    /// <summary>
-    /// It allows to scan a image previously uploaded
-    /// </summary>
-    /// <param name="url">The public available url</param>
-    /// <returns>The result</returns>
-    [Route("IdDocument"), HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CardIdResult))]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [Produces(MediaTypeNames.Application.Json)]
-    [Consumes(MediaTypeNames.Application.Json)]
-    public async Task<IActionResult> GetIdDocumentInfo([FromBody] BasicRequest request)
-    {
-        var result = await _idDocumentService.RecognizeAsync(request.Url);
-        return result == null ? NoContent() : Ok(result);
     }
 }
 

@@ -24,10 +24,16 @@ public class ImageClassifierService : IImageClassifier, IDisposable
 
     private HttpClient _httpClient;
 
-    // https://westeurope.api.cognitive.microsoft.com/customvision/v3.0/Prediction/83db127e-d786-4662-8f11-4dce83da21a5/classify/iterations/Iteration1/url
     private static string prefix_url = "customvision/v3.0/Prediction";
     private static string postfix_url = "classify/iterations/Iteration1/url";
 
+    /// <summary>
+    /// Standard service constructor 
+    /// </summary>
+    /// <param name="logger"></param>
+    /// <param name="config"></param>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ArgumentException"></exception>
     public ImageClassifierService(ILogger<ImageClassifierService> logger, IOptions<ImageClassifierSettings> config)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -57,7 +63,12 @@ public class ImageClassifierService : IImageClassifier, IDisposable
         _httpClient.DefaultRequestHeaders.Add("Prediction-Key", _config.PredictionKey);
     }
 
-    public async Task<Classification?> Classify(string url)
+    /// <summary>
+    /// ClassifyAsync the image
+    /// </summary>
+    /// <param name="url"></param>
+    /// <returns></returns>
+    public async Task<Classification?> ClassifyAsync(string url)
     {
         // The model Id is the classification model Id 
         var postResponse = await _httpClient.PostAsync($"/{prefix_url}/{_config.ModelId}/{postfix_url}", new { Url = url }.AsJson());

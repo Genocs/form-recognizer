@@ -3,9 +3,9 @@
 namespace Genocs.Integration.CognitiveServices.Interfaces;
 
 /// <summary>
-/// The generic interface for Document Id Recognizer
+/// The generic interface for ID recognizer
 /// </summary>
-public interface IIdDocumentRecognizer
+public interface IIDocumentRecognizer
 {
     /// <summary>
     /// The actual function to extract data from ID document

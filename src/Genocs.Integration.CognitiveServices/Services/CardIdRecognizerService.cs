@@ -12,7 +12,7 @@ namespace Genocs.Integration.CognitiveServices.Services;
 /// <summary>
 /// 
 /// </summary>
-public class CardIdRecognizerService : IIdDocumentRecognizer, IDisposable
+public class CardIdRecognizerService : IIDocumentRecognizer, IDisposable
 {
     private readonly AzureCognitiveServicesSettings _config;
     private readonly ILogger<CardIdRecognizerService> _logger;

@@ -2,7 +2,16 @@
 
 namespace Genocs.Integration.CognitiveServices.Interfaces;
 
+
+/// <summary>
+/// Inteface for image classifier
+/// </summary>
 public interface IImageClassifier
 {
-    Task<Classification?> Classify(string url);
+    /// <summary>
+    /// Classify the image against a custom model 
+    /// </summary>
+    /// <param name="url">The image absolute url</param>
+    /// <returns></returns>
+    Task<Classification?> ClassifyAsync(string url);
 }
