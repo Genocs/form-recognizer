@@ -125,5 +125,16 @@ public class IDResult
     /// <summary>
     /// The validation result
     /// </summary>
-    public IDValidationResultTypes ValidationResult { get; set; }
+    public IDValidationResultType ValidationResult { get; set; }
+
+    /// <summary>
+    /// DocumentNumber
+    /// </summary>
+    public string? Number { get; set; }
+
+    /// <summary>
+    /// Raw data as returned by Azure
+    /// </summary>
+    public Azure.AI.FormRecognizer.DocumentAnalysis.AnalyzeResult? Raw { get; set; }
+
 }

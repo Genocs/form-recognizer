@@ -1,18 +1,23 @@
-﻿using System.Text;
+﻿using Microsoft.AspNetCore.Http;
+using System.Text;
 
 namespace Genocs.Integration.CognitiveServices.Services;
 
 /// <summary>
-/// This helper can check the image format from the file header
+/// Image type helper.
+/// It can check the image format from the file header
 /// </summary>
 public class ImageFormatHelper
 {
+
+    private static readonly string[] ImagesFormats = new string[] { ".jpg", ".png", ".gif", ".jpeg" };
+
     /// <summary>
     /// Get the image format from the header
     /// </summary>
     /// <param name="bytes">byte stream</param>
     /// <returns></returns>
-    public static ImageFormatTypes GetImageFormat(byte[] bytes)
+    public static ImageFormat GetImageFormat(byte[] bytes)
     {
         var bmp = Encoding.ASCII.GetBytes("BM");               // BMP
         var gif = Encoding.ASCII.GetBytes("GIF");              // GIF
@@ -23,34 +28,49 @@ public class ImageFormatHelper
         var jpeg2 = new byte[] { 255, 216, 255, 225 };         // jpeg canon
 
         if (bmp.SequenceEqual(bytes.Take(bmp.Length)))
-            return ImageFormatTypes.bmp;
+            return ImageFormat.bmp;
 
         if (gif.SequenceEqual(bytes.Take(gif.Length)))
-            return ImageFormatTypes.gif;
+            return ImageFormat.gif;
 
         if (png.SequenceEqual(bytes.Take(png.Length)))
-            return ImageFormatTypes.png;
+            return ImageFormat.png;
 
         if (tiff.SequenceEqual(bytes.Take(tiff.Length)))
-            return ImageFormatTypes.tiff;
+            return ImageFormat.tiff;
 
         if (tiff2.SequenceEqual(bytes.Take(tiff2.Length)))
-            return ImageFormatTypes.tiff;
+            return ImageFormat.tiff;
 
         if (jpeg.SequenceEqual(bytes.Take(jpeg.Length)))
-            return ImageFormatTypes.jpeg;
+            return ImageFormat.jpeg;
 
         if (jpeg2.SequenceEqual(bytes.Take(jpeg2.Length)))
-            return ImageFormatTypes.jpeg;
+            return ImageFormat.jpeg;
 
-        return ImageFormatTypes.unknown;
+        return ImageFormat.unknown;
+    }
+
+    /// <summary>
+    /// Check if the file contains image
+    /// </summary>
+    /// <param name="file">The uploaded file</param>
+    /// <returns></returns>
+    public static bool IsImage(IFormFile file)
+    {
+        if (file.ContentType.Contains("image"))
+        {
+            return true;
+        }
+
+        return ImagesFormats.Any(item => file.FileName.EndsWith(item, StringComparison.OrdinalIgnoreCase));
     }
 
 
     /// <summary>
-    /// The supportd Image forma types  
+    /// The supportd Image format types  
     /// </summary>
-    public enum ImageFormatTypes
+    public enum ImageFormat
     {
         /// <summary>
         /// The unknows format

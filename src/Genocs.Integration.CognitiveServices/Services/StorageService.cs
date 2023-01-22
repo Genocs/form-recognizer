@@ -17,8 +17,12 @@ public class StorageService
     private readonly ILogger<StorageService> _logger;
     private readonly AzureStorageSettings _storageConfig;
 
-    private static readonly string[] ImagesFormats = new string[] { ".jpg", ".png", ".gif", ".jpeg" };
-
+    /// <summary>
+    /// Standard constructor
+    /// </summary>
+    /// <param name="config">the config options</param>
+    /// <param name="logger">The logger</param>
+    /// <exception cref="ArgumentNullException"></exception>
     public StorageService(IOptions<AzureStorageSettings> config, ILogger<StorageService> logger)
     {
         _ = config ?? throw new ArgumentNullException(nameof(config));
@@ -26,20 +30,6 @@ public class StorageService
         _storageConfig = config.Value;
     }
 
-    /// <summary>
-    /// Check if the file contains image
-    /// </summary>
-    /// <param name="file">The uploaded file</param>
-    /// <returns></returns>
-    public static bool IsImage(IFormFile file)
-    {
-        if (file.ContentType.Contains("image"))
-        {
-            return true;
-        }
-
-        return ImagesFormats.Any(item => file.FileName.EndsWith(item, StringComparison.OrdinalIgnoreCase));
-    }
 
     private async Task<string> UploadFileToStorage(Stream fileStream, string fileName)
     {
@@ -60,7 +50,7 @@ public class StorageService
 
         string tkn = SASToken(_storageConfig.AccountName, _storageConfig.AccountKey, _storageConfig.UploadContainer, fileName);
 
-        return await Task.FromResult(tkn);
+        return tkn;
     }
 
     private async Task<List<string>> GetThumbNailUrls()
@@ -107,12 +97,16 @@ public class StorageService
 
         foreach (var formFile in files)
         {
-            if (IsImage(formFile))
+            if (ImageFormatHelper.IsImage(formFile))
             {
                 if (formFile.Length > 0)
                 {
                     using Stream stream = formFile.OpenReadStream();
-                    string url = await UploadFileToStorage(stream, formFile.FileName);
+
+                    // formFile.FileName could be changed to guid to generate unique id for storage
+                    string uploadingFile = formFile.FileName;
+                    //uploadingFile = $"{Guid.NewGuid()}{Path.GetExtension(formFile.FileName)}";
+                    string url = await UploadFileToStorage(stream, uploadingFile);
                     result.Add(new UploadedItem() { FileName = formFile.FileName, URL = url });
                 }
             }

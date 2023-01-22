@@ -14,5 +14,5 @@ public interface IFaceRecognizer
     /// <param name="firstImage">First image containing a face</param>
     /// <param name="secondImage">Second image containing a face</param>
     /// <returns>The result</returns>
-    Task<IList<SimilarFace>> CompareAsync(string firstImage, string secondImage);
+    Task<IList<SimilarFace>> CompareFacesAsync(string firstImage, string secondImage);
 }

@@ -4,6 +4,7 @@ using Genocs.Integration.CognitiveServices.Models;
 using Genocs.Integration.CognitiveServices.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
+using static Genocs.Integration.CognitiveServices.Services.ImageFormatHelper;
 
 namespace Genocs.FormRecognizer.WebApi.Controllers;
 
@@ -55,24 +56,27 @@ public class ScanUserController : ControllerBase
         var uploadResult = await _storageService.UploadFilesAsync(images);
 
         // Check if the first image contains the ID
-        var result = await _idDocumentService.RecognizeAsync(uploadResult.First().URL);
+        var idDocumentResult = await _idDocumentService.RecognizeAsync(uploadResult.First().URL);
 
-        if (result is null)
+        if (idDocumentResult is null)
         {
             // ID not found on first image, check on the second one
-            result = await _idDocumentService.RecognizeAsync(uploadResult.Last().URL);
+            idDocumentResult = await _idDocumentService.RecognizeAsync(uploadResult.Last().URL);
         }
 
         // No ID found. Stop here any other checks
-        if (result is null)
+        if (idDocumentResult is null)
         {
             return BadRequest("no document found in the images");
         }
 
         // Run the face match
-        await _faceRecognizerService.CompareAsync(uploadResult.First().URL, uploadResult.Last().URL);
+        var faceResult = await _faceRecognizerService.CompareFacesAsync(uploadResult.First().URL, uploadResult.Last().URL);
 
-        return Ok("done");
+        MemberScanResponse response = new MemberScanResponse(faceResult.OrderBy(o => o.Confidence).FirstOrDefault().Confidence,
+            idDocumentResult);
+
+        return Ok(response);
     }
 
 
@@ -88,7 +92,7 @@ public class ScanUserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Produces(MediaTypeNames.Application.Json)]
     [Consumes(MediaTypeNames.Application.Json)]
-    public async Task<ActionResult<List<dynamic>>> PostEvalauteAsync([FromBody] EvalauteMemberKYCRequest request)
+    public async Task<ActionResult<List<dynamic>>> PostEvaluateAsync([FromBody] MemberScanRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.IdDocumentImageUrl))
         {
@@ -109,7 +113,9 @@ public class ScanUserController : ControllerBase
         }
 
 
-        await _faceRecognizerService.CompareAsync(request.IdDocumentImageUrl, request.FaceImageUrl);
+        await _faceRecognizerService.CompareFacesAsync(request.IdDocumentImageUrl, request.FaceImageUrl);
+
+
 
         return Ok("done");
     }
@@ -128,7 +134,7 @@ public class ScanUserController : ControllerBase
     public async Task<IActionResult> GetCardIdInfoAsync([FromBody] BasicRequest request)
     {
         var result = await _idDocumentService.RecognizeAsync(request.Url);
-        return result?.ValidationResult != IDValidationResultTypes.VALID ? NoContent() : Ok(result);
+        return result?.ValidationResult != IDValidationResultType.VALID ? NoContent() : Ok(result);
     }
 
     /// <summary>
@@ -149,8 +155,47 @@ public class ScanUserController : ControllerBase
     }
 }
 
-public class EvalauteMemberKYCRequest
+public class MemberScanRequest
 {
     public string IdDocumentImageUrl { get; set; }
     public string FaceImageUrl { get; set; }
+}
+
+public class MemberScanResponse
+{
+    public FaceResult Face { get; set; }
+    public IdDocumentResult IdDocument { get; set; }
+
+
+    public MemberScanResponse(double faceScore, IDResult idDocumentResult)
+    {
+        Face = new FaceResult(faceScore);
+
+        IdDocument = new IdDocumentResult
+        {
+            Number = idDocumentResult.Number,
+            FormatType = idDocumentResult.ValidationResult
+        };
+    }
+
+    public record FaceResult
+    {
+        public bool Match { get; init; }
+
+        public double Score { get; init; }
+
+        public FaceResult(double score)
+        {
+            Match = score > 0.55f;
+            Score = score;
+        }
+    }
+
+    public record IdDocumentResult
+    {
+        public IDValidationResultType FormatType { get; init; }
+        public string Number { get; init; }
+        public string PrimaryName { get; init; }
+        public string SecondaryName { get; init; }
+    }
 }

@@ -28,10 +28,25 @@ public class AzureStorageSettings
     /// <summary>
     /// The trainingset container name
     /// </summary>
-    public string TrainingSetContainer { get; set; } = default!;
+    public string? TrainingSetContainer { get; set; }
 
     /// <summary>
     /// The thumbnail container name
     /// </summary>
-    public string ThumbnailContainer { get; set; } = default!;
+    public string? ThumbnailContainer { get; set; }
+
+    /// <summary>
+    /// Helper function to validate data
+    /// </summary>
+    /// <param name="settings"></param>
+    /// <returns></returns>
+    public static bool IsValid(AzureStorageSettings settings)
+    {
+        if (settings == null) return false;
+        if (string.IsNullOrWhiteSpace(settings.AccountName)) return false;
+        if (string.IsNullOrWhiteSpace(settings.AccountKey)) return false;
+        if (string.IsNullOrWhiteSpace(settings.UploadContainer)) return false;
+
+        return true;
+    }
 }

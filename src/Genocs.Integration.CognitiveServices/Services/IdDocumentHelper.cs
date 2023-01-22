@@ -21,9 +21,9 @@ public static class IdDocumentHelper
     /// 
     /// </summary>
     /// <param name="document"></param>
-    public static IDValidationResultTypes Validate(Azure.AI.FormRecognizer.DocumentAnalysis.AnalyzedDocument? document)
+    public static IDValidationResultType Validate(Azure.AI.FormRecognizer.DocumentAnalysis.AnalyzedDocument? document)
     {
-        IDValidationResultTypes result = IDValidationResultTypes.EMPTY_DATA;
+        IDValidationResultType result = IDValidationResultType.EMPTY_DATA;
         if (document is null)
         {
             return result;
@@ -31,19 +31,19 @@ public static class IdDocumentHelper
 
         if (document.DocumentType != DOCUMENT_TYPE)
         {
-            result = IDValidationResultTypes.NO_ID;
+            result = IDValidationResultType.NO_ID;
             return result;
         }
 
         if (document.Confidence < ConfidenceThreshold)
         {
-            result = IDValidationResultTypes.UNDER_THRESHOLD;
+            result = IDValidationResultType.UNDER_THRESHOLD;
             return result;
         }
 
         if (document.BoundingRegions != null && !document.BoundingRegions.Any())
         {
-            result = IDValidationResultTypes.NO_IMAGE_BOUND;
+            result = IDValidationResultType.NO_IMAGE_BOUND;
             return result;
         }
 
@@ -52,7 +52,7 @@ public static class IdDocumentHelper
         var region = document.BoundingRegions.FirstOrDefault();
 
 
-        result = IDValidationResultTypes.VALID;
+        result = IDValidationResultType.VALID;
 
         return result;
     }
@@ -61,10 +61,10 @@ public static class IdDocumentHelper
 /// <summary>
 /// ID result
 /// </summary>
-public enum IDValidationResultTypes
+public enum IDValidationResultType
 {
     /// <summary>
-    /// No data to evalaute
+    /// No data to evaluate
     /// </summary>
     EMPTY_DATA,
 

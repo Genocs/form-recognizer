@@ -63,7 +63,7 @@ public class FaceRecognizerService : IFaceRecognizer
         return new FaceClient(new ApiKeyServiceClientCredentials(key)) { Endpoint = endpoint };
     }
 
-    private async Task<List<DetectedFace>> DetectFaceRecognize(string url)
+    private async Task<List<DetectedFace>> RecognizeFaceAsync(string url)
     {
         // Detect faces from image URL. Since only recognizing, use the recognition model 1.
         // We use detection model 2 because we are not retrieving attributes.
@@ -78,11 +78,38 @@ public class FaceRecognizerService : IFaceRecognizer
         // and its overall accuracy is improved compared
         // with models 1 and 2.
 
-        IList<DetectedFace> detectedFaces = await _client.Face.DetectWithUrlAsync(url,
+        IList<DetectedFace> detectedFaces = await _client.Face.DetectWithUrlAsync(url: url,
+                                                                                    returnFaceId: null,
+                                                                                    returnFaceLandmarks: false,
+                                                                                    returnFaceAttributes: null,
+                                                                                    recognitionModel: RecognitionModel.Recognition04,
+                                                                                    returnRecognitionModel: false,
+                                                                                    detectionModel: DetectionModel.Detection03);
+
+        _logger.LogInformation($"{detectedFaces.Count} face(s) detected from image '{url}'");
+        return detectedFaces.ToList();
+    }
+
+    private async Task<List<DetectedFace>> RecognizeFaceAsync(Stream stream)
+    {
+        // Detect faces from image URL. Since only recognizing, use the recognition model 1.
+        // We use detection model 2 because we are not retrieving attributes.
+
+        // Recognition model 3 was released in 2020 May.
+        // It is recommended since its overall accuracy is improved
+        // compared with models 1 and 2.
+
+        // Recognition model 4 was released in 2021 February.
+        // It is recommended since its accuracy is improved
+        // on faces wearing masks compared with model 3,
+        // and its overall accuracy is improved compared
+        // with models 1 and 2.
+
+        IList<DetectedFace> detectedFaces = await _client.Face.DetectWithStreamAsync(stream,
                                                                     recognitionModel: RecognitionModel.Recognition04,
                                                                     detectionModel: DetectionModel.Detection03);
 
-        _logger.LogInformation($"{detectedFaces.Count} face(s) detected from image '{url}'");
+        _logger.LogInformation($"{detectedFaces.Count} face(s) detected from stream");
         return detectedFaces.ToList();
     }
 
@@ -92,13 +119,13 @@ public class FaceRecognizerService : IFaceRecognizer
     /// <param name="firstImage">The first image</param>
     /// <param name="secondImage">The second image</param>
     /// <returns></returns>
-    public async Task<IList<SimilarFace>> CompareAsync(string firstImage, string secondImage)
+    public async Task<IList<SimilarFace>> CompareFacesAsync(string firstImage, string secondImage)
     {
         // Detect faces from source image url.
-        IList<DetectedFace> sourceFaces = await DetectFaceRecognize(firstImage);
+        IList<DetectedFace> sourceFaces = await RecognizeFaceAsync(firstImage);
 
         // Detect faces from target image url.
-        IList<DetectedFace> targetFaces = await DetectFaceRecognize(secondImage);
+        IList<DetectedFace> targetFaces = await RecognizeFaceAsync(secondImage);
 
         // Add detected faceId to list of GUIDs.
         IList<Guid?> targetFaceIds = new List<Guid?>();
@@ -112,13 +139,25 @@ public class FaceRecognizerService : IFaceRecognizer
 
         foreach (var target in targetFaces)
         {
-            targetFaceIds.Add(target.FaceId.Value);
+            if (target.FaceId != null)
+            {
+                targetFaceIds.Add(target.FaceId.Value);
+            }
         }
 
         // Find a similar face(s) in the list of IDs. Comparing only the first in list for testing purposes.
         foreach (var source in sourceFaces)
         {
-            result.AddRange(await _client.Face.FindSimilarAsync(source.FaceId.Value, null, null, targetFaceIds));
+            if (source.FaceId != null)
+            {
+                result.AddRange(await _client.Face.FindSimilarAsync(faceId: source.FaceId.Value,
+                                                                        faceListId: null,
+                                                                        largeFaceListId: null,
+                                                                        faceIds: targetFaceIds,
+                                                                        maxNumOfCandidatesReturned: 2,
+                                                                        mode: FindSimilarMatchMode.MatchPerson,
+                                                                        cancellationToken: default));
+            }
         }
         return result;
     }

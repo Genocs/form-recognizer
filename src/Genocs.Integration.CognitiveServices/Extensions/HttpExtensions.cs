@@ -6,7 +6,7 @@ namespace Genocs.Integration.CognitiveServices.Extensions;
 /// <summary>
 /// Http Extensions method helper class
 /// </summary>
-public static class HttpExtensions
+internal static class HttpExtensions
 {
     /// <summary>
     /// 

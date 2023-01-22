@@ -131,7 +131,7 @@ public class ScanFormController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Produces(MediaTypeNames.Application.Json)]
     [Consumes(MediaTypeNames.Application.Json)]
-    public async Task<ActionResult<List<dynamic>>> PostClassifyAndEvalauteAsync([FromBody] EvaluateRequest request)
+    public async Task<ActionResult<List<dynamic>>> PostClassifyAndEvaluateAsync([FromBody] EvaluateRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.ClassificationModelId))
         {

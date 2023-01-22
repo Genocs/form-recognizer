@@ -5,6 +5,7 @@ using Genocs.Integration.CognitiveServices.Models;
 using Genocs.Integration.CognitiveServices.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.ComponentModel.DataAnnotations;
 
 namespace Genocs.Integration.CognitiveServices.Services;
 
@@ -124,36 +125,42 @@ public class IdDocumentService : IIDocumentRecognizer, IDisposable
         DocumentAnalysisClient documentAnalysisClient = new DocumentAnalysisClient(new Uri(_config.Endpoint), credential);
         AnalyzeDocumentOperation operationResult = await documentAnalysisClient.AnalyzeDocumentFromUriAsync(WaitUntil.Completed, IdDocumentHelper.MODEL_ID, new Uri(url));
 
-        Azure.AI.FormRecognizer.DocumentAnalysis.AnalyzeResult? result = null;
+        Azure.AI.FormRecognizer.DocumentAnalysis.AnalyzeResult? analysisResult = null;
         if (!operationResult.HasCompleted)
         {
             var response = await operationResult.WaitForCompletionAsync();
-            result = response.Value;
+            analysisResult = response.Value;
         }
 
-        result = operationResult.Value;
+        analysisResult = operationResult.Value;
 
-        if (result == null)
+        if (analysisResult == null)
         {
             return null;
         }
 
-        if (result.Documents == null || !result.Documents.Any())
+        if (analysisResult.Documents == null || !analysisResult.Documents.Any())
         {
             // No documents
             return null;
         }
-        Azure.AI.FormRecognizer.DocumentAnalysis.AnalyzedDocument? document = result.Documents.OrderBy(o => o.Confidence).FirstOrDefault();
+
+        AnalyzedDocument? document = analysisResult.Documents.OrderBy(o => o.Confidence).FirstOrDefault();
 
         // Extract fields
-        var validationResult = IdDocumentHelper.Validate(document);
+        IDValidationResultType validationResult = IdDocumentHelper.Validate(document);
 
-        if (validationResult == IDValidationResultTypes.VALID)
+        IDResult result = new IDResult
         {
-            return new IDResult { ValidationResult = validationResult };
+            ValidationResult = validationResult,
+            Raw = analysisResult
+        };
+
+        if (validationResult == IDValidationResultType.VALID)
+        {
+            result.Number = document.Fields["DocumentNumber"].Value.AsString();
         }
 
-        return null;
+        return result;
     }
-
 }
