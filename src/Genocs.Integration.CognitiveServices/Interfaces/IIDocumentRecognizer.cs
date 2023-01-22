@@ -12,5 +12,5 @@ public interface IIDocumentRecognizer
     /// </summary>
     /// <param name="url">url to the resource, it could be a blob storage</param>
     /// <returns>The result</returns>
-    Task<CardIdResult?> RecognizeAsync(string url);
+    Task<IDResult?> RecognizeAsync(string url);
 }

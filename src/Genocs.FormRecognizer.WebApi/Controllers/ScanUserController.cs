@@ -54,7 +54,7 @@ public class ScanUserController : ControllerBase
         // Upload on storage
         var uploadResult = await _storageService.UploadFilesAsync(images);
 
-        // Check if the first image contains a document
+        // Check if the first image contains the ID
         var result = await _idDocumentService.RecognizeAsync(uploadResult.First().URL);
 
         if (result is null)
@@ -68,6 +68,9 @@ public class ScanUserController : ControllerBase
         {
             return BadRequest("no document found in the images");
         }
+
+        // Run the face match
+        await _faceRecognizerService.CompareAsync(uploadResult.First().URL, uploadResult.Last().URL);
 
         return Ok("done");
     }
@@ -125,7 +128,7 @@ public class ScanUserController : ControllerBase
     public async Task<IActionResult> GetCardIdInfoAsync([FromBody] BasicRequest request)
     {
         var result = await _idDocumentService.RecognizeAsync(request.Url);
-        return string.IsNullOrWhiteSpace(result?.AnalyzeResult?.Version) ? NoContent() : Ok(result);
+        return result?.ValidationResult != IDValidationResultTypes.VALID ? NoContent() : Ok(result);
     }
 
     /// <summary>

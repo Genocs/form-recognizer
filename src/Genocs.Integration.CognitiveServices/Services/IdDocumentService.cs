@@ -13,7 +13,6 @@ namespace Genocs.Integration.CognitiveServices.Services;
 /// </summary>
 public class IdDocumentService : IIDocumentRecognizer, IDisposable
 {
-    private const string ModelId = "prebuilt-idDocument";
     private readonly AzureCognitiveServicesSettings _config;
     private readonly ILogger<IdDocumentService> _logger;
 
@@ -107,7 +106,7 @@ public class IdDocumentService : IIDocumentRecognizer, IDisposable
     /// </summary>
     /// <param name="url"></param>
     /// <returns></returns>
-    public async Task<CardIdResult?> RecognizeAsync(string url)
+    public async Task<IDResult?> RecognizeAsync(string url)
     {
         if (string.IsNullOrWhiteSpace(url))
         {
@@ -123,7 +122,7 @@ public class IdDocumentService : IIDocumentRecognizer, IDisposable
 
         AzureKeyCredential credential = new AzureKeyCredential(_config.SubscriptionKey);
         DocumentAnalysisClient documentAnalysisClient = new DocumentAnalysisClient(new Uri(_config.Endpoint), credential);
-        AnalyzeDocumentOperation operationResult = await documentAnalysisClient.AnalyzeDocumentFromUriAsync(WaitUntil.Completed, ModelId, new Uri(url));
+        AnalyzeDocumentOperation operationResult = await documentAnalysisClient.AnalyzeDocumentFromUriAsync(WaitUntil.Completed, IdDocumentHelper.MODEL_ID, new Uri(url));
 
         Azure.AI.FormRecognizer.DocumentAnalysis.AnalyzeResult? result = null;
         if (!operationResult.HasCompleted)
@@ -147,7 +146,12 @@ public class IdDocumentService : IIDocumentRecognizer, IDisposable
         Azure.AI.FormRecognizer.DocumentAnalysis.AnalyzedDocument? document = result.Documents.OrderBy(o => o.Confidence).FirstOrDefault();
 
         // Extract fields
+        var validationResult = IdDocumentHelper.Validate(document);
 
+        if (validationResult == IDValidationResultTypes.VALID)
+        {
+            return new IDResult { ValidationResult = validationResult };
+        }
 
         return null;
     }

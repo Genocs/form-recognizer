@@ -105,7 +105,7 @@ public class CardIdRecognizerService : IIDocumentRecognizer, IDisposable
     /// </summary>
     /// <param name="url"></param>
     /// <returns></returns>
-    public async Task<CardIdResult?> RecognizeAsync(string url)
+    public async Task<IDResult?> RecognizeAsync(string url)
     {
         HttpResponseMessage response;
 
@@ -164,6 +164,8 @@ public class CardIdRecognizerService : IIDocumentRecognizer, IDisposable
             return null;
         }
 
-        return JsonConvert.DeserializeObject<CardIdResult>(contentString);
+        var tmp = JsonConvert.DeserializeObject<CardIdResult>(contentString);
+
+        return new IDResult { };
     }
 }

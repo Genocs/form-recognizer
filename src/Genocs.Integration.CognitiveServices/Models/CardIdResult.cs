@@ -1,4 +1,6 @@
-﻿namespace Genocs.Integration.CognitiveServices.Models;
+﻿using Genocs.Integration.CognitiveServices.Services;
+
+namespace Genocs.Integration.CognitiveServices.Models;
 
 // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse); 
 public class BaseTypeText
@@ -112,4 +114,16 @@ public class CardIdResult
     public DateTime CreatedDateTime { get; set; }
     public DateTime LastUpdatedDateTime { get; set; }
     public AnalyzeResult? AnalyzeResult { get; set; }
+}
+
+
+/// <summary>
+/// The ID Result
+/// </summary>
+public class IDResult
+{
+    /// <summary>
+    /// The validation result
+    /// </summary>
+    public IDValidationResultTypes ValidationResult { get; set; }
 }
