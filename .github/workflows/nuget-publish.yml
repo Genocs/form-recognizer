@@ -22,7 +22,7 @@ jobs:
           PROJECT_FILE_PATH: src/Genocs.Integration.CognitiveServices/Genocs.Integration.CognitiveServices.csproj
 
           # Configuration to build and package
-          # BUILD_CONFIGURATION: Release
+          BUILD_CONFIGURATION: Debug
 
           # Platform target to compile (default is empty/AnyCPU)
           # BUILD_PLATFORM: x64
@@ -46,7 +46,7 @@ jobs:
           # TAG_FORMAT: v*
 
           # API key to authenticate with NuGet server
-           NUGET_KEY: ${{ secrets.NUGET_API_KEY }}
+          NUGET_KEY: ${{ secrets.NUGET_API_KEY }}
 
           # NuGet server uri hosting the packages, defaults to https://api.nuget.org
           # NUGET_SOURCE: https://api.nuget.org
