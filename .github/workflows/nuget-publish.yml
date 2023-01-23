@@ -1,8 +1,7 @@
 name: publish to nuget
 on:
   push:
-    branches: [master]
-
+    branches: [deploy]
 jobs:
   publish:
     name: build, pack & publish
@@ -12,7 +11,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: 7.0.x
 
       # Publish
       - name: publish on version change
