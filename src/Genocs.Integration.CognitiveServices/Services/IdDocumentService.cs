@@ -148,18 +148,7 @@ public class IdDocumentService : IIDocumentRecognizer, IDisposable
         AnalyzedDocument? document = analysisResult.Documents.OrderBy(o => o.Confidence).FirstOrDefault();
 
         // Extract fields
-        IDValidationResultType validationResult = IdDocumentHelper.Validate(document);
-
-        IDResult result = new IDResult
-        {
-            ValidationResult = validationResult,
-            Raw = analysisResult
-        };
-
-        if (validationResult == IDValidationResultType.VALID)
-        {
-            result.Number = document.Fields["DocumentNumber"].Value.AsString();
-        }
+        var result = IdDocumentHelper.Validate(document);
 
         return result;
     }

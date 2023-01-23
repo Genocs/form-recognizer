@@ -166,6 +166,6 @@ public class CardIdRecognizerService : IIDocumentRecognizer, IDisposable
 
         var tmp = JsonConvert.DeserializeObject<CardIdResult>(contentString);
 
-        return new IDResult { };
+        return new IDResult(IDValidationResultType.EMPTY_DATA);
     }
 }

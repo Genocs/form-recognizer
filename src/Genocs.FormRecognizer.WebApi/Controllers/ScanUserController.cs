@@ -164,18 +164,12 @@ public class MemberScanRequest
 public class MemberScanResponse
 {
     public FaceResult Face { get; set; }
-    public IdDocumentResult IdDocument { get; set; }
-
+    public IDResult IdDocument { get; set; }
 
     public MemberScanResponse(double faceScore, IDResult idDocumentResult)
     {
         Face = new FaceResult(faceScore);
-
-        IdDocument = new IdDocumentResult
-        {
-            Number = idDocumentResult.Number,
-            FormatType = idDocumentResult.ValidationResult
-        };
+        IdDocument = idDocumentResult;
     }
 
     public record FaceResult
@@ -194,8 +188,6 @@ public class MemberScanResponse
     public record IdDocumentResult
     {
         public IDValidationResultType FormatType { get; init; }
-        public string Number { get; init; }
-        public string PrimaryName { get; init; }
-        public string SecondaryName { get; init; }
+
     }
 }

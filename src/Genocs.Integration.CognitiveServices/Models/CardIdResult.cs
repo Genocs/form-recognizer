@@ -122,19 +122,43 @@ public class CardIdResult
 /// </summary>
 public class IDResult
 {
+
     /// <summary>
     /// The validation result
     /// </summary>
     public IDValidationResultType ValidationResult { get; set; }
 
     /// <summary>
-    /// DocumentNumber
+    /// The mrz
     /// </summary>
-    public string? Number { get; set; }
+    public string? MRZ { get; set; }
 
     /// <summary>
-    /// Raw data as returned by Azure
+    /// The Data
     /// </summary>
-    public Azure.AI.FormRecognizer.DocumentAnalysis.AnalyzeResult? Raw { get; set; }
+    public IdentityDocumentData? Data { get; set; }
 
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="validationResult"></param>
+    public IDResult(IDValidationResultType validationResult)
+    {
+        ValidationResult = validationResult;
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="validationResult"></param>
+    /// <param name="mrz"></param>
+    /// <param name="data"></param>
+    public IDResult(IDValidationResultType validationResult, string mrz, IdentityDocumentData data)
+    {
+        ValidationResult = validationResult;
+        MRZ = mrz;
+        Data = data;
+    }
 }
