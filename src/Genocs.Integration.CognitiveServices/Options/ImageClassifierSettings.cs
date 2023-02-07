@@ -8,7 +8,7 @@ public class ImageClassifierSettings
     /// <summary>
     /// Default Section name
     /// </summary>
-    public const string Position = "ImageClassifierSettings";
+    public const string Position = "ImageClassifier";
 
     /// <summary>
     /// The cognitive service root endpoint

@@ -1,10 +1,12 @@
 ﻿using Genocs.FormRecognizer.Worker;
+using Genocs.FormRecognizer.Worker.Options;
 using Genocs.Integration.CognitiveServices.Options;
 using Genocs.Monitoring;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Serilog;
 using Serilog.Events;
+using System.Reflection;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -28,7 +30,7 @@ IHost host = Host.CreateDefaultBuilder(args)
 
         ConfigureMongoDb(services, hostContext.Configuration);
         ConfigureMassTransit(services, hostContext.Configuration);
-         
+
 
         // Register Settings
         services.Configure<AzureCognitiveServicesSettings>(hostContext.Configuration.GetSection(AzureCognitiveServicesSettings.Position));
@@ -65,16 +67,49 @@ static IServiceCollection ConfigureMongoDb(IServiceCollection services, IConfigu
     return services;
 }
 
+
 static IServiceCollection ConfigureMassTransit(IServiceCollection services, IConfiguration configuration)
 {
-    services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
-    services.AddMassTransit(cfg =>
+    //services.AddMediator();
+
+    var rabbitMQSettings = new RabbitMQSettings();
+    configuration.GetSection(RabbitMQSettings.Position).Bind(rabbitMQSettings);
+
+    services.AddSingleton(rabbitMQSettings);
+
+    // services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
+
+    services.AddMassTransit(x =>
     {
         // Consumer configuration
-        //cfg.AddConsumersFromNamespaceContaining<SubmitOrderConsumer>();
+        //x.AddConsumersFromNamespaceContaining<SubmitOrderConsumer>();
 
-        // Set the transport
-        cfg.UsingRabbitMq(ConfigureBus);
+        // Consumer
+        x.AddConsumers(Assembly.GetExecutingAssembly());
+        x.AddActivities(Assembly.GetExecutingAssembly());
+        x.SetKebabCaseEndpointNameFormatter();
+
+        // Transport RabbitMQ
+        x.UsingRabbitMq((context, cfg) =>
+        {
+            cfg.ConfigureEndpoints(context);
+            //cfg.UseHealthCheck(context);
+            cfg.Host(rabbitMQSettings.HostName, rabbitMQSettings.VirtualHost,
+                h =>
+                {
+                    h.Username(rabbitMQSettings.UserName);
+                    h.Password(rabbitMQSettings.Password);
+
+                    //h.UseSsl(s =>
+                    //{
+                    //    s.Protocol = SslProtocols.Tls12;
+                    //});
+                }
+            );
+        });
+
+        //// Set the transport
+        //x.UsingRabbitMq(ConfigureBus);
     });
 
     return services;
@@ -102,4 +137,19 @@ static void ConfigureBus(IBusRegistrationContext context, IRabbitMqBusFactoryCon
 
     // This configuration will configure the Activity Definition
     configurator.ConfigureEndpoints(context);
+
+    //cfg.UseHealthCheck(context);
+    //configurator.Host(rabbitMQSettings.HostName, rabbitMQSettings.VirtualHost,
+    //    h =>
+    //    {
+    //        h.Username(rabbitMQSettings.UserName);
+    //        h.Password(rabbitMQSettings.Password);
+
+    //        h.UseSsl(s =>
+    //        {
+    //            s.Protocol = SslProtocols.Tls12;
+    //        });
+    //    }
+    //);
+
 }

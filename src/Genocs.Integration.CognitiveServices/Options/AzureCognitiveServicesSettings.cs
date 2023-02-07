@@ -8,7 +8,7 @@ public class AzureCognitiveServicesSettings
     /// <summary>
     /// Default Section name
     /// </summary>
-    public static string Position = "AzureCognitiveServicesSettings";
+    public static string Position = "AzureCognitiveServices";
 
     /// <summary>
     /// The cognitive service root endpoint

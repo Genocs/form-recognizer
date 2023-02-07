@@ -8,7 +8,7 @@ public class AzureStorageSettings
     /// <summary>
     /// Default section name
     /// </summary>
-    public const string Position = "AzureStorageSettings";
+    public const string Position = "AzureStorage";
 
     /// <summary>
     /// The storage account name

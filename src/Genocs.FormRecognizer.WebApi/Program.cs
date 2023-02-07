@@ -4,8 +4,10 @@ using Genocs.Integration.CognitiveServices.Options;
 using Genocs.Integration.CognitiveServices.Services;
 using Genocs.Monitoring;
 using MassTransit;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.ML;
 using Serilog;
 using Serilog.Events;
 using System.Text.Json.Serialization;
@@ -50,6 +52,12 @@ services.Configure<HealthCheckPublisherOptions>(options =>
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 
+//Multipart
+services.Configure<FormOptions>(x =>
+{
+    x.MultipartBodyLengthLimit = 60000000;
+});
+
 // Add Masstransit bus configuration
 services.AddCustomMassTransit(builder.Configuration);
 
@@ -60,6 +68,16 @@ services.Configure<AzureCognitiveServicesSettings>(builder.Configuration.GetSect
 services.Configure<AzureStorageSettings>(builder.Configuration.GetSection(AzureStorageSettings.Position));
 services.Configure<ImageClassifierSettings>(builder.Configuration.GetSection(ImageClassifierSettings.Position));
 services.Configure<AzureCognitiveServicesSettings>(builder.Configuration.GetSection(AzureCognitiveServicesSettings.Position));
+
+// ML Engine Poll
+string? passportModelUrl = builder.Configuration.GetSection("AppSettings")?.GetValue(typeof(string), "PassportModel")?.ToString();
+if(!string.IsNullOrWhiteSpace(passportModelUrl))
+{
+    services.AddPredictionEnginePool<Genocs.FormRecognizer.WebApi.MachineLearnings.Passport_MLModel.ModelInput,
+                                        Genocs.FormRecognizer.WebApi.MachineLearnings.Passport_MLModel.ModelOutput>()
+                                .FromUri(passportModelUrl);
+}
+
 //services.Configure<RabbitMQSettings>(builder.Configuration.GetSection(RabbitMQSettings.Position));
 
 

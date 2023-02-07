@@ -1,4 +1,4 @@
-﻿using Genocs.FormRecognizer.WebApi.Dto;
+﻿using Genocs.FormRecognizer.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Text;

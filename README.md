@@ -32,7 +32,7 @@ POST {{root_url}}/api/Settings
 
 
 ``` sh
-  "AzureStorageSettings": {
+  "AzureStorage": {
     "AccountName": "{{accountName}}",
     "AccountKey": "{{AccountKey}}",
     "UploadContainer": "{{UploadContainer}}",
@@ -40,19 +40,19 @@ POST {{root_url}}/api/Settings
     "ThumbnailContainer": "{{ThumbnailContainer}}",
     "InspectingFileUrl": "{{InspectingFileUrl}}"
   },
-  "ImageClassifierSettings": {
+  "ImageClassifier": {
     "Endpoint": "{{Endpoint}}",
     "PredictionKey": "{{PredictionKey}}",
     "ModelId": "{{ModelId}}"
   },
-  "FormRecognizerSettings": {
+  "FormRecognizer": {
     "Endpoint": "{{Endpoint}}",
     "PredictionKey": "{{PredictionKey}}"
   },
   "RedisSettings": {
     "ConnectionString": "{{ConnectionString}}"
   },
-  "RabbitMQSettings": {
+  "RabbitMQ": {
     "HostName": "localhost",
     "Username": "guest",
     "Password": "guest",
@@ -79,8 +79,6 @@ dotnet run --project .\src\Genocs.FormRecognizer.WebApi
 # Run worker
 dotnet run --project .\src\Genocs.FormRecognizer.Worker
 
-
-# ** DOCKER ** #
 # Build docker image
 docker build -f webapi.dockerfile -t genocs/formrecognizer-webapi:3.1.0 -t genocs/formrecognizer-webapi:latest .
 docker build -f worker.dockerfile -t genocs/formrecognizer-worker:1.1.0 -t genocs/formrecognizer-worker:latest .

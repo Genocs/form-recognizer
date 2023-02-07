@@ -1,4 +1,4 @@
-﻿namespace Genocs.FormRecognizer.WebApi.Dto;
+﻿namespace Genocs.FormRecognizer.WebApi.Models;
 
 public class BasicRequest
 {
@@ -14,5 +14,4 @@ public class SetupSettingRequest
 {
     public string Key { get; set; } = default!;
     public string Value { get; set; } = default!;
-
 }

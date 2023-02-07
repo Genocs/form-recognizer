@@ -1,10 +1,10 @@
-﻿using Genocs.FormRecognizer.WebApi.Dto;
+﻿using Genocs.FormRecognizer.WebApi.Models;
 using Genocs.Integration.CognitiveServices.Interfaces;
 using Genocs.Integration.CognitiveServices.Models;
 using Genocs.Integration.CognitiveServices.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.ML;
 using System.Net.Mime;
-using static Genocs.Integration.CognitiveServices.Services.ImageFormatHelper;
 
 namespace Genocs.FormRecognizer.WebApi.Controllers;
 
@@ -16,14 +16,18 @@ public class ScanUserController : ControllerBase
     private readonly IFaceRecognizer _faceRecognizerService;
     private readonly IIDocumentRecognizer _idDocumentService;
     private readonly StorageService _storageService;
+    private readonly PredictionEnginePool<MachineLearnings.Passport_MLModel.ModelInput,
+                                        MachineLearnings.Passport_MLModel.ModelOutput> _predictionEnginePool;
 
     public ScanUserController(StorageService storageService,
                                 IFaceRecognizer faceRecognizerService,
-                                IIDocumentRecognizer idDocumentService)
+                                IIDocumentRecognizer idDocumentService,
+                                PredictionEnginePool<MachineLearnings.Passport_MLModel.ModelInput, MachineLearnings.Passport_MLModel.ModelOutput> predictionEnginePool)
     {
         _faceRecognizerService = faceRecognizerService ?? throw new ArgumentNullException(nameof(faceRecognizerService));
         _storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
         _idDocumentService = idDocumentService ?? throw new ArgumentNullException(nameof(idDocumentService));
+        _predictionEnginePool = predictionEnginePool ?? throw new ArgumentNullException(nameof(predictionEnginePool));
     }
 
 
@@ -55,6 +59,19 @@ public class ScanUserController : ControllerBase
         // Upload on storage
         var uploadResult = await _storageService.UploadFilesAsync(images);
 
+        // Copy for local predictionEngine
+        Stream s = images[0].OpenReadStream();
+
+        MachineLearnings.Passport_MLModel.ModelInput inputData = new MachineLearnings.Passport_MLModel.ModelInput();
+
+        using (BinaryReader br = new BinaryReader(s))
+        {
+            inputData.ImageSource = br.ReadBytes((int)s.Length);
+        }
+
+        MachineLearnings.Passport_MLModel.ModelOutput outputData = _predictionEnginePool.Predict(inputData);
+
+
         // Check if the first image contains the ID
         var idDocumentResult = await _idDocumentService.RecognizeAsync(uploadResult.First().URL);
 
@@ -73,8 +90,15 @@ public class ScanUserController : ControllerBase
         // Run the face match
         var faceResult = await _faceRecognizerService.CompareFacesAsync(uploadResult.First().URL, uploadResult.Last().URL);
 
-        MemberScanResponse response = new MemberScanResponse(faceResult.OrderBy(o => o.Confidence).FirstOrDefault().Confidence,
-            idDocumentResult);
+        if (faceResult is null || !faceResult.Any())
+        {
+            return BadRequest("no face into the images");
+        }
+
+        MemberScanResponse response = new MemberScanResponse(outputData.PredictedLabel,
+                                                              outputData.Score[0],
+                                                              faceResult.OrderBy(o => o.Confidence).FirstOrDefault().Confidence,
+                                                              idDocumentResult);
 
         return Ok(response);
     }
@@ -165,11 +189,41 @@ public class MemberScanResponse
 {
     public FaceResult Face { get; set; }
     public IDResult IdDocument { get; set; }
+    public string DocumentData { get; set; }
+    public float DocumentDataScore { get; set; }
 
-    public MemberScanResponse(double faceScore, IDResult idDocumentResult)
+    public string Overall { get; set; }
+
+    public MemberScanResponse(string documentData, float documentDataScore, double faceScore, IDResult idDocumentResult)
     {
+        DocumentData = documentData;
+        DocumentDataScore = documentDataScore;
         Face = new FaceResult(faceScore);
         IdDocument = idDocumentResult;
+        Overall = DocumentData;
+
+        if (DocumentData != "valid")
+        {
+            return;
+        }
+
+        if (IdDocument.ValidationResult != IDValidationResultType.VALID)
+        {
+            Overall = IdDocument.ValidationResult.ToString();
+            return;
+        }
+
+        if (!Face.Match)
+        {
+            Overall = "face mismatch";
+            return;
+        }
+
+        if (Face.Score > 0.99)
+        {
+            Overall = "face duplicated";
+            return;
+        }
     }
 
     public record FaceResult

@@ -1,4 +1,4 @@
-﻿namespace Genocs.FormRecognizer.WebApi.Options;
+﻿namespace Genocs.FormRecognizer.Worker.Options;
 
 public class RabbitMQSettings
 {
