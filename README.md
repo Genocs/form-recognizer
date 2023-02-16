@@ -31,7 +31,10 @@ POST {{root_url}}/api/Settings
 ## Setup the environment by using environment variables
 
 
-``` sh
+``` bash
+  "AppSettings": {
+    "PassportModel": "{{PassportModelUrl}}"
+  },
   "AzureStorage": {
     "AccountName": "{{accountName}}",
     "AccountKey": "{{AccountKey}}",
