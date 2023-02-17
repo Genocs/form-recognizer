@@ -9,11 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.FormRecognizer.Worke
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.FormRecognizer.Tests", "src\Genocs.FormRecognizer.Tests\Genocs.FormRecognizer.Tests.csproj", "{F93E80AE-C09A-4126-90B6-CC9F8E61CEB8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{5B7F598F-D6C6-4316-9657-68212BAC78E9}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5B7F598F-D6C6-4316-9657-68212BAC78E9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.Integration.CognitiveServices", "src\Genocs.Integration.CognitiveServices\Genocs.Integration.CognitiveServices.csproj", "{5201A9AA-6F3B-45FD-932C-0C3DC2520ABE}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solution Items", "{09BB5F5A-0603-47D5-AF68-5A90F35E742F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{09BB5F5A-0603-47D5-AF68-5A90F35E742F}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
 		README.md = README.md

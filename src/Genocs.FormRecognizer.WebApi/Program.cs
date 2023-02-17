@@ -1,3 +1,5 @@
+using FluentValidation;
+using Genocs.FormRecognizer.WebApi.Controllers;
 using Genocs.FormRecognizer.WebApi.Extensions;
 using Genocs.Integration.CognitiveServices.Interfaces;
 using Genocs.Integration.CognitiveServices.Options;
@@ -91,6 +93,8 @@ services.AddCustomCache(builder.Configuration);
 
 services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
 
+// Fluent Validation
+services.AddValidatorsFromAssemblyContaining<SetupSettingRequestValidator>();
 
 var app = builder.Build();
 

@@ -3,7 +3,6 @@ using Genocs.FormRecognizer.Worker.Options;
 using Genocs.Integration.CognitiveServices.Options;
 using Genocs.Monitoring;
 using MassTransit;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Serilog;
 using Serilog.Events;
 using System.Reflection;

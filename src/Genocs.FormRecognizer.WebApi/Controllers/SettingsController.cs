@@ -1,4 +1,4 @@
-﻿using Genocs.FormRecognizer.WebApi.Models;
+﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Text;
@@ -11,10 +11,12 @@ public class SettingsController : ControllerBase
 {
 
     private readonly IDistributedCache _distributedCache;
+    private readonly IValidator<SetupSettingRequest> _setupSettingRequestValidator;
 
-    public SettingsController(IDistributedCache distributedCache)
+    public SettingsController(IDistributedCache distributedCache, IValidator<SetupSettingRequest> setupSettingRequestValidator)
     {
         _distributedCache = distributedCache ?? throw new ArgumentNullException(nameof(distributedCache));
+        _setupSettingRequestValidator = setupSettingRequestValidator ?? throw new ArgumentNullException(nameof(setupSettingRequestValidator));
     }
 
 
@@ -29,17 +31,14 @@ public class SettingsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult> PostSetupClassificationModel([FromBody] SetupSettingRequest request)
     {
-        if (string.IsNullOrWhiteSpace(request.Key))
+        var validationResult = await _setupSettingRequestValidator.ValidateAsync(request);
+
+        if (!validationResult.IsValid)
         {
-            return BadRequest("key cannot be null or empty");
+            return BadRequest(validationResult.ToDictionary());
         }
 
-        if (string.IsNullOrWhiteSpace(request.Value))
-        {
-            return BadRequest("value cannot be null or empty");
-        }
-
-        await this._distributedCache.SetAsync(request.Key, Encoding.UTF8.GetBytes(request.Value));
+        await _distributedCache.SetAsync(request.Key, Encoding.UTF8.GetBytes(request.Value));
 
         return NoContent();
     }

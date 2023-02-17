@@ -150,8 +150,6 @@ public class ScanFormController : ControllerBase
     /// <summary>
     /// It allows to scan a image previously uploaded
     /// </summary>
-    /// <param name="modelId">The ML ModelId</param>
-    /// <param name="url">The public available resource url</param>
     /// <returns>The result</returns>
     [Route("ClassifyAndEvaluate"), HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FormExtractorResponse))]
@@ -160,14 +158,31 @@ public class ScanFormController : ControllerBase
     [Consumes(MediaTypeNames.Application.Json)]
     public async Task<IActionResult> GetClassifyAndEvaluateAsync([FromBody] BasicRequest request)
     {
-        FormExtractorResponse result = new();
+        if (request == null)
+        {
+            return BadRequest("request cannot be null");
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Url))
+        {
+            return BadRequest("request Url cannot be null or empty");
+        }
+
+
+        FormExtractorResponse result = new FormExtractorResponse();
         result.ResourceUrl = HttpUtility.HtmlDecode(request.Url);
-        var classification = await _formClassifierService.ClassifyAsync(HttpUtility.HtmlDecode(request.Url));
+
+        if (string.IsNullOrWhiteSpace(result.ResourceUrl))
+        {
+            return BadRequest("request Url is null or empty after HtmlDecode");
+        }
+
+        var classification = await _formClassifierService.ClassifyAsync(result.ResourceUrl);
 
         if (classification != null && classification.Predictions != null && classification.Predictions.Any())
         {
-            var first = classification.Predictions.OrderByDescending(o => o.Probability).First();
-            result.ContentData = await _formRecognizerService.ScanAsync(first.TagId, request.Url);
+            var firstPrediction = classification.Predictions.OrderByDescending(o => o.Probability).First();
+            result.ContentData = await _formRecognizerService.ScanAsync(firstPrediction.TagId!, request.Url);
         }
 
         result.Classification = classification;

@@ -1,4 +1,5 @@
-﻿using Genocs.FormRecognizer.WebApi.Models;
+﻿using FluentValidation;
+using Genocs.FormRecognizer.WebApi.Models;
 using Genocs.Integration.CognitiveServices.Interfaces;
 using Genocs.Integration.CognitiveServices.Models;
 using Genocs.Integration.CognitiveServices.Services;
@@ -16,32 +17,34 @@ public class ScanUserController : ControllerBase
     private readonly IFaceRecognizer _faceRecognizerService;
     private readonly IIDocumentRecognizer _idDocumentService;
     private readonly StorageService _storageService;
+    private readonly IValidator<MemberScanRequest> _memberScanRequestValidator;
     private readonly PredictionEnginePool<MachineLearnings.Passport_MLModel.ModelInput,
                                         MachineLearnings.Passport_MLModel.ModelOutput> _predictionEnginePool;
 
     public ScanUserController(StorageService storageService,
                                 IFaceRecognizer faceRecognizerService,
                                 IIDocumentRecognizer idDocumentService,
+                                IValidator<MemberScanRequest> memberScanRequestValidator,
                                 PredictionEnginePool<MachineLearnings.Passport_MLModel.ModelInput, MachineLearnings.Passport_MLModel.ModelOutput> predictionEnginePool)
     {
         _faceRecognizerService = faceRecognizerService ?? throw new ArgumentNullException(nameof(faceRecognizerService));
         _storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
         _idDocumentService = idDocumentService ?? throw new ArgumentNullException(nameof(idDocumentService));
+        _memberScanRequestValidator = memberScanRequestValidator ?? throw new ArgumentNullException(nameof(memberScanRequestValidator));
         _predictionEnginePool = predictionEnginePool ?? throw new ArgumentNullException(nameof(predictionEnginePool));
     }
 
 
     /// <summary>
-    /// 
+    /// Upload two images on the blob storage and run the data extraction
     /// </summary>
-    /// <param name="documentImage">The ID document image file</param>
-    /// <param name="faceImage">The face image file</param>
+    /// <param name="images">images with Id document and the selfie</param>
     /// <returns></returns>
     [Route("UploadAndEvaluate"), HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> PostUploadAndEvaluateAsync([FromForm(Name = "images")] List<IFormFile> images)
+    public async Task<IActionResult> PostUploadAndEvaluateAsync([FromForm] List<IFormFile> images)
     {
         if (images is null || images.Count != 2)
         {
@@ -118,14 +121,11 @@ public class ScanUserController : ControllerBase
     [Consumes(MediaTypeNames.Application.Json)]
     public async Task<ActionResult<List<dynamic>>> PostEvaluateAsync([FromBody] MemberScanRequest request)
     {
-        if (string.IsNullOrWhiteSpace(request.IdDocumentImageUrl))
-        {
-            return BadRequest("IdDocumentImageUrl cannot be null or empty");
-        }
+        var validationResult = await _memberScanRequestValidator.ValidateAsync(request);
 
-        if (string.IsNullOrWhiteSpace(request.FaceImageUrl))
+        if (!validationResult.IsValid)
         {
-            return BadRequest("FaceImageUrl cannot be null or empty");
+            return BadRequest(validationResult.ToDictionary());
         }
 
         // Check if the first image contains a document
@@ -136,10 +136,7 @@ public class ScanUserController : ControllerBase
             return BadRequest("IdDocumentImageUrl do not contain valid ID Document");
         }
 
-
         await _faceRecognizerService.CompareFacesAsync(request.IdDocumentImageUrl, request.FaceImageUrl);
-
-
 
         return Ok("done");
     }
@@ -149,8 +146,8 @@ public class ScanUserController : ControllerBase
     /// </summary>
     /// <param name="url">The public available url</param>
     /// <returns>The result</returns>
-    [Route("CardId"), HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+    [Route("DocumentId"), HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDResult))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Produces(MediaTypeNames.Application.Json)]
@@ -158,41 +155,19 @@ public class ScanUserController : ControllerBase
     public async Task<IActionResult> GetCardIdInfoAsync([FromBody] BasicRequest request)
     {
         var result = await _idDocumentService.RecognizeAsync(request.Url);
-        return result?.ValidationResult != IDValidationResultType.VALID ? NoContent() : Ok(result);
-    }
-
-    /// <summary>
-    /// It allows to scan previously uploaded images
-    /// </summary>
-    /// <param name="url">The public available url</param>
-    /// <returns>The result</returns>
-    [Route("IdDocument"), HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CardIdResult))]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [Produces(MediaTypeNames.Application.Json)]
-    [Consumes(MediaTypeNames.Application.Json)]
-    public async Task<IActionResult> GetIdDocumentInfoAsync([FromBody] BasicRequest request)
-    {
-        var result = await _idDocumentService.RecognizeAsync(request.Url);
-        return result == null ? NoContent() : Ok(result);
+        return (result == null || result?.ValidationResult != IDValidationResultType.VALID) ? NoContent() : Ok(result);
     }
 }
 
-public class MemberScanRequest
-{
-    public string IdDocumentImageUrl { get; set; }
-    public string FaceImageUrl { get; set; }
-}
 
 public class MemberScanResponse
 {
-    public FaceResult Face { get; set; }
-    public IDResult IdDocument { get; set; }
+    public string Overall { get; set; }
     public string DocumentData { get; set; }
     public float DocumentDataScore { get; set; }
+    public FaceResult Face { get; set; }
+    public IDResult IdDocument { get; set; }
 
-    public string Overall { get; set; }
 
     public MemberScanResponse(string documentData, float documentDataScore, double faceScore, IDResult idDocumentResult)
     {
@@ -215,13 +190,13 @@ public class MemberScanResponse
 
         if (!Face.Match)
         {
-            Overall = "face mismatch";
+            Overall = "FaceMismatch";
             return;
         }
 
-        if (Face.Score > 0.99)
+        if (Face.Same)
         {
-            Overall = "face duplicated";
+            Overall = "FaceDuplicated";
             return;
         }
     }
@@ -229,12 +204,14 @@ public class MemberScanResponse
     public record FaceResult
     {
         public bool Match { get; init; }
+        public bool Same { get; init; }
 
         public double Score { get; init; }
 
         public FaceResult(double score)
         {
             Match = score > 0.55f;
+            Same = score > 0.97f;
             Score = score;
         }
     }
