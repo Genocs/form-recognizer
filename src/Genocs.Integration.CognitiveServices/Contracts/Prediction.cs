@@ -1,5 +1,8 @@
 ﻿namespace Genocs.Integration.CognitiveServices.Contracts;
 
+/// <summary>
+/// the prediction class 
+/// </summary>
 public class Prediction
 {
     public double Probability { get; set; }

@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.ML;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Serilog;
 using Serilog.Events;
 using System.Text.Json.Serialization;
@@ -31,9 +33,6 @@ builder.Host.UseSerilog((ctx, lc) => lc
 //builder.InitializeOpenTelemetry();
 // add services to DI container
 var services = builder.Services;
-
-// Set Custom Open telemetry
-services.AddCustomOpenTelemetry(builder.Configuration);
 
 services.AddCors();
 services.AddControllers().AddJsonOptions(x =>
@@ -96,6 +95,8 @@ services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
 // Fluent Validation
 services.AddValidatorsFromAssemblyContaining<SetupSettingRequestValidator>();
 
+// Set Custom Open telemetry
+services.AddCustomOpenTelemetry(builder.Configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

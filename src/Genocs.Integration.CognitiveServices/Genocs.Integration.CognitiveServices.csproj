@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>4.0.0-rc2.0</Version>
+		<Version>4.0.0-rc3.0</Version>
 		<MinClientVersion>5.0.0</MinClientVersion>
 		<Authors>Nocco Giovanni Emanuele</Authors>
 		<Company>Genocs</Company>
@@ -19,7 +19,7 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>Machine Learning Azure Cognitive Services Vision FormRecognizer Face Recognition Microservice</PackageTags>
 		<PackageReadmeFile>README_NUGET.md</PackageReadmeFile>
-		<PackageReleaseNotes>Removed postfix Settings</PackageReleaseNotes>
+		<PackageReleaseNotes>Minor Updates</PackageReleaseNotes>
 		<EnableNETAnalyzers>True</EnableNETAnalyzers>
 		<AnalysisLevel>latest</AnalysisLevel>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
@@ -28,7 +28,7 @@
 	<ItemGroup>
 		<PackageReference Include="Azure.AI.FormRecognizer" Version="4.0.0" />
 		<PackageReference Include="Microsoft.Azure.CognitiveServices.Vision.Face" Version="2.8.0-preview.3" />
-		<PackageReference Include="Azure.Storage.Blobs" Version="12.14.1" />
+		<PackageReference Include="Azure.Storage.Blobs" Version="12.15.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />

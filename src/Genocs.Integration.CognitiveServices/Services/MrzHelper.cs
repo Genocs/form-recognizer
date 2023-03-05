@@ -593,9 +593,23 @@ public enum MRZCheckResult
     Names = 6
 }
 
+/// <summary>
+/// Available MRZ types
+/// </summary>
 public enum MRZType
 {
+    /// <summary>
+    /// Undefined type. This is a placeholder 
+    /// </summary>
     UNKNOWN,
+
+    /// <summary>
+    /// The TD1 MRZ type (see passports)
+    /// </summary>
     TD1,
+
+    /// <summary>
+    /// The Document Id MZR type (See Italian Carta D'Identità)
+    /// </summary>
     TD3
 }

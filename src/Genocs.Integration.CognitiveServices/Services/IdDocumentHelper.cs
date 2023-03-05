@@ -26,7 +26,6 @@ public static class IdDocumentHelper
     /// <param name="document"></param>
     public static IDResult Validate(AnalyzedDocument? document)
     {
-        IDValidationResultType result = IDValidationResultType.EMPTY_DATA;
         if (document is null)
         {
             return new IDResult(IDValidationResultType.EMPTY_DATA);

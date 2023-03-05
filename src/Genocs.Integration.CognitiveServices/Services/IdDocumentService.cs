@@ -5,7 +5,6 @@ using Genocs.Integration.CognitiveServices.Models;
 using Genocs.Integration.CognitiveServices.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.ComponentModel.DataAnnotations;
 
 namespace Genocs.Integration.CognitiveServices.Services;
 
@@ -36,22 +35,12 @@ public class IdDocumentService : IIDocumentRecognizer, IDisposable
             throw new ArgumentNullException(nameof(config));
         }
 
-        _config = config.Value;
-
-        if (string.IsNullOrWhiteSpace(_config.SubscriptionKey))
+        if (!AzureCognitiveServicesSettings.IsValid(config.Value))
         {
-            throw new ArgumentNullException(_config.SubscriptionKey);
+            throw new ArgumentException("AzureCognitiveServicesSettings is invalid", nameof(config.Value));
         }
 
-        if (string.IsNullOrWhiteSpace(_config.Endpoint))
-        {
-            throw new ArgumentNullException(_config.Endpoint);
-        }
-
-        if (!Uri.IsWellFormedUriString(_config.Endpoint, UriKind.Absolute))
-        {
-            throw new InvalidDataException($"Config Endpoint Uri '{_config.Endpoint}' is invalid");
-        }
+        _config = config.Value; 
     }
 
     /// <summary>
@@ -136,20 +125,17 @@ public class IdDocumentService : IIDocumentRecognizer, IDisposable
 
         if (analysisResult == null)
         {
-            return null;
+            return IDResult.Empty();
         }
 
         if (analysisResult.Documents == null || !analysisResult.Documents.Any())
         {
-            // No documents
-            return null;
+            return IDResult.Empty();
         }
 
         AnalyzedDocument? document = analysisResult.Documents.OrderBy(o => o.Confidence).FirstOrDefault();
 
         // Extract fields
-        var result = IdDocumentHelper.Validate(document);
-
-        return result;
+        return IdDocumentHelper.Validate(document);
     }
 }

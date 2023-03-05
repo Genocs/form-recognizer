@@ -25,6 +25,12 @@ public class CardIdRecognizerService : IIDocumentRecognizer, IDisposable
     private readonly string prefix_url = "vision/v2.0/recognizeText?mode=Printed";
 
 
+    /// <summary>
+    /// The CardIdRecognizerService service implementation 
+    /// </summary>
+    /// <param name="config"></param>
+    /// <param name="logger"></param>
+    /// <exception cref="ArgumentNullException"></exception>
     public CardIdRecognizerService(IOptions<AzureCognitiveServicesSettings> config, ILogger<CardIdRecognizerService> logger)
     {
         if (config == null)
@@ -33,6 +39,12 @@ public class CardIdRecognizerService : IIDocumentRecognizer, IDisposable
         }
 
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+
+        if (!AzureCognitiveServicesSettings.IsValid(config.Value))
+        {
+            throw new ArgumentException("AzureCognitiveServicesSettings is invalid", nameof(config.Value));
+        }
 
         _config = config.Value;
 

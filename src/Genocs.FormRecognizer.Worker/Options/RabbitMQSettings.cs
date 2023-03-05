@@ -2,7 +2,7 @@
 
 public class RabbitMQSettings
 {
-    public static string Position = "RabbitMQ";
+    public static string Position = "RabbitMq";
 
     public string HostName { get; set; } = "localhost";
     public string VirtualHost { get; set; } = "/";

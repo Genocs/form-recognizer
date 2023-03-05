@@ -33,6 +33,7 @@ public class AzureCognitiveServicesSettings
 
         if (string.IsNullOrWhiteSpace(settings.Endpoint)) return false;
         if (string.IsNullOrWhiteSpace(settings.SubscriptionKey)) return false;
+        if (!Uri.IsWellFormedUriString(settings.Endpoint, UriKind.Absolute)) return false;
         return true;
     }
 }

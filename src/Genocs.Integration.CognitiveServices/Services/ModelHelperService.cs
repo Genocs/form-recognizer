@@ -8,6 +8,9 @@ using Microsoft.Extensions.Options;
 
 namespace Genocs.Integration.CognitiveServices.Services;
 
+/// <summary>
+/// The ModelHelperService implementation
+/// </summary>
 public class ModelHelperService : IModelHelper
 {
     private readonly AzureCognitiveServicesSettings _config;
@@ -15,6 +18,13 @@ public class ModelHelperService : IModelHelper
 
     private readonly FormTrainingClient _client;
 
+    /// <summary>
+    /// Standard ModelHelperService ctor 
+    /// </summary>
+    /// <param name="config"></param>
+    /// <param name="logger"></param>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ArgumentException"></exception>
     public ModelHelperService(IOptions<AzureCognitiveServicesSettings> config, ILogger<ModelHelperService> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -132,6 +142,12 @@ public class ModelHelperService : IModelHelper
     //    }
     //}
 
+    /// <summary>
+    /// It allows to create a model based on a Traingset
+    /// </summary>
+    /// <param name="trainingSetUrl">The traingset folder url</param>
+    /// <param name="modelName">The model name we want to give</param>
+    /// <returns></returns>
     public async Task CreateModelAsync(string trainingSetUrl, string modelName)
     {
         // Create a new model to store in the account
@@ -163,6 +179,9 @@ public class ModelHelperService : IModelHelper
         //client.DeleteModel(model.ModelId);
     }
 
+    /// <summary>
+    /// It allaws to evaluating an existing model based on the client that has been setup
+    /// </summary>
     public void EvaluateExisting()
     {
         // Check number of models in the FormRecognizer account, and the maximum number of models that can be stored.

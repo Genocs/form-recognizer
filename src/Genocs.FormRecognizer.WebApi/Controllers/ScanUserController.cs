@@ -41,7 +41,7 @@ public class ScanUserController : ControllerBase
     /// <param name="images">images with Id document and the selfie</param>
     /// <returns></returns>
     [Route("UploadAndEvaluate"), HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MemberScanResponse))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> PostUploadAndEvaluateAsync([FromForm] List<IFormFile> images)
@@ -63,16 +63,26 @@ public class ScanUserController : ControllerBase
         var uploadResult = await _storageService.UploadFilesAsync(images);
 
         // Copy for local predictionEngine
-        Stream s = images[0].OpenReadStream();
+        Stream stream = images[0].OpenReadStream();
 
         MachineLearnings.Passport_MLModel.ModelInput inputData = new MachineLearnings.Passport_MLModel.ModelInput();
 
-        using (BinaryReader br = new BinaryReader(s))
+        using (BinaryReader reader = new BinaryReader(stream))
         {
-            inputData.ImageSource = br.ReadBytes((int)s.Length);
+            inputData.ImageSource = reader.ReadBytes((int)stream.Length);
         }
 
-        MachineLearnings.Passport_MLModel.ModelOutput outputData = _predictionEnginePool.Predict(inputData);
+        MachineLearnings.Passport_MLModel.ModelOutput predictionResult = _predictionEnginePool.Predict(inputData);
+
+        if (predictionResult.PredictedLabel != "valid")
+        {
+            MemberScanResponse invalidResponse = new MemberScanResponse(predictionResult.PredictedLabel,
+                                                      predictionResult.Score[0]);
+
+            return Ok(invalidResponse);
+
+        }
+
 
 
         // Check if the first image contains the ID
@@ -98,8 +108,8 @@ public class ScanUserController : ControllerBase
             return BadRequest("no face into the images");
         }
 
-        MemberScanResponse response = new MemberScanResponse(outputData.PredictedLabel,
-                                                              outputData.Score[0],
+        MemberScanResponse response = new MemberScanResponse(predictionResult.PredictedLabel,
+                                                              predictionResult.Score[0],
                                                               faceResult.OrderBy(o => o.Confidence).FirstOrDefault().Confidence,
                                                               idDocumentResult);
 
@@ -175,6 +185,38 @@ public class MemberScanResponse
         DocumentDataScore = documentDataScore;
         Face = new FaceResult(faceScore);
         IdDocument = idDocumentResult;
+        Overall = DocumentData;
+
+        if (DocumentData != "valid")
+        {
+            return;
+        }
+
+        if (IdDocument.ValidationResult != IDValidationResultType.VALID)
+        {
+            Overall = IdDocument.ValidationResult.ToString();
+            return;
+        }
+
+        if (!Face.Match)
+        {
+            Overall = "FaceMismatch";
+            return;
+        }
+
+        if (Face.Same)
+        {
+            Overall = "FaceDuplicated";
+            return;
+        }
+    }
+
+    public MemberScanResponse(string documentData, float documentDataScore)
+    {
+        DocumentData = documentData;
+        DocumentDataScore = documentDataScore;
+        Face = new FaceResult(0);
+        IdDocument = null;
         Overall = DocumentData;
 
         if (DocumentData != "valid")

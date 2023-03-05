@@ -161,4 +161,13 @@ public class IDResult
         MRZ = mrz;
         Data = data;
     }
+
+    /// <summary>
+    /// Empty Helper
+    /// </summary>
+    /// <returns></returns>
+    public static IDResult Empty()
+    {
+        return new IDResult(IDValidationResultType.EMPTY_DATA);
+    }
 }

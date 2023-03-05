@@ -40,9 +40,12 @@ Following is about how to setup **AzureCognitiveServices** **AzureStorage** **Im
 
 ## Release notes
 
+
+### [2023-03-05] 4.0.0-rc3.0
+- Nuget package updates and minor fix
+
 ### [2023-02-06] 4.0.0-rc2.0
 - Removed postfix Settings
 
 ### [2023-01-21] 4.0.0-rc1.0
 - Added KYC support
-

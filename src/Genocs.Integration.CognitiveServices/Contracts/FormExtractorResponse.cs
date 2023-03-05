@@ -1,7 +1,7 @@
 ﻿namespace Genocs.Integration.CognitiveServices.Contracts;
 
 /// <summary>
-/// The FormExtractorResponse data response
+/// The Form Extractor Response
 /// </summary>
 public class FormExtractorResponse
 {
