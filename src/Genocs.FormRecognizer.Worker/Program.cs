@@ -17,7 +17,7 @@ Log.Logger = new LoggerConfiguration()
 
 
 
-IHost host = Host.CreateDefaultBuilder(args)
+Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((hostContext, builder) =>
     {
         builder.AddUserSecrets<Program>();
@@ -48,8 +48,6 @@ IHost host = Host.CreateDefaultBuilder(args)
     .Build();
 
 await host.RunAsync();
-
-await TelemetryAndLogging.FlushAndCloseAsync();
 
 Log.CloseAndFlush();
 

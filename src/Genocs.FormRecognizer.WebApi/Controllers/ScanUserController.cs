@@ -80,10 +80,7 @@ public class ScanUserController : ControllerBase
                                                       predictionResult.Score[0]);
 
             return Ok(invalidResponse);
-
         }
-
-
 
         // Check if the first image contains the ID
         var idDocumentResult = await _idDocumentService.RecognizeAsync(uploadResult.First().URL);
