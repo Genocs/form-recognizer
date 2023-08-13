@@ -10,7 +10,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Genocs.Integration.CognitiveServices" Version="4.0.0-rc3.0" />
 		<PackageReference Include="Genocs.Monitoring" Version="2.0.1" />
 		<PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.1" />
 		<PackageReference Include="MassTransit.RabbitMQ" Version="8.0.16" />
@@ -19,7 +18,11 @@
 		<PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
+		<ProjectReference Include="..\Genocs.Integration.CognitiveServices\Genocs.Integration.CognitiveServices.csproj" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(Configuration)' == 'Release'">
+		<PackageReference Include="Genocs.Integration.CognitiveServices" Version="4.0.0-rc3.*" />
 	</ItemGroup>
 </Project>
