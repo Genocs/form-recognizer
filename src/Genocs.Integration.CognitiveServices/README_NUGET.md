@@ -40,9 +40,11 @@ Following is about how to setup **AzureCognitiveServices** **AzureStorage** **Im
 
 ## Release notes
 
+### [2023-08-13] 4.0.0-rc3.1
+- NuGet package updates, supported framework NET6 and NET7, plus minor fix
 
 ### [2023-03-05] 4.0.0-rc3.0
-- Nuget package updates and minor fix
+- NuGet package updates and minor fix
 
 ### [2023-02-06] 4.0.0-rc2.0
 - Removed postfix Settings

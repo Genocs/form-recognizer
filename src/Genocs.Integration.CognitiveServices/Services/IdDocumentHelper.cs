@@ -110,7 +110,7 @@ public enum IDValidationResultType
     UNDER_THRESHOLD,
 
     /// <summary>
-    /// NO bouding region found
+    /// NO bounding region found
     /// </summary>
     NO_IMAGE_BOUND,
 

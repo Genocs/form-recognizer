@@ -43,7 +43,7 @@ public class FormRecognizerService : IFormRecognizer
     }
 
     /// <summary>
-    /// Scan an image file froma a stream
+    /// Scan an image file from a stream
     /// </summary>
     /// <param name="classificationKey"></param>
     /// <param name="stream"></param>
@@ -90,6 +90,12 @@ public class FormRecognizerService : IFormRecognizer
         return await Evaluate(operation);
     }
 
+    /// <summary>
+    /// Scan image to find ID Document
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <returns></returns>
+    /// <exception cref="NullReferenceException"></exception>
     public async Task<string?> ScanLocalCardId(string filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath))

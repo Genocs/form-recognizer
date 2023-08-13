@@ -155,7 +155,7 @@ public class FaceRecognizerService : IFaceRecognizer
                                                                         largeFaceListId: null,
                                                                         faceIds: targetFaceIds,
                                                                         maxNumOfCandidatesReturned: 2,
-                                                                        mode: FindSimilarMatchMode.MatchPerson,
+                                                                        mode: FindSimilarMatchMode.MatchFace,
                                                                         cancellationToken: default));
             }
         }
