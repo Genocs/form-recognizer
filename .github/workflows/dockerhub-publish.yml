@@ -1,6 +1,6 @@
-# This is a manually triggered nuget build and deploy
+# This is a manually triggered dockerhub build and publish
 
-name: Publish on NuGet
+name: Publish to Dockerhub
 
 # Controls when the action will run. Workflow runs when manually triggered using the UI
 # or API.
@@ -10,7 +10,7 @@ on:
     inputs:
       version:
         # Friendly description to be shown in the UI instead of 'name'
-        description: "Packages Version"
+        description: "Image Version"
 
         # Default value if no value is explicitly provided
         default: "5.0.0"
@@ -21,29 +21,38 @@ on:
 
 jobs:
   build:
-    name: Update NuGet packages
+    name: Publish Docker Image
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
+  
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 8.0.x
-
+  
       - name: Restore dependencies
         run: dotnet restore
-
+  
       - name: Build
         run: dotnet build -c Debug --no-restore
-
+  
       - name: Test
         run: dotnet test --no-build --verbosity normal
-
+  
       - name: Pack
-        run: dotnet pack -c Debug -o out -p:PackageVersion=${{ github.event.inputs.version }} --no-build --verbosity normal
+        run: dotnet pack --no-build --verbosity normal
 
-      - name: Push packages to Nuget
-        run: dotnet nuget push ./out/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate --no-symbols
+      - name: Docker Hub Log in
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push image to Dockerhub
+        run: |
+          docker build -f webapi.dockerfile -t genocs/demo-webapi:${{ github.event.inputs.version }} -t genocs/demo-webapi:latest .
+          docker push genocs/demo-webapi:${{ github.event.inputs.version }}
+          docker push genocs/demo-webapi:latest
