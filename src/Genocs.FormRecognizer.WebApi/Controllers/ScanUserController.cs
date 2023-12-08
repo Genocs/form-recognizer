@@ -14,7 +14,6 @@ namespace Genocs.FormRecognizer.WebApi.Controllers;
 [Route("[controller]")]
 public class ScanUserController : ControllerBase
 {
-    private readonly IFaceRecognizer _faceRecognizerService;
     private readonly IIDocumentRecognizer _idDocumentService;
     private readonly StorageService _storageService;
     private readonly IValidator<MemberScanRequest> _memberScanRequestValidator;
@@ -23,12 +22,10 @@ public class ScanUserController : ControllerBase
 
     public ScanUserController(
                                 StorageService storageService,
-                                IFaceRecognizer faceRecognizerService,
                                 IIDocumentRecognizer idDocumentService,
                                 IValidator<MemberScanRequest> memberScanRequestValidator,
                                 PredictionEnginePool<MachineLearnings.Passport_MLModel.ModelInput, MachineLearnings.Passport_MLModel.ModelOutput> predictionEnginePool)
     {
-        _faceRecognizerService = faceRecognizerService ?? throw new ArgumentNullException(nameof(faceRecognizerService));
         _storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
         _idDocumentService = idDocumentService ?? throw new ArgumentNullException(nameof(idDocumentService));
         _memberScanRequestValidator = memberScanRequestValidator ?? throw new ArgumentNullException(nameof(memberScanRequestValidator));
@@ -100,21 +97,23 @@ public class ScanUserController : ControllerBase
             return BadRequest("no document found in the images");
         }
 
-        // Run the face match
-        var faceResult = await _faceRecognizerService.CompareFacesAsync(uploadResult.First().URL, uploadResult.Last().URL);
+        return BadRequest("no face into the images");
 
-        if (faceResult is null || !faceResult.Any())
-        {
-            return BadRequest("no face into the images");
-        }
+        //// Run the face match
+        //var faceResult = await _faceRecognizerService.CompareFacesAsync(uploadResult.First().URL, uploadResult.Last().URL);
 
-        MemberScanResponse response = new MemberScanResponse(
-                                                              predictionResult.PredictedLabel,
-                                                              predictionResult.Score[0],
-                                                              faceResult.OrderBy(o => o.Confidence).FirstOrDefault().Confidence,
-                                                              idDocumentResult);
+        //if (faceResult is null || !faceResult.Any())
+        //{
+        //    return BadRequest("no face into the images");
+        //}
 
-        return Ok(response);
+        //MemberScanResponse response = new MemberScanResponse(
+        //                                                      predictionResult.PredictedLabel,
+        //                                                      predictionResult.Score[0],
+        //                                                      faceResult.OrderBy(o => o.Confidence).FirstOrDefault().Confidence,
+        //                                                      idDocumentResult);
+
+        //return Ok(response);
     }
 
     /// <summary>
@@ -146,22 +145,23 @@ public class ScanUserController : ControllerBase
             return BadRequest("IdDocumentImageUrl do not contain valid ID Document");
         }
 
-        await _faceRecognizerService.CompareFacesAsync(request.IdDocumentImageUrl, request.FaceImageUrl);
+        // await _faceRecognizerService.CompareFacesAsync(request.IdDocumentImageUrl, request.FaceImageUrl);
 
         return Ok("done");
     }
 
     /// <summary>
-    /// It allows to scan a image previously uploaded
+    /// It allows to scan a image previously uploaded.
     /// </summary>
     /// <param name="url">The public available url</param>
     /// <returns>The result</returns>
-    [Route("DocumentId"), HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDResult))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Produces(MediaTypeNames.Application.Json)]
     [Consumes(MediaTypeNames.Application.Json)]
+    [Route("DocumentId")]
+    [HttpPost]
     public async Task<IActionResult> GetCardIdInfoAsync([FromBody] BasicRequest request)
     {
         var result = await _idDocumentService.RecognizeAsync(request.Url);

@@ -1,7 +1,7 @@
 ﻿namespace Genocs.Integration.CognitiveServices.Contracts;
 
 /// <summary>
-/// the prediction class 
+/// The prediction class.
 /// </summary>
 public class Prediction
 {

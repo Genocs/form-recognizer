@@ -15,21 +15,18 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();
 
-
-
-Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
+IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((hostContext, builder) =>
     {
         builder.AddUserSecrets<Program>();
     })
     .ConfigureServices((hostContext, services) =>
     {
-        //TelemetryAndLogging.Initialize(hostContext.Configuration.GetConnectionString("ApplicationInsights"));
+        // TelemetryAndLogging.Initialize(hostContext.Configuration.GetConnectionString("ApplicationInsights"));
         services.AddCustomOpenTelemetry(hostContext.Configuration);
 
         ConfigureMongoDb(services, hostContext.Configuration);
         ConfigureMassTransit(services, hostContext.Configuration);
-
 
         // Register Settings
         services.Configure<AzureCognitiveServicesSettings>(hostContext.Configuration.GetSection(AzureCognitiveServicesSettings.Position));
@@ -51,7 +48,6 @@ await host.RunAsync();
 
 Log.CloseAndFlush();
 
-
 static IServiceCollection ConfigureMongoDb(IServiceCollection services, IConfiguration configuration)
 {
     //services.Configure<DBSettings>(configuration.GetSection(DBSettings.Position));
@@ -64,10 +60,9 @@ static IServiceCollection ConfigureMongoDb(IServiceCollection services, IConfigu
     return services;
 }
 
-
 static IServiceCollection ConfigureMassTransit(IServiceCollection services, IConfiguration configuration)
 {
-    //services.AddMediator();
+    // services.AddMediator();
 
     var rabbitMQSettings = new RabbitMQSettings();
     configuration.GetSection(RabbitMQSettings.Position).Bind(rabbitMQSettings);

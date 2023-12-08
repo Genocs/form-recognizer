@@ -80,7 +80,7 @@ services.AddSingleton<StorageService>();
 services.AddSingleton<IFormRecognizer, FormRecognizerService>();
 services.AddSingleton<IImageClassifier, ImageClassifierService>();
 services.TryAddScoped<IIDocumentRecognizer, IdDocumentService>();
-services.TryAddScoped<IFaceRecognizer, FaceRecognizerService>();
+// services.TryAddScoped<IFaceRecognizer, FaceRecognizerService>();
 
 services.AddCustomCache(builder.Configuration);
 

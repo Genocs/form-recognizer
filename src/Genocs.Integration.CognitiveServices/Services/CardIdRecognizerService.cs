@@ -4,8 +4,7 @@ using Genocs.Integration.CognitiveServices.Models;
 using Genocs.Integration.CognitiveServices.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
 
 namespace Genocs.Integration.CognitiveServices.Services;
 
@@ -23,7 +22,6 @@ public class CardIdRecognizerService : IIDocumentRecognizer, IDisposable
     private HttpClient _httpClient;
 
     private readonly string prefix_url = "vision/v2.0/recognizeText?mode=Printed";
-
 
     /// <summary>
     /// The CardIdRecognizerService service implementation 
@@ -73,7 +71,6 @@ public class CardIdRecognizerService : IIDocumentRecognizer, IDisposable
         // from executing a second time.
         GC.SuppressFinalize(this);
     }
-
 
     /// <summary>
     /// Dispose(bool disposing) executes in two distinct scenarios.
@@ -146,7 +143,7 @@ public class CardIdRecognizerService : IIDocumentRecognizer, IDisposable
         {
             // Display the JSON error data.
             string errorString = await postResponse.Content.ReadAsStringAsync();
-            _logger.LogError($"Response: {0}", JToken.Parse(errorString).ToString());
+            _logger.LogError($"Response: {0}", errorString);
             return null;
         }
 
@@ -163,7 +160,7 @@ public class CardIdRecognizerService : IIDocumentRecognizer, IDisposable
         int i = 0;
         do
         {
-            System.Threading.Thread.Sleep(1000);
+            Thread.Sleep(1000);
             response = await _httpClient.GetAsync(operationLocation);
             contentString = await response.Content.ReadAsStringAsync();
             ++i;
@@ -176,7 +173,7 @@ public class CardIdRecognizerService : IIDocumentRecognizer, IDisposable
             return null;
         }
 
-        var tmp = JsonConvert.DeserializeObject<CardIdResult>(contentString);
+        var tmp = JsonSerializer.Deserialize<CardIdResult>(contentString);
 
         return new IDResult(IDValidationResultType.EMPTY_DATA);
     }

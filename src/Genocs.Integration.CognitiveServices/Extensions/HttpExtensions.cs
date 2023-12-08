@@ -4,7 +4,7 @@ using System.Text.Json;
 namespace Genocs.Integration.CognitiveServices.Extensions;
 
 /// <summary>
-/// Http Extensions method helper class
+/// Http Extensions method helper class.
 /// </summary>
 internal static class HttpExtensions
 {

@@ -9,7 +9,6 @@ using System.Web;
 
 namespace Genocs.FormRecognizer.WebApi.Controllers;
 
-
 [ApiController]
 [Route("[controller]")]
 public class ScanFormController : ControllerBase
@@ -19,7 +18,8 @@ public class ScanFormController : ControllerBase
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly StorageService _storageService;
 
-    public ScanFormController(StorageService storageService,
+    public ScanFormController(
+                                StorageService storageService,
                                 IFormRecognizer formRecognizerService,
                                 IImageClassifier formClassifierService,
                                 IPublishEndpoint publishEndpoint)
@@ -33,13 +33,14 @@ public class ScanFormController : ControllerBase
     /// <summary>
     /// It allows to classify an image.
     /// </summary>
-    /// <param name="url">The HTML encoded url</param>
-    /// <returns>The classification result</returns>
-    [Route("Classify"), HttpPost]
+    /// <param name="request">The request</param>
+    /// <returns>The classification result.</returns>
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Prediction))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [Route("Classify")]
+    [HttpPost]
     public async Task<IActionResult> GetClassifyAsync([FromBody] BasicRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.Url))
@@ -55,20 +56,21 @@ public class ScanFormController : ControllerBase
 
             return Ok(first);
         }
+
         return NoContent();
     }
 
-
     /// <summary>
-    /// It allows to upload an image and classify it
+    /// It allows to upload an image and classify it.
     /// </summary>
-    /// <param name="files">File that will be classified</param>
-    /// <returns>The Prediction result</returns>
-    [Route("UploadAndClassify"), HttpPost]
+    /// <param name="files">File that will be classified.</param>
+    /// <returns>The Prediction result.</returns>
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Prediction))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [Route("UploadAndClassify")]
+    [HttpPost]
     public async Task<IActionResult> PostUploadAndClassifyAsync([FromForm(Name = "images")] List<IFormFile> files)
     {
         if (files == null || files.Count == 0)
@@ -93,17 +95,18 @@ public class ScanFormController : ControllerBase
 
             return Ok(first);
         }
+
         return NoContent();
     }
 
-
     /// <summary>
-    /// It allows to upload an image and extract form data it
+    /// It allows to upload an image and extract form data it.
     /// </summary>
-    /// <param name="files">The File/s stream</param>
-    /// <param name="classificationModelId">The classification model Id</param>
-    /// <returns>The result</returns>
-    [Route("UploadAndEvaluate"), HttpPost]
+    /// <param name="files">The File/s stream.</param>
+    /// <param name="classificationModelId">The classification model Id.</param>
+    /// <returns>The result.</returns>
+    [Route("UploadAndEvaluate")]
+    [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<dynamic>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -118,15 +121,13 @@ public class ScanFormController : ControllerBase
         return await _formRecognizerService.ScanAsync(classificationModelId, uploadResult.First().URL);
     }
 
-
     /// <summary>
-    /// It allows to scan a image previously uploaded
+    /// It allows to scan a image previously uploaded.
     /// </summary>
-    /// <param name="modelId">The ML ModelId</param>
-    /// <param name="url">The public available url</param>
-    /// <returns>The result</returns>
-
-    [Route("Evaluate"), HttpPost]
+    /// <param name="request">The request body.</param>
+    /// <returns>The result.</returns>
+    [Route("Evaluate")]
+    [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<object>))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Produces(MediaTypeNames.Application.Json)]
@@ -146,16 +147,17 @@ public class ScanFormController : ControllerBase
         return await _formRecognizerService.ScanAsync(request.ClassificationModelId, request.Url);
     }
 
-
     /// <summary>
-    /// It allows to scan a image previously uploaded
+    /// It allows to scan a image previously uploaded.
     /// </summary>
-    /// <returns>The result</returns>
-    [Route("ClassifyAndEvaluate"), HttpPost]
+    /// <returns>The result.</returns>
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FormExtractorResponse))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Produces(MediaTypeNames.Application.Json)]
     [Consumes(MediaTypeNames.Application.Json)]
+    [Route("ClassifyAndEvaluate")]
+    [HttpPost]
+
     public async Task<IActionResult> GetClassifyAndEvaluateAsync([FromBody] BasicRequest request)
     {
         if (request == null)
@@ -167,7 +169,6 @@ public class ScanFormController : ControllerBase
         {
             return BadRequest("request Url cannot be null or empty");
         }
-
 
         FormExtractorResponse result = new FormExtractorResponse();
         result.ResourceUrl = HttpUtility.HtmlDecode(request.Url);
@@ -193,4 +194,3 @@ public class ScanFormController : ControllerBase
         return Ok(result);
     }
 }
-
