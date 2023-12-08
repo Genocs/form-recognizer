@@ -5,6 +5,8 @@
         <UserSecretsId>genocs</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <DockerfileContext>..\..</DockerfileContext>
+        <GenerateDocumentationFile>True</GenerateDocumentationFile>
+        <DocumentationFile>api-documentation.xml</DocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -25,6 +27,12 @@
 
     <ItemGroup Condition="'$(Configuration)' == 'Release'">
         <PackageReference Include="Genocs.Integration.CognitiveServices" Version="5.0.*" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="api-documentation.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

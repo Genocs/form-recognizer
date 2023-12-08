@@ -1,0 +1,35 @@
+pool:
+  name: Azure Pipelines
+
+steps:
+  - task: NuGetAuthenticate@1
+    displayName: "NuGet Authenticate"
+
+  - task: DotNetCoreCLI@2
+    displayName: "Build projects"
+    inputs:
+      projects: "$(Parameters.BuildProjects)"
+      arguments: "--configuration $(BuildConfiguration)" # Update this to match your need
+
+  # Run the Test (after building)
+  - task: DotNetCoreCLI@2
+    displayName: "Run tests"
+    inputs:
+      command: "test"
+      projects: "$(Parameters.TestProjects)"
+      arguments: "--configuration $(BuildConfiguration)"
+
+  # Publish the artifact to be ready for deploy
+  - task: DotNetCoreCLI@2
+    displayName: Publish
+    inputs:
+      command: "publish"
+      publishWebProjects: false
+      arguments: "--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)"
+      zipAfterPublish: True
+
+  - task: PublishBuildArtifacts@1
+    displayName: "Publish Artifact"
+    inputs:
+      pathToPublish: "$(build.artifactstagingdirectory)"
+    condition: succeededOrFailed()

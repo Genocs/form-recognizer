@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Genocs.FormRecognizer.WebApi</name>
+    </assembly>
+    <members>
+        <member name="M:Genocs.FormRecognizer.WebApi.Controllers.ScanFormController.GetClassifyAsync(Genocs.FormRecognizer.WebApi.Models.BasicRequest)">
+            <summary>
+            It allows to classify an image.
+            </summary>
+            <param name="request">The request</param>
+            <returns>The classification result.</returns>
+        </member>
+        <member name="M:Genocs.FormRecognizer.WebApi.Controllers.ScanFormController.PostUploadAndClassifyAsync(System.Collections.Generic.List{Microsoft.AspNetCore.Http.IFormFile})">
+            <summary>
+            It allows to upload an image and classify it.
+            </summary>
+            <param name="files">File that will be classified.</param>
+            <returns>The Prediction result.</returns>
+        </member>
+        <member name="M:Genocs.FormRecognizer.WebApi.Controllers.ScanFormController.PostUploadAndEvaluateAsync(System.Collections.Generic.List{Microsoft.AspNetCore.Http.IFormFile},System.String)">
+            <summary>
+            It allows to upload an image and extract form data it.
+            </summary>
+            <param name="files">The File/s stream.</param>
+            <param name="classificationModelId">The classification model Id.</param>
+            <returns>The result.</returns>
+        </member>
+        <member name="M:Genocs.FormRecognizer.WebApi.Controllers.ScanFormController.PostClassifyAndEvaluateAsync(Genocs.FormRecognizer.WebApi.Models.EvaluateRequest)">
+            <summary>
+            It allows to scan a image previously uploaded.
+            </summary>
+            <param name="request">The request body.</param>
+            <returns>The result.</returns>
+        </member>
+        <member name="M:Genocs.FormRecognizer.WebApi.Controllers.ScanFormController.GetClassifyAndEvaluateAsync(Genocs.FormRecognizer.WebApi.Models.BasicRequest)">
+            <summary>
+            It allows to scan a image previously uploaded.
+            </summary>
+            <returns>The result.</returns>
+        </member>
+        <member name="M:Genocs.FormRecognizer.WebApi.Controllers.ScanUserController.PostUploadAndEvaluateAsync(System.Collections.Generic.List{Microsoft.AspNetCore.Http.IFormFile})">
+            <summary>
+            Upload two images on the blob storage and run the data extraction.
+            </summary>
+            <param name="images">images with Id document and the selfie.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Genocs.FormRecognizer.WebApi.Controllers.ScanUserController.PostEvaluateAsync(Genocs.FormRecognizer.WebApi.Controllers.MemberScanRequest)">
+            <summary>
+            It allows to scan a image previously uploaded
+            </summary>
+            <param name="modelId">The ML ModelId</param>
+            <param name="url">The public available url</param>
+            <returns>The result</returns>
+        </member>
+        <member name="M:Genocs.FormRecognizer.WebApi.Controllers.ScanUserController.GetCardIdInfoAsync(Genocs.FormRecognizer.WebApi.Models.BasicRequest)">
+            <summary>
+            It allows to scan a image previously uploaded.
+            </summary>
+            <param name="url">The public available url</param>
+            <returns>The result</returns>
+        </member>
+        <member name="M:Genocs.FormRecognizer.WebApi.Controllers.SettingsController.PostSetupClassificationModel(Genocs.FormRecognizer.WebApi.Controllers.SetupSettingRequest)">
+            <summary>
+            It allows to setup the model classifier lookup table.
+            </summary>
+            <param name="request">the key value pair.</param>
+            <returns>No Content</returns>
+        </member>
+        <member name="T:Genocs.FormRecognizer.WebApi.MachineLearnings.Passport_MLModel.ModelInput">
+            <summary>
+            model input class for KYC_MLModel.
+            </summary>
+        </member>
+        <member name="T:Genocs.FormRecognizer.WebApi.MachineLearnings.Passport_MLModel.ModelOutput">
+            <summary>
+            model output class for KYC_MLModel.
+            </summary>
+        </member>
+        <member name="M:Genocs.FormRecognizer.WebApi.MachineLearnings.Passport_MLModel.PredictAllLabels(Genocs.FormRecognizer.WebApi.MachineLearnings.Passport_MLModel.ModelInput)">
+            <summary>
+            Use this method to predict scores for all possible labels.
+            </summary>
+            <param name="input">model input.</param>
+            <returns><seealso cref="T:Genocs.FormRecognizer.WebApi.MachineLearnings.Passport_MLModel.ModelOutput"/></returns>
+        </member>
+        <member name="M:Genocs.FormRecognizer.WebApi.MachineLearnings.Passport_MLModel.GetSortedScoresWithLabels(Genocs.FormRecognizer.WebApi.MachineLearnings.Passport_MLModel.ModelOutput)">
+            <summary>
+            Map the unlabeled result score array to the predicted label names.
+            </summary>
+            <param name="result">Prediction to get the labeled scores from.</param>
+            <returns>Ordered list of label and score.</returns>
+            <exception cref="T:System.Exception"></exception>
+        </member>
+        <member name="M:Genocs.FormRecognizer.WebApi.MachineLearnings.Passport_MLModel.GetLabels(Genocs.FormRecognizer.WebApi.MachineLearnings.Passport_MLModel.ModelOutput)">
+            <summary>
+            Get the ordered label names.
+            </summary>
+            <param name="result">Predicted result to get the labels from.</param>
+            <returns>List of labels.</returns>
+            <exception cref="T:System.Exception"></exception>
+        </member>
+        <member name="M:Genocs.FormRecognizer.WebApi.MachineLearnings.Passport_MLModel.Predict(Genocs.FormRecognizer.WebApi.MachineLearnings.Passport_MLModel.ModelInput)">
+            <summary>
+            Use this method to predict on <see cref="T:Genocs.FormRecognizer.WebApi.MachineLearnings.Passport_MLModel.ModelInput"/>.
+            </summary>
+            <param name="input">model input.</param>
+            <returns><seealso cref="T:Genocs.FormRecognizer.WebApi.MachineLearnings.Passport_MLModel.ModelOutput"/></returns>
+        </member>
+        <member name="M:Genocs.FormRecognizer.WebApi.MachineLearnings.Passport_MLModel_MLModel.RetrainModel(Microsoft.ML.MLContext,Microsoft.ML.IDataView)">
+            <summary>
+            Retrains model using the pipeline generated as part of the training process.
+            </summary>
+            <param name="mlContext"></param>
+            <param name="trainData"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Genocs.FormRecognizer.WebApi.MachineLearnings.Passport_MLModel_MLModel.BuildPipeline(Microsoft.ML.MLContext)">
+            <summary>
+            build the pipeline that is used from model builder. Use this function to retrain model.
+            </summary>
+            <param name="mlContext"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
