@@ -15,8 +15,8 @@ namespace Genocs.FormRecognizer.WebApi.Controllers;
 public class ScanFormController : ControllerBase
 {
     private readonly IFormRecognizer _formRecognizerService;
-    private readonly IPublishEndpoint _publishEndpoint;
     private readonly IImageClassifier _formClassifierService;
+    private readonly IPublishEndpoint _publishEndpoint;
     private readonly StorageService _storageService;
 
     public ScanFormController(StorageService storageService,
@@ -98,7 +98,7 @@ public class ScanFormController : ControllerBase
 
 
     /// <summary>
-    /// It allows to upload an image and estract form data it
+    /// It allows to upload an image and extract form data it
     /// </summary>
     /// <param name="files">The File/s stream</param>
     /// <param name="classificationModelId">The classification model Id</param>

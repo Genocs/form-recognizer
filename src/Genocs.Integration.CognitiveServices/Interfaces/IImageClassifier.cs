@@ -4,7 +4,7 @@ namespace Genocs.Integration.CognitiveServices.Interfaces;
 
 
 /// <summary>
-/// Inteface for image classifier
+/// Interface for image classifier.
 /// </summary>
 public interface IImageClassifier
 {

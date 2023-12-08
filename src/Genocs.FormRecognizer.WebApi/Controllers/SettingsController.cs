@@ -19,16 +19,16 @@ public class SettingsController : ControllerBase
         _setupSettingRequestValidator = setupSettingRequestValidator ?? throw new ArgumentNullException(nameof(setupSettingRequestValidator));
     }
 
-
     /// <summary>
     /// It allows to setup the model classifier lookup table.
     /// </summary>
-    /// <param name="request">the key value pair</param>
+    /// <param name="request">the key value pair.</param>
     /// <returns>No Content</returns>
-    [Route("SetupClassificationModel"), HttpPost]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [Route("SetupClassificationModel")]
+    [HttpPost]
     public async Task<ActionResult> PostSetupClassificationModel([FromBody] SetupSettingRequest request)
     {
         var validationResult = await _setupSettingRequestValidator.ValidateAsync(request);

@@ -10,8 +10,6 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.ML;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
 using Serilog;
 using Serilog.Events;
 using System.Text.Json.Serialization;
@@ -24,13 +22,11 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((ctx, lc) => lc
     .WriteTo.Console());
 
-//builder.InitializeOpenTelemetry();
 // add services to DI container
 var services = builder.Services;
 
@@ -53,7 +49,7 @@ services.Configure<HealthCheckPublisherOptions>(options =>
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 
-//Multipart
+// Multipart
 services.Configure<FormOptions>(x =>
 {
     x.MultipartBodyLengthLimit = 60000000;
@@ -61,7 +57,6 @@ services.Configure<FormOptions>(x =>
 
 // Add Masstransit bus configuration
 services.AddCustomMassTransit(builder.Configuration);
-
 
 services.AddOptions();
 
@@ -72,15 +67,14 @@ services.Configure<AzureCognitiveServicesSettings>(builder.Configuration.GetSect
 
 // ML Engine Poll
 string? passportModelUrl = builder.Configuration.GetSection("AppSettings")?.GetValue(typeof(string), "PassportModel")?.ToString();
-if(!string.IsNullOrWhiteSpace(passportModelUrl))
+if (!string.IsNullOrWhiteSpace(passportModelUrl))
 {
     services.AddPredictionEnginePool<Genocs.FormRecognizer.WebApi.MachineLearnings.Passport_MLModel.ModelInput,
                                         Genocs.FormRecognizer.WebApi.MachineLearnings.Passport_MLModel.ModelOutput>()
                                 .FromUri(passportModelUrl);
 }
 
-//services.Configure<RabbitMQSettings>(builder.Configuration.GetSection(RabbitMQSettings.Position));
-
+// services.Configure<RabbitMQSettings>(builder.Configuration.GetSection(RabbitMQSettings.Position));
 
 services.AddSingleton<StorageService>();
 services.AddSingleton<IFormRecognizer, FormRecognizerService>();
@@ -121,7 +115,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapHealthChecks("/healthz");
+app.MapHealthChecks("/hc");
 
 app.Run();
 

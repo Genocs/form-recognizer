@@ -21,7 +21,8 @@ public class ScanUserController : ControllerBase
     private readonly PredictionEnginePool<MachineLearnings.Passport_MLModel.ModelInput,
                                         MachineLearnings.Passport_MLModel.ModelOutput> _predictionEnginePool;
 
-    public ScanUserController(StorageService storageService,
+    public ScanUserController(
+                                StorageService storageService,
                                 IFaceRecognizer faceRecognizerService,
                                 IIDocumentRecognizer idDocumentService,
                                 IValidator<MemberScanRequest> memberScanRequestValidator,
@@ -34,16 +35,17 @@ public class ScanUserController : ControllerBase
         _predictionEnginePool = predictionEnginePool ?? throw new ArgumentNullException(nameof(predictionEnginePool));
     }
 
-
     /// <summary>
-    /// Upload two images on the blob storage and run the data extraction
+    /// Upload two images on the blob storage and run the data extraction.
     /// </summary>
-    /// <param name="images">images with Id document and the selfie</param>
+    /// <param name="images">images with Id document and the selfie.</param>
     /// <returns></returns>
-    [Route("UploadAndEvaluate"), HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MemberScanResponse))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [Route("UploadAndEvaluate")]
+    [HttpPost]
+
     public async Task<IActionResult> PostUploadAndEvaluateAsync([FromForm] List<IFormFile> images)
     {
         if (images is null || images.Count != 2)
@@ -76,8 +78,9 @@ public class ScanUserController : ControllerBase
 
         if (predictionResult.PredictedLabel != "valid")
         {
-            MemberScanResponse invalidResponse = new MemberScanResponse(predictionResult.PredictedLabel,
-                                                      predictionResult.Score[0]);
+            MemberScanResponse invalidResponse = new MemberScanResponse(
+                                                                        predictionResult.PredictedLabel,
+                                                                        predictionResult.Score[0]);
 
             return Ok(invalidResponse);
         }
@@ -105,14 +108,14 @@ public class ScanUserController : ControllerBase
             return BadRequest("no face into the images");
         }
 
-        MemberScanResponse response = new MemberScanResponse(predictionResult.PredictedLabel,
+        MemberScanResponse response = new MemberScanResponse(
+                                                              predictionResult.PredictedLabel,
                                                               predictionResult.Score[0],
                                                               faceResult.OrderBy(o => o.Confidence).FirstOrDefault().Confidence,
                                                               idDocumentResult);
 
         return Ok(response);
     }
-
 
     /// <summary>
     /// It allows to scan a image previously uploaded
@@ -166,7 +169,6 @@ public class ScanUserController : ControllerBase
     }
 }
 
-
 public class MemberScanResponse
 {
     public string Overall { get; set; }
@@ -174,7 +176,6 @@ public class MemberScanResponse
     public float DocumentDataScore { get; set; }
     public FaceResult Face { get; set; }
     public IDResult IdDocument { get; set; }
-
 
     public MemberScanResponse(string documentData, float documentDataScore, double faceScore, IDResult idDocumentResult)
     {
