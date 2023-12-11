@@ -32,16 +32,16 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 8.0.x
-  
+
       - name: Restore dependencies
         run: dotnet restore
-  
+
       - name: Build
         run: dotnet build -c Debug --no-restore
-  
+
       - name: Test
         run: dotnet test --no-build --verbosity normal
-  
+
       - name: Pack
         run: dotnet pack --no-build --verbosity normal
 
@@ -51,8 +51,14 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push image to Dockerhub
+      - name: Build and push webapi image to Dockerhub
         run: |
-          docker build -f webapi.dockerfile -t genocs/demo-webapi:${{ github.event.inputs.version }} -t genocs/demo-webapi:latest .
-          docker push genocs/demo-webapi:${{ github.event.inputs.version }}
-          docker push genocs/demo-webapi:latest
+          docker build -f webapi.dockerfile -t genocs/formrecognizer-webapi:${{ github.event.inputs.version }} -t genocs/formrecognizer-webapi:latest .
+          docker push genocs/formrecognizer-webapi:${{ github.event.inputs.version }}
+          docker push genocs/formrecognizer-webapi:latest
+
+      - name: Build and push worker image to Dockerhub
+        run: |
+          docker build -f worker.dockerfile -t genocs/formrecognizer-worker:${{ github.event.inputs.version }} -t genocs/formrecognizer-worker:latest .
+          docker push genocs/formrecognizer-worker:${{ github.event.inputs.version }}
+          docker push genocs/formrecognizer-worker:latest

@@ -172,6 +172,7 @@ public class ScanFormController : ControllerBase
 
         FormExtractorResponse result = new FormExtractorResponse()
         {
+            ReferenceId = request.ReferenceId,
             RequestId = request.RequestId,
             ContextId = request.ContextId,
             ResourceUrl = HttpUtility.HtmlDecode(request.Url)

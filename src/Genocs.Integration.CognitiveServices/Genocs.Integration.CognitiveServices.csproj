@@ -3,8 +3,8 @@
     <PropertyGroup>
         <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
         <PackageId>Genocs.Integration.CognitiveServices</PackageId>
-        <RootNamespace>Genocs.WebApi.CQRS</RootNamespace>
-        <AssemblyName>Genocs.WebApi.CQRS</AssemblyName>
+        <RootNamespace>Genocs.Integration.CognitiveServices</RootNamespace>
+        <AssemblyName>Genocs.Integration.CognitiveServices</AssemblyName>
         <Title>The Genocs library to integrate Azure Cognitive Services into .NET Core projects.</Title>
         <Description>The Genocs library to integrate Azure Cognitive Services into .NET Core projects.</Description>
         <LangVersion>10.0</LangVersion>

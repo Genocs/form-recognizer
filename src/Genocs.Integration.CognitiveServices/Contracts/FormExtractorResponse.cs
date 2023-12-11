@@ -6,6 +6,11 @@
 public class FormExtractorResponse
 {
     /// <summary>
+    /// The reference id. Client can use it to keep external reference.
+    /// </summary>
+    public string? ReferenceId { get; set; }
+
+    /// <summary>
     /// The request id.
     /// </summary>
     public string? RequestId { get; set; }

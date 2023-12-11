@@ -34,14 +34,12 @@ public static class ServiceCollectionExtension
         return services;
     }
 
-
     public static IServiceCollection AddCustomCache(this IServiceCollection services, IConfiguration configuration)
     {
         var settings = new RedisSettings();
         configuration.GetSection(RedisSettings.Position).Bind(settings);
 
         services.AddSingleton(settings);
-
 
         if (string.IsNullOrWhiteSpace(settings.ConnectionStringTxn))
         {
