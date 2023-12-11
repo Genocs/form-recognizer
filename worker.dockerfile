@@ -5,6 +5,7 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /src
+COPY ["src/Genocs.Integration.CognitiveServices", "src/Genocs.Integration.CognitiveServices/"]
 COPY ["src/Genocs.FormRecognizer.Worker", "src/Genocs.FormRecognizer.Worker/"]
 
 COPY ["LICENSE", "LICENSE"]
