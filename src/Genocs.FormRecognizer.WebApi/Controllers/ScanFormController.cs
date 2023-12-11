@@ -33,7 +33,7 @@ public class ScanFormController : ControllerBase
     /// <summary>
     /// It allows to classify an image.
     /// </summary>
-    /// <param name="request">The request</param>
+    /// <param name="request">The request.</param>
     /// <returns>The classification result.</returns>
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Prediction))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -170,8 +170,12 @@ public class ScanFormController : ControllerBase
             return BadRequest("request Url cannot be null or empty");
         }
 
-        FormExtractorResponse result = new FormExtractorResponse();
-        result.ResourceUrl = HttpUtility.HtmlDecode(request.Url);
+        FormExtractorResponse result = new FormExtractorResponse()
+        {
+            RequestId = request.RequestId,
+            ContextId = request.ContextId,
+            ResourceUrl = HttpUtility.HtmlDecode(request.Url)
+        };
 
         if (string.IsNullOrWhiteSpace(result.ResourceUrl))
         {
@@ -188,7 +192,7 @@ public class ScanFormController : ControllerBase
 
         result.Classification = classification;
 
-        // Publish to the service bus 
+        // Publish to the service bus
         await _publishEndpoint.Publish(result);
 
         return Ok(result);

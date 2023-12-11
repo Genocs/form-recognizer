@@ -6,6 +6,16 @@
 public class FormExtractorResponse
 {
     /// <summary>
+    /// The request id.
+    /// </summary>
+    public string? RequestId { get; set; }
+
+    /// <summary>
+    /// The context id.
+    /// </summary>
+    public string? ContextId { get; set; }
+
+    /// <summary>
     /// The processed resource url.
     /// </summary>
     public string ResourceUrl { get; set; } = default!;

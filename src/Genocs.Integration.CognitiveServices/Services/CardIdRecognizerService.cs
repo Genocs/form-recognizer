@@ -9,7 +9,7 @@ using System.Text.Json;
 namespace Genocs.Integration.CognitiveServices.Services;
 
 /// <summary>
-/// 
+/// The CardIdRecognizerService service implementation.
 /// </summary>
 public class CardIdRecognizerService : IIDocumentRecognizer, IDisposable
 {
@@ -21,14 +21,14 @@ public class CardIdRecognizerService : IIDocumentRecognizer, IDisposable
 
     private HttpClient _httpClient;
 
-    private readonly string prefix_url = "vision/v2.0/recognizeText?mode=Printed";
+    private readonly string _prefixUrl = "vision/v2.0/recognizeText?mode=Printed";
 
     /// <summary>
-    /// The CardIdRecognizerService service implementation 
+    /// The CardIdRecognizerService service implementation.
     /// </summary>
-    /// <param name="config"></param>
-    /// <param name="logger"></param>
-    /// <exception cref="ArgumentNullException"></exception>
+    /// <param name="config">The configuration.</param>
+    /// <param name="logger">The logger.</param>
+    /// <exception cref="ArgumentNullException">The exception thrown when the configuration is invalid.</exception>
     public CardIdRecognizerService(IOptions<AzureCognitiveServicesSettings> config, ILogger<CardIdRecognizerService> logger)
     {
         if (config == null)
@@ -37,7 +37,6 @@ public class CardIdRecognizerService : IIDocumentRecognizer, IDisposable
         }
 
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
 
         if (!AzureCognitiveServicesSettings.IsValid(config.Value))
         {
@@ -64,6 +63,7 @@ public class CardIdRecognizerService : IIDocumentRecognizer, IDisposable
     public void Dispose()
     {
         Dispose(true);
+
         // This object will be cleaned up by the Dispose method.
         // Therefore, you should call GC.SuppressFinalize to
         // take this object off the finalization queue
@@ -128,7 +128,7 @@ public class CardIdRecognizerService : IIDocumentRecognizer, IDisposable
 
         // The first REST API method, Batch Read, starts
         // the async process to analyze the written text in the image.
-        var postResponse = await _httpClient.PostAsync($"/{prefix_url}", new { Url = url }.AsJson());
+        var postResponse = await _httpClient.PostAsync($"/{_prefixUrl}", new { Url = url }.AsJson());
 
         // The response header for the Batch Read method contains the URI
         // of the second method, Read Operation Result, which

@@ -9,7 +9,6 @@ using System.Net.Mime;
 
 namespace Genocs.FormRecognizer.WebApi.Controllers;
 
-
 [ApiController]
 [Route("[controller]")]
 public class ScanUserController : ControllerBase
@@ -35,7 +34,7 @@ public class ScanUserController : ControllerBase
     /// <summary>
     /// Upload two images on the blob storage and run the data extraction.
     /// </summary>
-    /// <param name="images">images with Id document and the selfie.</param>
+    /// <param name="images">Images with Id document and the selfie.</param>
     /// <returns></returns>
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MemberScanResponse))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -117,17 +116,16 @@ public class ScanUserController : ControllerBase
     }
 
     /// <summary>
-    /// It allows to scan a image previously uploaded
+    /// It allows to scan a image previously uploaded.
     /// </summary>
-    /// <param name="modelId">The ML ModelId</param>
-    /// <param name="url">The public available url</param>
-    /// <returns>The result</returns>
-
-    [Route("Evaluate"), HttpPost]
+    /// <param name="request">The request object.</param>
+    /// <returns>The result.</returns>
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Produces(MediaTypeNames.Application.Json)]
     [Consumes(MediaTypeNames.Application.Json)]
+    [Route("Evaluate")]
+    [HttpPost]
     public async Task<ActionResult<List<dynamic>>> PostEvaluateAsync([FromBody] MemberScanRequest request)
     {
         var validationResult = await _memberScanRequestValidator.ValidateAsync(request);
@@ -153,7 +151,7 @@ public class ScanUserController : ControllerBase
     /// <summary>
     /// It allows to scan a image previously uploaded.
     /// </summary>
-    /// <param name="url">The public available url</param>
+    /// <param name="request">The request object.</param>
     /// <returns>The result</returns>
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IDResult))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -175,7 +173,7 @@ public class MemberScanResponse
     public string DocumentData { get; set; }
     public float DocumentDataScore { get; set; }
     public FaceResult Face { get; set; }
-    public IDResult IdDocument { get; set; }
+    public IDResult? IdDocument { get; set; }
 
     public MemberScanResponse(string documentData, float documentDataScore, double faceScore, IDResult idDocumentResult)
     {
@@ -214,7 +212,6 @@ public class MemberScanResponse
         DocumentData = documentData;
         DocumentDataScore = documentDataScore;
         Face = new FaceResult(0);
-        IdDocument = null;
         Overall = DocumentData;
 
         if (DocumentData != "valid")
@@ -259,6 +256,5 @@ public class MemberScanResponse
     public record IdDocumentResult
     {
         public IDValidationResultType FormatType { get; init; }
-
     }
 }

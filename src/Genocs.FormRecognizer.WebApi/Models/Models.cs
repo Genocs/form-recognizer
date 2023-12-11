@@ -2,6 +2,8 @@
 
 public class BasicRequest
 {
+    public string? RequestId { get; set; }
+    public string? ContextId { get; set; }
     public string Url { get; set; } = default!;
 }
 
