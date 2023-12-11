@@ -7,19 +7,18 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /src
-COPY ["src/Genocs.Integration.CognitiveServices", "src/Genocs.Integration.CognitiveServices/"]
-COPY ["src/Genocs.FormRecognizer.WebApi", "src/Genocs.FormRecognizer.WebApi/"]
+COPY ["src/Genocs.Integration.CognitiveServices", "Genocs.Integration.CognitiveServices/"]
+COPY ["src/Genocs.FormRecognizer.WebApi", "Genocs.FormRecognizer.WebApi/"]
 
 COPY ["Directory.Build.props", "Directory.Build.props"]
 COPY ["Directory.Build.targets", "Directory.Build.targets"]
 COPY ["dotnet.ruleset", "dotnet.ruleset"]
 COPY ["stylecop.json", "stylecop.json"]
 
-
 COPY ["LICENSE", "LICENSE"]
 COPY ["icon.png", "icon.png"]
 
-WORKDIR "/src/src/Genocs.FormRecognizer.WebApi"
+WORKDIR "/src/Genocs.FormRecognizer.WebApi"
 
 RUN dotnet restore "Genocs.FormRecognizer.WebApi.csproj"
 
