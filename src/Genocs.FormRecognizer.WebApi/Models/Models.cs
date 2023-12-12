@@ -1,4 +1,6 @@
-﻿namespace Genocs.FormRecognizer.WebApi.Models;
+﻿using Genocs.Integration.CognitiveServices.IntegrationEvents;
+
+namespace Genocs.FormRecognizer.WebApi.Models;
 
 /// <summary>
 /// The basic request.
@@ -29,4 +31,9 @@ public class BasicRequest
 public class EvaluateRequest : BasicRequest
 {
     public string ClassificationModelId { get; set; } = default!;
+}
+
+public class FormExtractorResponse : FormDataExtractionCompleted
+{
+
 }

@@ -1,9 +1,11 @@
-﻿namespace Genocs.Integration.CognitiveServices.Contracts;
+﻿using Genocs.Integration.CognitiveServices.Contracts;
+
+namespace Genocs.Integration.CognitiveServices.IntegrationEvents;
 
 /// <summary>
-/// The Form Extractor Response.
+/// The event to raise when Form Data extraction is completed.
 /// </summary>
-public class FormExtractorResponse
+public class FormDataExtractionCompleted
 {
     /// <summary>
     /// The reference id. Client can use it to keep external reference.

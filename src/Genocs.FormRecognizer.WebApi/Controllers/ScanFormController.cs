@@ -1,5 +1,6 @@
 ﻿using Genocs.FormRecognizer.WebApi.Models;
 using Genocs.Integration.CognitiveServices.Contracts;
+using Genocs.Integration.CognitiveServices.IntegrationEvents;
 using Genocs.Integration.CognitiveServices.Interfaces;
 using Genocs.Integration.CognitiveServices.Services;
 using MassTransit;
@@ -151,7 +152,7 @@ public class ScanFormController : ControllerBase
     /// It allows to scan a image previously uploaded.
     /// </summary>
     /// <returns>The result.</returns>
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FormExtractorResponse))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FormDataExtractionCompleted))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Produces(MediaTypeNames.Application.Json)]
     [Consumes(MediaTypeNames.Application.Json)]
@@ -170,7 +171,7 @@ public class ScanFormController : ControllerBase
             return BadRequest("request Url cannot be null or empty");
         }
 
-        FormExtractorResponse result = new FormExtractorResponse()
+        FormDataExtractionCompleted result = new FormDataExtractionCompleted()
         {
             ReferenceId = request.ReferenceId,
             RequestId = request.RequestId,
