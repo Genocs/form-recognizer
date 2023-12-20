@@ -11,7 +11,7 @@
 
     <ItemGroup>
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
-        <PackageReference Include="Genocs.Monitoring" Version="5.0.*" />
+        <PackageReference Include="Genocs.Tracing" Version="5.0.*" />
         <PackageReference Include="MassTransit.RabbitMQ" Version="8.1.2" />
         <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.ML" Version="3.0.0" />

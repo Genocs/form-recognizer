@@ -1,10 +1,12 @@
 using FluentValidation;
+using Genocs.Core.Builders;
 using Genocs.FormRecognizer.WebApi.Controllers;
 using Genocs.FormRecognizer.WebApi.Extensions;
 using Genocs.Integration.CognitiveServices.Interfaces;
 using Genocs.Integration.CognitiveServices.Options;
 using Genocs.Integration.CognitiveServices.Services;
-using Genocs.Monitoring;
+using Genocs.Logging;
+using Genocs.Tracing;
 using MassTransit;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -24,11 +26,15 @@ Log.Logger = new LoggerConfiguration()
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog((ctx, lc) => lc
-    .WriteTo.Console());
+builder.Host
+        .UseLogging();
 
 // add services to DI container
 var services = builder.Services;
+
+services
+    .AddGenocs(builder.Configuration)
+    .AddOpenTelemetry();
 
 services.AddCors();
 services.AddControllers().AddJsonOptions(x =>
@@ -49,16 +55,16 @@ services.Configure<HealthCheckPublisherOptions>(options =>
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 
+services.AddOptions();
+
+// Add Masstransit bus configuration
+services.AddCustomMassTransit(builder.Configuration);
+
 // Multipart
 services.Configure<FormOptions>(x =>
 {
     x.MultipartBodyLengthLimit = 60000000;
 });
-
-// Add Masstransit bus configuration
-services.AddCustomMassTransit(builder.Configuration);
-
-services.AddOptions();
 
 services.Configure<AzureCognitiveServicesSettings>(builder.Configuration.GetSection(AzureCognitiveServicesSettings.Position));
 services.Configure<AzureStorageSettings>(builder.Configuration.GetSection(AzureStorageSettings.Position));
@@ -90,11 +96,8 @@ services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
 // Fluent Validation
 services.AddValidatorsFromAssemblyContaining<SetupSettingRequestValidator>();
 
-// Set Custom Open telemetry
-services.AddCustomOpenTelemetry(builder.Configuration);
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
