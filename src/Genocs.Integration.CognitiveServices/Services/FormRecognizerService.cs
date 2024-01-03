@@ -91,11 +91,11 @@ public class FormRecognizerService : IFormRecognizer
     }
 
     /// <summary>
-    /// Scan image to find ID Document
+    /// Scan image to find ID Document.
     /// </summary>
     /// <param name="filePath"></param>
     /// <returns></returns>
-    /// <exception cref="NullReferenceException"></exception>
+    /// <exception cref="NullReferenceException">This exception is thrown in case mandatory data are missing.</exception>
     public async Task<string?> ScanLocalCardId(string filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath))
@@ -115,11 +115,11 @@ public class FormRecognizerService : IFormRecognizer
     }
 
     /// <summary>
-    /// Scan image to find ID Document
+    /// Scan image to find ID Document.
     /// </summary>
     /// <param name="url"></param>
     /// <returns></returns>
-    /// <exception cref="NullReferenceException"></exception>
+    /// <exception cref="NullReferenceException">This exception is thrown in case mandatory data are missing.</exception>
     public async Task<string?> ScanRemoteCardIdAsync(string url)
     {
         if (string.IsNullOrWhiteSpace(url))
@@ -145,6 +145,7 @@ public class FormRecognizerService : IFormRecognizer
                 }
             }
         }
+
         return mrz;
     }
 
@@ -165,6 +166,7 @@ public class FormRecognizerService : IFormRecognizer
             {
                 ((IDictionary<string, object>)exo).Add(field.Name, new { Value = field?.ValueData?.Text, field?.Confidence });
             }
+
             res.Add(exo);
 
 
