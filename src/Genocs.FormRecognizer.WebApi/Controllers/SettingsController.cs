@@ -23,7 +23,7 @@ public class SettingsController : ControllerBase
     /// It allows to setup the model classifier lookup table.
     /// </summary>
     /// <param name="request">the key value pair.</param>
-    /// <returns>No Content</returns>
+    /// <returns>No Content.</returns>
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]

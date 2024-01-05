@@ -1,42 +1,42 @@
 ﻿namespace Genocs.Integration.CognitiveServices.Options;
 
 /// <summary>
-/// Azure blob storage settings 
+/// Azure blob storage settings.
 /// </summary>
 public class AzureStorageSettings
 {
     /// <summary>
-    /// Default section name
+    /// Default section name.
     /// </summary>
     public const string Position = "AzureStorage";
 
     /// <summary>
-    /// The storage account name
+    /// The storage account name.
     /// </summary>
     public string AccountName { get; set; } = default!;
 
     /// <summary>
-    /// The storage account key
+    /// The storage account key.
     /// </summary>
     public string AccountKey { get; set; } = default!;
 
     /// <summary>
-    /// the root storage container name
+    /// the root storage container name.
     /// </summary>
     public string UploadContainer { get; set; } = default!;
 
     /// <summary>
-    /// The trainingset container name
+    /// The training set container name.
     /// </summary>
     public string? TrainingSetContainer { get; set; }
 
     /// <summary>
-    /// The thumbnail container name
+    /// The thumbnail container name.
     /// </summary>
     public string? ThumbnailContainer { get; set; }
 
     /// <summary>
-    /// Helper function to validate data
+    /// Helper function to validate data.
     /// </summary>
     /// <param name="settings"></param>
     /// <returns></returns>

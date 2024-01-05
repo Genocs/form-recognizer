@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 namespace Genocs.Integration.CognitiveServices.Services;
 
 /// <summary>
-/// FormRecognizerService implementation
+/// FormRecognizerService implementation.
 /// </summary>
 public class FormRecognizerService : IFormRecognizer
 {
@@ -21,12 +21,12 @@ public class FormRecognizerService : IFormRecognizer
     private readonly FormRecognizerClient _client;
 
     /// <summary>
-    /// ctor
+    /// ctor.
     /// </summary>
-    /// <param name="distributedCache"></param>
-    /// <param name="config"></param>
-    /// <param name="logger"></param>
-    /// <exception cref="ArgumentNullException"></exception>
+    /// <param name="distributedCache">The distributed cache used for image classification.</param>
+    /// <param name="config">The config object instance.</param>
+    /// <param name="logger">The logger.</param>
+    /// <exception cref="NullReferenceException">This exception is thrown in case mandatory data are missing.</exception>
     public FormRecognizerService(IDistributedCache distributedCache, IOptions<AzureCognitiveServicesSettings> config, ILogger<FormRecognizerService> logger)
     {
         if (config == null)
@@ -43,12 +43,12 @@ public class FormRecognizerService : IFormRecognizer
     }
 
     /// <summary>
-    /// Scan an image file from a stream
+    /// Scan an image file from a stream.
     /// </summary>
     /// <param name="classificationKey"></param>
     /// <param name="stream"></param>
     /// <returns></returns>
-    /// <exception cref="NullReferenceException"></exception>
+    /// <exception cref="NullReferenceException">This exception is thrown in case mandatory data are missing.</exception>
     public async Task<List<dynamic>> ScanAsync(string classificationKey, Stream stream)
     {
         string? classificationModelId = await _distributedCache.GetStringAsync(classificationKey);
@@ -65,12 +65,12 @@ public class FormRecognizerService : IFormRecognizer
     }
 
     /// <summary>
-    /// 
+    /// It allows to scan an image file from a url.
     /// </summary>
-    /// <param name="classificationKey">_The Classification key</param>
-    /// <param name="url">the resource url</param>
-    /// <returns>dynamic list result</returns>
-    /// <exception cref="NullReferenceException"></exception>
+    /// <param name="classificationKey">The Classification key.</param>
+    /// <param name="url">The resource url.</param>
+    /// <returns>A list of dynamic objects</returns>
+    /// <exception cref="NullReferenceException">This exception is thrown in case mandatory data are missing.</exception>
     public async Task<List<dynamic>> ScanAsync(string classificationKey, string url)
     {
         string? classificationModelId = await _distributedCache.GetStringAsync(classificationKey);
@@ -125,8 +125,13 @@ public class FormRecognizerService : IFormRecognizer
         if (string.IsNullOrWhiteSpace(url))
         {
             throw new NullReferenceException($"url cannot be null or empty");
-
         }
+
+        if (!Uri.IsWellFormedUriString(url, UriKind.Absolute))
+        {
+            throw new InvalidDataException($"resource url '{url}' is invalid");
+        }
+
         Uri formFileUri = new Uri(url);
         RecognizeIdentityDocumentsOperation operation = await _client.StartRecognizeIdentityDocumentsFromUriAsync(formFileUri);
         Response<RecognizedFormCollection> operationResponse = await operation.WaitForCompletionAsync();
@@ -157,8 +162,8 @@ public class FormRecognizerService : IFormRecognizer
         List<dynamic> res = new();
         foreach (RecognizedForm form in forms)
         {
-            _logger.LogInformation($"Form of type: {form.FormType}");
-            _logger.LogInformation($"Form was analyzed with model with ID: {form.ModelId}");
+            _logger.LogInformation($"Form of type '{form.FormType}'");
+            _logger.LogInformation($"Form was analyzed with model with ID '{form.ModelId}'");
 
             dynamic exo = new System.Dynamic.ExpandoObject();
 
@@ -169,20 +174,22 @@ public class FormRecognizerService : IFormRecognizer
 
             res.Add(exo);
 
+            /*
+            foreach (FormField field in form.Fields.Values)
+            {
+                _logger.LogInformation($"Field '{field.Name}': ");
 
-            //foreach (FormField field in form.Fields.Values)
-            //{
-            //    _logger.LogInformation($"Field '{field.Name}': ");
+                if (field.LabelData != null)
+                {
+                    _logger.LogInformation($"  Label: '{field.LabelData.Text}'");
+                }
 
-            //    if (field.LabelData != null)
-            //    {
-            //        _logger.LogInformation($"  Label: '{field.LabelData.Text}'");
-            //    }
-
-            //    _logger.LogInformation($"  Value: '{field.ValueData.Text}'");
-            //    _logger.LogInformation($"  Confidence: '{field.Confidence}'");
-            //}
+                _logger.LogInformation($"  Value: '{field.ValueData.Text}'");
+                _logger.LogInformation($"  Confidence: '{field.Confidence}'");
+            }
+            */
         }
+
         return res;
     }
 }

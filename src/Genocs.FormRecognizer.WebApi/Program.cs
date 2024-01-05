@@ -67,9 +67,9 @@ services.Configure<FormOptions>(x =>
 });
 
 services.Configure<AzureCognitiveServicesSettings>(builder.Configuration.GetSection(AzureCognitiveServicesSettings.Position));
+services.Configure<AzureVisionSettings>(builder.Configuration.GetSection("AzureVision"));
 services.Configure<AzureStorageSettings>(builder.Configuration.GetSection(AzureStorageSettings.Position));
 services.Configure<ImageClassifierSettings>(builder.Configuration.GetSection(ImageClassifierSettings.Position));
-services.Configure<AzureCognitiveServicesSettings>(builder.Configuration.GetSection(AzureCognitiveServicesSettings.Position));
 
 // ML Engine Poll
 string? passportModelUrl = builder.Configuration.GetSection("AppSettings")?.GetValue(typeof(string), "PassportModel")?.ToString();
@@ -86,6 +86,7 @@ services.AddSingleton<StorageService>();
 services.AddSingleton<IFormRecognizer, FormRecognizerService>();
 services.AddSingleton<IImageClassifier, ImageClassifierService>();
 services.TryAddScoped<IIDocumentRecognizer, IdDocumentService>();
+services.TryAddScoped<IImageSemanticScanner, ImageSemanticScanner>();
 
 // services.TryAddScoped<IFaceRecognizer, FaceRecognizerService>();
 

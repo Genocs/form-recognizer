@@ -16,6 +16,7 @@ public class ScanFormController : ControllerBase
 {
     private readonly IFormRecognizer _formRecognizerService;
     private readonly IImageClassifier _formClassifierService;
+    private readonly IImageSemanticScanner _imageSemanticScannerService;
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly StorageService _storageService;
 
@@ -23,11 +24,13 @@ public class ScanFormController : ControllerBase
                                 StorageService storageService,
                                 IFormRecognizer formRecognizerService,
                                 IImageClassifier formClassifierService,
+                                IImageSemanticScanner imageSemanticScannerService,
                                 IPublishEndpoint publishEndpoint)
     {
         _formRecognizerService = formRecognizerService ?? throw new ArgumentNullException(nameof(formRecognizerService));
         _storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
         _formClassifierService = formClassifierService ?? throw new ArgumentNullException(nameof(formClassifierService));
+        _imageSemanticScannerService = imageSemanticScannerService ?? throw new ArgumentNullException(nameof(imageSemanticScannerService));
         _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
     }
 
@@ -123,7 +126,7 @@ public class ScanFormController : ControllerBase
     }
 
     /// <summary>
-    /// It allows to scan a image previously uploaded.
+    /// It allows to scan an image.
     /// </summary>
     /// <param name="request">The request body.</param>
     /// <returns>The result.</returns>
@@ -149,7 +152,7 @@ public class ScanFormController : ControllerBase
     }
 
     /// <summary>
-    /// It allows to scan a image previously uploaded.
+    /// It allows to scan an image.
     /// </summary>
     /// <returns>The result.</returns>
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FormDataExtractionCompleted))]
@@ -193,6 +196,50 @@ public class ScanFormController : ControllerBase
         }
 
         result.Classification = classification;
+
+        // Publish to the service bus
+        await _publishEndpoint.Publish(result);
+
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// It allows to perform semantic analysis on an image.
+    /// </summary>
+    /// <returns>The result.</returns>
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FormDataExtractionCompleted))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [Produces(MediaTypeNames.Application.Json)]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [Route("SemanticAnalysis")]
+    [HttpPost]
+
+    public async Task<IActionResult> ProcessSemanticAnalysisAsync([FromBody] BasicRequest request)
+    {
+        if (request == null)
+        {
+            return BadRequest("request cannot be null");
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Url))
+        {
+            return BadRequest("request Url cannot be null or empty");
+        }
+
+        FormDataExtractionCompleted result = new FormDataExtractionCompleted()
+        {
+            ReferenceId = request.ReferenceId,
+            RequestId = request.RequestId,
+            ContextId = request.ContextId,
+            ResourceUrl = HttpUtility.HtmlDecode(request.Url)
+        };
+
+        if (string.IsNullOrWhiteSpace(result.ResourceUrl))
+        {
+            return BadRequest("request Url is null or empty after HtmlDecode");
+        }
+
+        result.ContentData = await _imageSemanticScannerService.ScanAsync(request.Url);
 
         // Publish to the service bus
         await _publishEndpoint.Publish(result);

@@ -12,22 +12,19 @@ public static class ServiceCollectionExtension
 
         services.AddSingleton(settings);
 
-
         services.AddMassTransit(x =>
         {
-            //x.AddConsumersFromNamespaceContaining<MerchantStatusChangedEvent>();
-
             x.UsingRabbitMq((context, cfg) =>
             {
                 cfg.ConfigureEndpoints(context);
-                //cfg.UseHealthCheck(context);
+
+                // cfg.UseHealthCheck(context);
                 cfg.Host(settings.HostName, settings.VirtualHost,
                     h =>
                     {
                         h.Username(settings.UserName);
                         h.Password(settings.Password);
-                    }
-                );
+                    });
             });
         });
 

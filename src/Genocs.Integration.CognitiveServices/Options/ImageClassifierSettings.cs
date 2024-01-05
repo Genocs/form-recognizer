@@ -1,35 +1,35 @@
 ﻿namespace Genocs.Integration.CognitiveServices.Options;
 
 /// <summary>
-/// The ImageClassifierSettings object
+/// The ImageClassifierSettings object.
 /// </summary>
 public class ImageClassifierSettings
 {
     /// <summary>
-    /// Default Section name
+    /// Default Section name.
     /// </summary>
     public const string Position = "ImageClassifier";
 
     /// <summary>
-    /// The cognitive service root endpoint
+    /// The cognitive service root endpoint.
     /// </summary>
     public string? Endpoint { get; set; }
 
     /// <summary>
-    /// The prediction key
+    /// The prediction key.
     /// </summary>
     public string? PredictionKey { get; set; }
 
     /// <summary>
-    /// The model id
+    /// The model id.
     /// </summary>
     public string? ModelId { get; set; }
 
     /// <summary>
-    /// Static helper function used to validate the settings
+    /// Static helper function used to validate the settings.
     /// </summary>
-    /// <param name="settings">Object to validate</param>
-    /// <returns>true in case is OK otherwise false</returns>
+    /// <param name="settings">Object to validate.</param>
+    /// <returns>true in case is OK otherwise false.</returns>
     public static bool IsValid(ImageClassifierSettings settings)
     {
         if (settings == null) return false;
