@@ -3,14 +3,14 @@
 namespace Genocs.Integration.CognitiveServices.Options;
 
 /// <summary>
-/// The AzureCognitiveServicesSettings object.
+/// The AzureVisionSettings object.
 /// </summary>
-public class AzureCognitiveServicesSettings
+public class AzureVisionSettings
 {
     /// <summary>
     /// Default Section name.
     /// </summary>
-    public static string Position = "AzureCognitiveServices";
+    public static string Position = "AzureVision";
 
     /// <summary>
     /// The cognitive service root endpoint.
@@ -28,7 +28,7 @@ public class AzureCognitiveServicesSettings
     /// <param name="settings">instance object to validate.</param>
     /// <param name="throwException"></param>
     /// <returns>true if valid otherwise false.</returns>
-    public static bool IsValid(AzureCognitiveServicesSettings settings, bool throwException = false)
+    public static bool IsValid(AzureVisionSettings settings, bool throwException = false)
     {
         if (settings is null) return false;
 
@@ -54,17 +54,17 @@ public class AzureCognitiveServicesSettings
             result = BuildResult(errorMessage, throwException);
         }
 
-        if (result && !Regex.IsMatch(endpoint, ConstantsSettings.AzureCognitiveServices))
+        if (result && !Regex.IsMatch(endpoint, @"^https://\S+\.cognitiveservices\.azure\.com/?$"))
         {
             errorMessage = $" Error: Invalid value for computer vision endpoint: {endpoint}.";
-            errorMessage += $" It should be similar to: https://<your-computer-vision-resource-name>.api.cognitive.microsoft.com";
+            errorMessage += " It should be similar to: https://<your-computer-vision-resource-name>.cognitiveservices.azure.com";
             result = BuildResult(errorMessage, throwException);
         }
 
         if (result && !Uri.IsWellFormedUriString(endpoint, UriKind.Absolute))
         {
             errorMessage = $" Error: Invalid value for computer vision endpoint: {endpoint}.";
-            errorMessage += " It should be similar to: https://<your-computer-vision-resource-name>.api.cognitive.microsoft.com";
+            errorMessage += " It should be similar to: https://<your-computer-vision-resource-name>.cognitiveservices.azure.com";
             errorMessage += " The Uri.IsWellFormedUriString return false";
             result = BuildResult(errorMessage, throwException);
         }

@@ -1,4 +1,4 @@
-﻿namespace Genocs.FormRecognizer.WebApi.Options;
+﻿namespace Genocs.Integration.CognitiveServices.Options;
 
 public class RedisSettings
 {

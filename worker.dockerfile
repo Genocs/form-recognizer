@@ -19,10 +19,10 @@ WORKDIR "/src/Genocs.FormRecognizer.Worker"
 
 RUN dotnet restore "Genocs.FormRecognizer.Worker.csproj"
 
-RUN dotnet build "Genocs.FormRecognizer.Worker.csproj" -c Release -o /app/build
+RUN dotnet build "Genocs.FormRecognizer.Worker.csproj" -c Debug -o /app/build
 
 FROM build-env AS publish
-RUN dotnet publish "Genocs.FormRecognizer.Worker.csproj" -c Release -o /app/publish
+RUN dotnet publish "Genocs.FormRecognizer.Worker.csproj" -c Debug -o /app/publish
 
 FROM base AS final
 WORKDIR /app

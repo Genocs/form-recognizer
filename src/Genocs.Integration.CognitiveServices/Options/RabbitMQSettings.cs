@@ -1,4 +1,4 @@
-﻿namespace Genocs.FormRecognizer.Worker.Options;
+﻿namespace Genocs.Integration.CognitiveServices.Options;
 
 public class RabbitMQSettings
 {

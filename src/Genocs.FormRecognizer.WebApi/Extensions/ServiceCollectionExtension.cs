@@ -1,4 +1,4 @@
-﻿using Genocs.FormRecognizer.WebApi.Options;
+﻿using Genocs.Integration.CognitiveServices.Options;
 using MassTransit;
 
 namespace Genocs.FormRecognizer.WebApi.Extensions;

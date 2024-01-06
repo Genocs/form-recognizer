@@ -10,7 +10,7 @@ namespace Genocs.Integration.CognitiveServices.Services;
 
 public class ImageSemanticScanner : IImageSemanticScanner
 {
-    private readonly AzureCognitiveServicesSettings _config;
+    private readonly AzureVisionSettings _config;
     private readonly ILogger<ImageSemanticScanner> _logger;
 
     /// <summary>
@@ -28,7 +28,7 @@ public class ImageSemanticScanner : IImageSemanticScanner
             throw new ArgumentNullException(nameof(config));
         }
 
-        if (!AzureCognitiveServicesSettings.IsValid(config.Value))
+        if (!AzureVisionSettings.IsValid(config.Value))
         {
             throw new ArgumentException("AzureVisionSettings is invalid", nameof(config.Value));
         }

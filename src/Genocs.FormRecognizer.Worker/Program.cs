@@ -1,5 +1,4 @@
 ﻿using Genocs.FormRecognizer.Worker;
-using Genocs.FormRecognizer.Worker.Options;
 using Genocs.Integration.CognitiveServices.Options;
 using Genocs.Monitoring;
 using MassTransit;
