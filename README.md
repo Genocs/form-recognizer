@@ -167,6 +167,9 @@ dotnet build
 # Run tests
 dotnet test
 
+# Pack nuget package
+dotnet pack
+
 # Run WebApi
 dotnet run --project ./src/Genocs.FormRecognizer.WebApi
 
@@ -174,14 +177,14 @@ dotnet run --project ./src/Genocs.FormRecognizer.WebApi
 dotnet run --project ./src/Genocs.FormRecognizer.Worker
 
 # Build docker image
-docker build -f webapi.dockerfile -t genocs/formrecognizer-webapi:4.0.0 -t genocs/formrecognizer-webapi:latest .
-docker build -f worker.dockerfile -t genocs/formrecognizer-worker:4.0.0 -t genocs/formrecognizer-worker:latest .
+docker build -f webapi.dockerfile -t genocs/formrecognizer-webapi:5.0.4 -t genocs/formrecognizer-webapi:latest .
+docker build -f worker.dockerfile -t genocs/formrecognizer-worker:5.0.4 -t genocs/formrecognizer-worker:latest .
 
 # Push image on dockerhub
-docker push genocs/formrecognizer-webapi:4.0.0
+docker push genocs/formrecognizer-webapi:5.0.4
 docker push genocs/formrecognizer-webapi:latest
 
-docker push genocs/formrecognizer-worker:4.0.0
+docker push genocs/formrecognizer-worker:5.0.4
 docker push genocs/formrecognizer-worker:latest
 
 # Build using docker compose
