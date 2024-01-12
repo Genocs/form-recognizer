@@ -83,7 +83,7 @@ Following is about how to setup **AzureCognitiveServices** **AzureStorage** **Im
   },
   "ImageClassifier": {
     "Endpoint": "{{Endpoint}}",
-    "PredictionKey": "{{PredictionKey}}",
+    "SubscriptionKey": "{{SubscriptionKey}}",
     "ModelId": "{{ModelId}}"
   }
 

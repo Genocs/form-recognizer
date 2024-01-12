@@ -11,7 +11,7 @@ using System.Net.Http.Json;
 namespace Genocs.Integration.CognitiveServices.Services;
 
 /// <summary>
-/// The ImageClassifierService implementation 
+/// The ImageClassifierService implementation.
 /// </summary>
 public class ImageClassifierService : IImageClassifier, IDisposable
 {
@@ -28,7 +28,7 @@ public class ImageClassifierService : IImageClassifier, IDisposable
     private static string postfix_url = "classify/iterations/Iteration1/url";
 
     /// <summary>
-    /// Standard service constructor 
+    /// Standard service constructor.
     /// </summary>
     /// <param name="logger"></param>
     /// <param name="config"></param>
@@ -60,28 +60,27 @@ public class ImageClassifierService : IImageClassifier, IDisposable
             BaseAddress = new Uri(config.Value.Endpoint)
         };
 
-        _httpClient.DefaultRequestHeaders.Add("Prediction-Key", _config.PredictionKey);
+        _httpClient.DefaultRequestHeaders.Add("Prediction-Key", _config.SubscriptionKey);
     }
 
     /// <summary>
-    /// ClassifyAsync the image
+    /// ClassifyAsync the image.
     /// </summary>
-    /// <param name="url"></param>
+    /// <param name="url">The resource url</param>
     /// <returns></returns>
     public async Task<Classification?> ClassifyAsync(string url)
     {
-        // The model Id is the classification model Id 
+        // The model Id is the classification model Id
         var postResponse = await _httpClient.PostAsync($"/{prefix_url}/{_config.ModelId}/{postfix_url}", new { Url = url }.AsJson());
         postResponse.EnsureSuccessStatusCode();
 
-
-        if (postResponse != null && postResponse.IsSuccessStatusCode)
+        if (postResponse?.IsSuccessStatusCode == true)
         {
             return await postResponse.Content.ReadFromJsonAsync<Classification>();
         }
+
         return null;
     }
-
 
     /// <summary>
     /// Implement IDisposable.
@@ -91,6 +90,7 @@ public class ImageClassifierService : IImageClassifier, IDisposable
     public void Dispose()
     {
         Dispose(true);
+
         // This object will be cleaned up by the Dispose method.
         // Therefore, you should call GC.SuppressFinalize to
         // take this object off the finalization queue
@@ -98,7 +98,6 @@ public class ImageClassifierService : IImageClassifier, IDisposable
         // from executing a second time.
         GC.SuppressFinalize(this);
     }
-
 
     /// <summary>
     /// Dispose(bool disposing) executes in two distinct scenarios.
@@ -137,7 +136,6 @@ public class ImageClassifierService : IImageClassifier, IDisposable
         }
     }
 
-
     private async Task<List<dynamic>> Evaluate(RecognizeCustomFormsOperation operation)
     {
         Response<RecognizedFormCollection> operationResponse = await operation.WaitForCompletionAsync();
@@ -155,9 +153,10 @@ public class ImageClassifierService : IImageClassifier, IDisposable
             {
                 ((IDictionary<string, object>)exo).Add(field.Name, new { Value = field?.ValueData?.Text, field?.Confidence });
             }
-            res.Add(exo);
 
+            res.Add(exo);
         }
+
         return res;
     }
 }

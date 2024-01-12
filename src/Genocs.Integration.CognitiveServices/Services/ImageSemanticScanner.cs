@@ -16,7 +16,8 @@ public class ImageSemanticScanner : IImageSemanticScanner
     /// </summary>
     /// <param name="config">The config object instance.</param>
     /// <param name="logger">The logger.</param>
-    /// <exception cref="NullReferenceException">This exception is thrown in case mandatory data are missing.</exception>
+    /// <exception cref="ArgumentNullException">This exception is thrown in case mandatory data are missing.</exception>
+    /// <exception cref="ArgumentException">This exception is thrown in case setting info are incorrect or missing.</exception>
     public ImageSemanticScanner(IOptions<AzureVisionSettings> config, ILogger<ImageSemanticScanner> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -26,7 +27,7 @@ public class ImageSemanticScanner : IImageSemanticScanner
             throw new ArgumentNullException(nameof(config));
         }
 
-        if (!AzureVisionSettings.IsValid(config.Value))
+        if (!AzureVisionSettings.IsValid(config.Value, true))
         {
             throw new ArgumentException("AzureVisionSettings is invalid", nameof(config.Value));
         }

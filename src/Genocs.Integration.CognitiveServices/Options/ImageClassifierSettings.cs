@@ -16,9 +16,9 @@ public class ImageClassifierSettings
     public string? Endpoint { get; set; }
 
     /// <summary>
-    /// The prediction key.
+    /// The subscription key.
     /// </summary>
-    public string? PredictionKey { get; set; }
+    public string? SubscriptionKey { get; set; }
 
     /// <summary>
     /// The model id.
@@ -34,7 +34,7 @@ public class ImageClassifierSettings
     {
         if (settings == null) return false;
         if (string.IsNullOrWhiteSpace(settings.Endpoint)) return false;
-        if (string.IsNullOrWhiteSpace(settings.PredictionKey)) return false;
+        if (string.IsNullOrWhiteSpace(settings.SubscriptionKey)) return false;
         if (string.IsNullOrWhiteSpace(settings.ModelId)) return false;
         return true;
     }

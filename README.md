@@ -86,16 +86,16 @@ POST {{root_url}}/api/Settings
   },
   "ImageClassifier": {
     "Endpoint": "https://westeurope.api.cognitive.microsoft.com",
-    "PredictionKey": "{{PredictionKey}}",
+    "SubscriptionKey": "{{SubscriptionKey}}",
     "ModelId": "{{ModelId}}"
   },
   "FormRecognizer": {
     "Endpoint": "https://westeurope.api.cognitive.microsoft.com",
-    "PredictionKey": "{{PredictionKey}}"
+    "SubscriptionKey": "{{SubscriptionKey}}"
   },
   "AzureVision": {
     "Endpoint": "https://westeurope.cognitiveservices.azure.com",
-    "PredictionKey": "{{PredictionKey}}"
+    "SubscriptionKey": "{{SubscriptionKey}}"
   },
   "RedisSettings": {
     "ConnectionString": "{{ConnectionString}}"
